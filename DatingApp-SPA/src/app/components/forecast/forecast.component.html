@@ -1,0 +1,12 @@
+﻿<div class="card h-100">
+	<div class="card-body row no-gutters">
+		<img [src]="forecast.imageUrl" class="img-fluid p-5" alt="" style="min-width: 48px;" />
+		<div class="card-block">
+			<h5 class="card-title">
+				{{ forecast.date | date:'EEEE, MMM d' }}
+				<span class="badge badge-secondary p-2">{{forecast.temperatureC}}°</span>
+			</h5>
+			<p class="card-text">{{ forecast.summary }}</p>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,90 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"baseUrl": "./",
+		"rootDir": "./",
+		"outDir": "./dist/out-tsc",
+		"sourceMap": true,
+		"declaration": false,
+		"downlevelIteration": true,
+		"experimentalDecorators": true,
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"target": "es2015",
+		"module": "es2020",
+		"strict": true,
+		"alwaysStrict": true,
+		"strictPropertyInitialization": false,
+		"removeComments": true,
+		"jsx": "preserve",
+		"preserveConstEnums": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"allowUnreachableCode": false,
+		"noImplicitReturns": true,
+		"noImplicitAny": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noFallthroughCasesInSwitch": false,
+		"forceConsistentCasingInFileNames": false,
+		"strictNullChecks": true,
+		"typeRoots": [
+			"node_modules/@types",
+			"./typings"
+		],
+		"types": [
+			"node",
+			"lodash"
+		],
+		"lib": [
+			"es2018",
+			"dom",
+			"dom.Iterable"
+		],
+		"paths": {
+			"@node/*": [
+				"node_modules/*"
+			],
+			"@/*": [
+				"src/app/*"
+			],
+			"@common/*": [
+				"src/app/common/*"
+			],
+			"@components/*": [
+				"src/app/components/*"
+			],
+			"@data/*": [
+				"src/app/data/*"
+			],
+			"@services/*": [
+				"src/app/services/*"
+			],
+			"@lib/*": [
+				"src/app/lib/*"
+			],
+			"@assets/*": [
+				"src/assets/*"
+			],
+			"@images/*": [
+				"src/assets/images/*"
+			]
+		}
+	},
+	"angularCompilerOptions": {
+		"fullTemplateTypeCheck": true,
+		"strictTemplates": true,
+		"strictInjectionParameters": true
+	},
+	"include": [
+		"src/**/*",
+		"./typings"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"public"
+	]
+}

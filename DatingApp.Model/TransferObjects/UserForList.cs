@@ -1,0 +1,22 @@
+using System;
+
+namespace DatingApp.Model.TransferObjects
+{
+	[Serializable]
+	public class UserForList
+	{
+		public string Id { get; set; }
+		public string FirstName { get; set; }
+		public string LastName { get; set; }
+		public string KnownAs { get; set; }
+		public Genders Gender { get; set; }
+		public DateTime DateOfBirth { get; set; }
+		public string Introduction { get; set; }
+		public string LookingFor { get; set; }
+		public Guid CityId { get; set; }
+		public double Age { get; set; }
+		public string PhotoUrl { get; set; }
+		public int Likers { get; set; }
+		public int Likees { get; set; }
+	}
+}

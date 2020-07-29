@@ -1,0 +1,23 @@
+<app-message [messages]="messages">
+</app-message>
+<table class="table" *ngIf="paginated && paginated.result && paginated.result.length > 0">
+	<thead>
+		<tr class="d-flex">
+			<th class="col-1" scope="col"></th>
+			<th class="col-2" scope="col">Date</th>
+			<th class="col-1" scope="col">Temperature (C)</th>
+			<th class="col-1" scope="col">Temperature (F)</th>
+			<th class="col-7" scope="col">Summery</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="d-flex" *ngFor="let forecast of paginated.result">
+			<td class="col-1"><img [src]="forecast.imageUrl" class="img-fluid" alt="" style="max-width: 48px;" /></td>
+			<td class="col-2">{{ forecast.date | date:'EEEE, MMM d' }}</td>
+			<td class="col-1">{{ forecast.temperatureC | number }}</td>
+			<td class="col-1">{{ forecast.temperatureF | number }}</td>
+			<td class="col-7">{{ forecast.summary }}</td>
+		</tr>
+	</tbody>
+</table>
+<ngb-pagination [collectionSize]="paginated.pagination.count" [(page)]="paginated.pagination.page"></ngb-pagination>

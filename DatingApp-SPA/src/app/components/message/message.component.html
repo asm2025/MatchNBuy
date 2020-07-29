@@ -1,0 +1,6 @@
+﻿<ngb-alert *ngFor="let message of messages"
+			[type]="getMessageType(message)"
+			[dismissible]="isDismissible(message)"
+			(close)="close(message)">
+	{{ message.content }}
+</ngb-alert>

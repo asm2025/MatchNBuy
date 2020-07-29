@@ -1,0 +1,9 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+	"extends": "./tsconfig.base.json",
+	"exclude": [
+		"src/test.ts",
+		"**/*.test.ts",
+		"src/**/*.spec.ts"
+	]
+}

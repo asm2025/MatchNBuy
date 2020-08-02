@@ -217,12 +217,13 @@ namespace DatingApp.Data.Migrations
                 name: "Likes",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(nullable: false),
                     LikerId = table.Column<string>(nullable: false),
                     LikeeId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Likes", x => new { x.LikerId, x.LikeeId });
+                    table.PrimaryKey("PK_Likes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Likes_AspNetUsers_LikeeId",
                         column: x => x.LikeeId,
@@ -241,6 +242,7 @@ namespace DatingApp.Data.Migrations
                 name: "Messages",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(nullable: false),
                     SenderId = table.Column<string>(maxLength: 128, nullable: false),
                     RecipientId = table.Column<string>(maxLength: 128, nullable: false),
                     Content = table.Column<string>(maxLength: 512, nullable: false),
@@ -251,7 +253,7 @@ namespace DatingApp.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => new { x.SenderId, x.RecipientId });
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Messages_AspNetUsers_RecipientId",
                         column: x => x.RecipientId,

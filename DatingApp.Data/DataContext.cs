@@ -104,12 +104,6 @@ namespace DatingApp.Data
 
 			modelBuilder.Entity<Like>(like =>
 			{
-				like.HasKey(e => new
-				{
-					e.LikerId,
-					e.LikeeId
-				});
-
 				like.HasOne(e => e.Likee)
 					.WithMany(e => e.Likers)
 					.HasForeignKey(e => e.LikeeId)
@@ -123,12 +117,6 @@ namespace DatingApp.Data
 
 			modelBuilder.Entity<Message>(message =>
 			{
-				message.HasKey(e => new
-				{
-					e.SenderId,
-					e.RecipientId
-				});
-
 				message.HasOne(e => e.Sender)
 						.WithMany(e => e.MessagesSent)
 						.OnDelete(DeleteBehavior.Restrict);

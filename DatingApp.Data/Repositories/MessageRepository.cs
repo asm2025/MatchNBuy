@@ -105,34 +105,40 @@ namespace DatingApp.Data.Repositories
 		{
 			token.ThrowIfCancellationRequested();
 			settings ??= new Pagination();
-			
-			var groups = DbSet
-						//.Include(e => e.Sender)
-						//.Include(e => e.Recipient)
-						.Where(e => e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted)
-						.GroupBy(e => new
+
+			var groups = from message in DbSet
+						join sender in Context.Users on message.SenderId equals sender.Id
+						join recipient in Context.Users on message.RecipientId equals recipient.Id
+						where message.RecipientId == userId && !message.RecipientDeleted || message.SenderId == userId && !message.SenderDeleted
+						group message by new
 						{
-							e.SenderId,
-							e.RecipientId
-						});
+							message.SenderId,
+							message.RecipientId
+						}
+						into g
+						select new
+						{
+							g.Key.SenderId,
+							g.Key.RecipientId,
+						};
 
 			settings.Count = await groups.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
-			List<MessageThread> threads = await groups.Paginate(settings)
-												.Select(e => new MessageThread
-												{
-													SenderId = e.Key.SenderId,
-													SenderKnownAs = e.First().Sender.KnownAs,
-													SenderPhotoUrl = e.First().Sender.PhotoUrl,
-													RecipientId = e.Key.RecipientId,
-													RecipientKnownAs = e.First().Recipient.KnownAs,
-													RecipientPhotoUrl = e.First().Recipient.PhotoUrl,
-													Count = e.Count()
-												})
-												.ToListAsync(token);
+			//List<MessageThread> threads = await groups.Paginate(settings)
+			//									.Select(e => new MessageThread
+			//									{
+			//										SenderId = e.Key.SenderId,
+			//										SenderKnownAs = e.First().Sender.KnownAs,
+			//										SenderPhotoUrl = e.First().Sender.PhotoUrl,
+			//										RecipientId = e.Key.RecipientId,
+			//										RecipientKnownAs = e.First().Recipient.KnownAs,
+			//										RecipientPhotoUrl = e.First().Recipient.PhotoUrl,
+			//										Count = e.Count()
+			//									})
+			//									.ToListAsync(token);
 
-			return new Paginated<MessageThread>(threads, settings);
+			return new Paginated<MessageThread>(Enumerable.Empty<MessageThread>(), settings);
 		}
 
 		public IQueryable<Message> ListByThread(string userId, string recipientId, IPagination settings = null)

@@ -16,7 +16,5 @@ namespace DatingApp.Model.TransferObjects
 		public Guid CityId { get; set; }
 		public double Age { get; set; }
 		public string PhotoUrl { get; set; }
-		public int Likers { get; set; }
-		public int Likees { get; set; }
 	}
 }

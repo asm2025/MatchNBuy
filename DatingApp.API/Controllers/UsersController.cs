@@ -10,6 +10,7 @@ using asm.Core.Web.Controllers;
 using asm.Data.Patterns.Parameters;
 using asm.Extensions;
 using asm.Patterns.Pagination;
+using asm.Patterns.Sorting;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DatingApp.Data.Repositories;
@@ -42,23 +43,45 @@ namespace DatingApp.API.Controllers
 			_mapper = mapper;
 		}
 
-		[HttpPost]
-		public async Task<IActionResult> List([FromBody][NotNull] UserList pagination, CancellationToken token)
+		[HttpGet]
+		public async Task<IActionResult> List([FromQuery] UserList pagination, CancellationToken token)
 		{
-			token.ThrowIfCancellationRequested();
+			const int AGE_RANGE = 10;
 
+			token.ThrowIfCancellationRequested();
+			pagination ??= new UserList();
+
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
+			listSettings.Include = new[]
+			{
+				"Photos"
+			};
+
+			StringBuilder filter = new StringBuilder();
+			IList<object> args = new List<object>();
+			filter.Append($"{nameof(Model.User.Id)} != @{args.Count}");
+			args.Add(userId);
+			
+			if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified)
+			{
+				filter.Append($" and {nameof(Model.User.Gender)} == @{args.Count}");
+				args.Add((int)pagination.Gender.Value);
+			}
+
+			DateTime today = DateTime.Today;
 			bool hasMinAge = pagination.MinAge.HasValue && pagination.MinAge > 0;
 			bool hasMaxAge = pagination.MaxAge.HasValue && pagination.MaxAge > 0;
 
-			if (!hasMinAge || !hasMaxAge)
+			if (!pagination.Likers && !pagination.Likees && (!hasMinAge || !hasMaxAge))
 			{
 				Claim dobClaim = User.FindFirst(ClaimTypes.DateOfBirth);
 
 				if (dobClaim != null && DateTime.TryParse(dobClaim.Value, out DateTime dob))
 				{
 					double age = DateTime.Today.Years(dob).NotBelow(Model.User.AGE_MIN);
-					if (!hasMinAge) pagination.MinAge = ((int)(age - 10.0d)).NotBelow(Model.User.AGE_MIN);
-					if (!hasMaxAge) pagination.MaxAge = (int)(age + 10.0d);
+					if (!hasMinAge) pagination.MinAge = ((int)(age - AGE_RANGE)).NotBelow(Model.User.AGE_MIN);
+					if (!hasMaxAge) pagination.MaxAge = (int)(age + AGE_RANGE);
 				}
 				else
 				{
@@ -66,10 +89,10 @@ namespace DatingApp.API.Controllers
 					if (!hasMaxAge) pagination.MaxAge = Model.User.AGE_MAX;
 				}
 
-				if (pagination.MaxAge < pagination.MinAge) pagination.MaxAge = pagination.MinAge.Value + 5;
+				if (pagination.MaxAge < pagination.MinAge) pagination.MaxAge = pagination.MinAge.Value + AGE_RANGE;
 			}
 
-			if (!pagination.Gender.HasValue)
+			if (!pagination.Likers && !pagination.Likees && !pagination.Gender.HasValue)
 			{
 				Claim genderClaim = User.FindFirst(ClaimTypes.Gender);
 
@@ -80,27 +103,6 @@ namespace DatingApp.API.Controllers
 											: Genders.Female;
 				}
 			}
-
-			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
-			listSettings.Include = new[]
-			{
-				"Photos",
-				"Likers",
-				"Likees"
-			};
-
-			StringBuilder filter = new StringBuilder();
-			IList<object> args = new List<object>();
-			filter.Append($"{nameof(Model.User.Id)} != @{args.Count}");
-			args.Add(pagination.UserId);
-			
-			if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified)
-			{
-				filter.Append($" and {nameof(Model.User.Gender)} == @{args.Count}");
-				args.Add((int)pagination.Gender.Value);
-			}
-
-			DateTime today = DateTime.Today;
 
 			if (pagination.MinAge > 0)
 			{
@@ -114,11 +116,33 @@ namespace DatingApp.API.Controllers
 				filter.Append($" and {nameof(Model.User.DateOfBirth)} >= DateTime({maxDate.Year}, {maxDate.Month}, {maxDate.Day})");
 			}
 
+			if (pagination.Likers)
+			{
+				filter.Append($" and {nameof(Model.User.Likers)}.Contains(@{args.Count})");
+				args.Add(userId);
+			}
+
+			if (pagination.Likees)
+			{
+				filter.Append($" and {nameof(Model.User.Likees)}.Contains(@{args.Count})");
+				args.Add(userId);
+			}
+
 			listSettings.Filter = new DynamicFilter
 			{
 				Expression = filter.ToString(),
 				Arguments = args.ToArray()
 			};
+
+			if (listSettings.OrderBy == null || listSettings.OrderBy.Count == 0)
+			{
+				listSettings.OrderBy = new[]
+				{
+					new SortField(nameof(Model.User.LastActive), SortType.Descending),
+					new SortField(nameof(Model.User.FirstName)),
+					new SortField(nameof(Model.User.LastName))
+				};
+			}
 
 			IQueryable<User> queryable = _repository.List(listSettings);
 			listSettings.Count = await queryable.LongCountAsync(token);
@@ -136,7 +160,7 @@ namespace DatingApp.API.Controllers
 			token.ThrowIfCancellationRequested();
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
-			if (user == null) return NotFound();
+			if (user == null) return NotFound(id);
 			UserForList userForList = _mapper.Map<UserForList>(user);
 			return Ok(userForList);
 		}
@@ -149,7 +173,7 @@ namespace DatingApp.API.Controllers
 			token.ThrowIfCancellationRequested();
 			string userToken = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userToken)) return Unauthorized();
+			if (string.IsNullOrEmpty(userToken)) return Unauthorized(loginParams.UserName);
 			return Ok(userToken);
 		}
 
@@ -174,10 +198,10 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
-			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized();
+			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
-			if (user == null) return NotFound();
+			if (user == null) return NotFound(id);
 			user = _mapper.Map(userParams, user);
 			user.Id = id;
 			user = await _repository.UpdateAsync(user, token);
@@ -195,14 +219,12 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
-			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized();
+			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
-			if (user == null) return NotFound();
-			user = await _repository.DeleteAsync(user, token);
-			token.ThrowIfCancellationRequested();
-			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
-			return Ok(userForSerialization);
+			if (user == null) return NotFound(id);
+			await _repository.DeleteAsync(user, token);
+			return Ok();
 		}
 	}
 }

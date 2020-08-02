@@ -48,12 +48,12 @@ namespace DatingApp.API.Controllers
 			_mapper = mapper;
 		}
 
-		[HttpPost]
+		[HttpGet]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> List(string userId, [FromBody] SortablePagination pagination, CancellationToken token)
+		public async Task<IActionResult> List(string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
 			
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			StringBuilder filter = new StringBuilder();
@@ -84,7 +84,7 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
-			Photo photo = await _repository.GetAsync(new GetSettings(id), token);
+			Photo photo = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) return NotFound(id);
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
@@ -98,7 +98,7 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
 
 			Stream stream = null;
 			Image image = null;
@@ -140,21 +140,24 @@ namespace DatingApp.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Update(string userId, Guid id, [FromBody] PhotoToEdit photoToParams, CancellationToken token)
+		public async Task<IActionResult> Update(Guid id, [FromBody] PhotoToEdit photoToParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
-			bool isAdmin = User.IsInRole(Role.Administrators);
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !isAdmin) return Unauthorized();
+
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
+
 			Photo photo = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
-			if (photo == null) return NotFound();
-			if (!photo.UserId.IsSame(userId) && !isAdmin) return Unauthorized();
+			if (photo == null) return NotFound(id);
+			if (!photo.UserId.IsSame(userId) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
 			photo = await _repository.UpdateAsync(_mapper.Map(photoToParams, photo), token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception("Updating photo failed.");
 			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
+
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
 			return Ok(photoForList);
 		}
@@ -163,23 +166,59 @@ namespace DatingApp.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Delete(string userId, Guid id, CancellationToken token)
+		public async Task<IActionResult> Delete(Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
-			bool isAdmin = User.IsInRole(Role.Administrators);
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !isAdmin) return Unauthorized();
+
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
+			
 			Photo photo = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
-			if (photo == null) return NotFound();
-			if (!photo.UserId.IsSame(userId) && !isAdmin) return Unauthorized();
+			if (photo == null) return NotFound(id);
+			if (!photo.UserId.IsSame(userId) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
 			photo = await _repository.DeleteAsync(photo, token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception("Deleting photo failed.");
 			await _repository.Context.SaveChangesAsync(token);
+			return Ok();
+		}
+
+		[HttpGet("[action]")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		public async Task<IActionResult> GetDefault(string userId, CancellationToken token)
+		{
 			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
+
+			Photo photo = await _repository.GetDefaultAsync(userId, token);
+			if (photo == null) return NotFound(userId);
+
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
 			return Ok(photoForList);
+		}
+
+		[HttpPut("{id}/[action]")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		public async Task<IActionResult> SetDefault(Guid id, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (id.IsEmpty()) return BadRequest();
+
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
+			Photo photo = await _repository.GetAsync(new object[] {id}, token);
+			token.ThrowIfCancellationRequested();
+			if (photo == null) return NotFound(id);
+			bool isAdmin = User.IsInRole(Role.Administrators);
+			if (!photo.UserId.IsSame(userId) && !isAdmin) return Unauthorized(userId);
+			if (!await _repository.SetDefaultAsync(photo, token)) return NotFound(id);
+			return Ok();
 		}
 	}
 }

@@ -30,9 +30,10 @@ namespace DatingApp.API.Controllers
 			_repository = repository;
 		}
 
-		[HttpPost]
-		public IActionResult List([FromBody][NotNull] Pagination pagination)
+		[HttpGet]
+		public IActionResult List([FromQuery] Pagination pagination)
 		{
+			pagination ??= new Pagination();
 			IQueryable<Forecast> queryable = _repository.List(pagination);
 			pagination.Count = int.MaxValue;
 			IList<Forecast> forecasts = queryable.ToList(); // Special case sense this is a fake repo: await queryable.Paginate(pagination).ToListAsync(token);

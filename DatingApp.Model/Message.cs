@@ -8,6 +8,9 @@ namespace DatingApp.Model
 	[Serializable]
     public class Message : IEntity
     {
+		[Key]
+		public Guid Id { get; set; }
+
 		[Required]
 		[StringLength(128)]
         public string SenderId { get; set; }
@@ -19,7 +22,7 @@ namespace DatingApp.Model
         public virtual User Recipient { get; set; }
 
 		[Required]
-        [StringLength(512)]
+        [StringLength(512, MinimumLength = 1)]
         public string Content { get; set; }
         public DateTime? DateRead { get; set; }
         public DateTime MessageSent { get; set; }

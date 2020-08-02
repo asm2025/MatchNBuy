@@ -25,26 +25,19 @@ namespace DatingApp.API.Controllers
 {
 	[AllowAnonymous]
 	[Route("[controller]")]
-	public class CountryController : ApiController
+	public class CountriesController : ApiController
 	{
 		private static readonly Lazy<ListSettings> __countriesSettings = new Lazy<ListSettings>(() => new ListSettings
 		{
 			PageSize = int.MaxValue,
-			OrderBy = new[]
-			{
-				new SortField
-				{
-					Name = nameof(Country.Name),
-					Type = SortType.Ascending
-				}
-			}
+			OrderBy = new[] { new SortField(nameof(Country.Name)) }
 		});
 
 		private readonly ICountryRepositoryBase _countryRepository;
 		private readonly ICityRepositoryBase _cityRepository;
 		private readonly IMapper _mapper;
 
-		public CountryController([NotNull] ICountryRepositoryBase countryRepository, [NotNull] ICityRepositoryBase cityRepository, IMapper mapper, [NotNull] IConfiguration configuration, ILogger<WeatherController> logger)
+		public CountriesController([NotNull] ICountryRepositoryBase countryRepository, [NotNull] ICityRepositoryBase cityRepository, IMapper mapper, [NotNull] IConfiguration configuration, ILogger<WeatherController> logger)
 			: base(configuration, logger)
 		{
 			_countryRepository = countryRepository;
@@ -87,21 +80,11 @@ namespace DatingApp.API.Controllers
 			ListSettings listSettings = new ListSettings
 			{
 				PageSize = int.MaxValue,
-				OrderBy = new[]
-				{
-					new SortField
-					{
-						Name = nameof(City.Name),
-						Type = SortType.Ascending
-					}
-				},
+				OrderBy = new[] { new SortField(nameof(City.Name)) },
 				Filter = new DynamicFilter
 				{
 					Expression = $"{nameof(City.CountryCode)} == @0",
-					Arguments = new object[]
-					{
-						code
-					}
+					Arguments = new object[] { code }
 				}
 			};
 

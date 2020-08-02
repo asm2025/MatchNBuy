@@ -1,10 +1,11 @@
 using System;
+using asm.Patterns.Pagination;
 
 namespace DatingApp.Model.Parameters
 {
 	[Serializable]
-	public class MessageList : UserSortablePagination
+	public class MessageList : SortablePagination
 	{
-		public string MessageContainer { get; set; } = "Unread";
+		public MessageContainers Container { get; set; }
 	}
 }

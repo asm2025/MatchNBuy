@@ -22,6 +22,8 @@ namespace DatingApp.Data.Repositories
 {
 	public class UserRepository : Repository<DataContext, User>, IUserRepository
 	{
+		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(User).GetProperty(nameof(User.Id))}, LazyThreadSafetyMode.PublicationOnly);
+
 		/// <inheritdoc />
 		public UserRepository([NotNull] DataContext context, [NotNull] SignInManager<User> signInManager, [NotNull] IConfiguration configuration, ILogger<UserRepository> logger)
 			: base(context, configuration, logger)
@@ -31,7 +33,7 @@ namespace DatingApp.Data.Repositories
 		}
 
 		/// <inheritdoc />
-		protected override PropertyInfo[] KeyProperties { get; } = { typeof(User).GetProperty(nameof(User.Id)) };
+		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
 
 		[NotNull]
 		protected UserManager<User> UserManager { get; }
@@ -42,7 +44,7 @@ namespace DatingApp.Data.Repositories
 		/// <inheritdoc />
 		protected override User GetInternal([NotNull] params object[] keys)
 		{
-			return UserManager.FindByIdAsync((string)keys[0]).Result;
+			return UserManager.FindByIdAsync((string)keys[0]).GetAwaiter().GetResult();
 		}
 
 		/// <inheritdoc />
@@ -55,67 +57,57 @@ namespace DatingApp.Data.Repositories
 		public User Get(ClaimsPrincipal principal)
 		{
 			ThrowIfDisposed();
-			return GetInternal(principal);
-		}
-
-		protected virtual User GetInternal([NotNull] ClaimsPrincipal principal)
-		{
-			return UserManager.GetUserAsync(principal).Result;
+			return UserManager.GetUserAsync(principal).GetAwaiter().GetResult();
 		}
 
 		public ValueTask<User> GetAsync(ClaimsPrincipal principal, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			return GetAsyncInternal(principal, token);
-		}
-
-		protected virtual ValueTask<User> GetAsyncInternal([NotNull] ClaimsPrincipal principal, CancellationToken token = default(CancellationToken))
-		{
-			token.ThrowIfCancellationRequested();
 			return new ValueTask<User>(UserManager.GetUserAsync(principal));
 		}
 
 		/// <inheritdoc />
 		[NotNull]
-		protected override User AddInternal([NotNull] User entity) { return AddInternal(entity, null); }
+		protected override User AddInternal([NotNull] User entity) { return Add(entity, null); }
 
 		[NotNull]
 		public User Add(User entity, string password)
 		{
 			ThrowIfDisposed();
-			return AddInternal(entity, password);
-		}
+			if (string.IsNullOrEmpty(entity.Id)) entity.Id = Guid.NewGuid().ToString();
+			entity.Created = DateTime.UtcNow;
+			entity.Modified = DateTime.UtcNow;
+			entity.LastActive = DateTime.UtcNow;
+			entity.LockoutEnabled = true;
 
-		[NotNull]
-		protected virtual User AddInternal([NotNull] User entity, string password)
-		{
-			return AddAsyncInternal(entity, password).GetAwaiter().GetResult();
+			IdentityResult result = (string.IsNullOrEmpty(password)
+										? UserManager.CreateAsync(entity)
+										: UserManager.CreateAsync(entity, password)).GetAwaiter()
+																					.GetResult();
+			if (!result.Succeeded) throw new Exception(result.Errors.CollectMessages($"Unable to create user '{entity.UserName}'."));
+			result = UserManager.AddToRoleAsync(entity, Role.Members).GetAwaiter().GetResult();
+			if (!result.Succeeded) throw new Exception(result.Errors.CollectMessages($"User '{entity.UserName}' is created but with some errors."));
+			return entity;
 		}
 
 		/// <inheritdoc />
 		protected override ValueTask<User> AddAsyncInternal([NotNull] User entity, CancellationToken token = default(CancellationToken))
 		{
-			token.ThrowIfCancellationRequested();
-			return AddAsyncInternal(entity, null, token);
-		}
-
-		public ValueTask<User> AddAsync(User entity, string password, CancellationToken token = default(CancellationToken))
-		{
-			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-			return AddAsyncInternal(entity, password, token);
+			return AddAsync(entity, null, token);
 		}
 
 		[ItemNotNull]
-		protected virtual async ValueTask<User> AddAsyncInternal([NotNull] User entity, string password, CancellationToken token = default(CancellationToken))
+		public async ValueTask<User> AddAsync(User entity, string password, CancellationToken token = default(CancellationToken))
 		{
+			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(entity.Id)) entity.Id = Guid.NewGuid().ToString();
 			entity.Created = DateTime.UtcNow;
 			entity.Modified = DateTime.UtcNow;
 			entity.LastActive = DateTime.UtcNow;
 			entity.LockoutEnabled = true;
+
 			IdentityResult result = string.IsNullOrEmpty(password)
 										? await UserManager.CreateAsync(entity)
 										: await UserManager.CreateAsync(entity, password);
@@ -129,7 +121,7 @@ namespace DatingApp.Data.Repositories
 
 		/// <inheritdoc />
 		[NotNull]
-		protected override User UpdateInternal([NotNull] User entity) { return UpdateAsyncInternal(entity).Result; }
+		protected override User UpdateInternal([NotNull] User entity) { return UpdateAsyncInternal(entity).GetAwaiter().GetResult(); }
 
 		/// <inheritdoc />
 		[ItemNotNull]
@@ -144,7 +136,7 @@ namespace DatingApp.Data.Repositories
 
 		/// <inheritdoc />
 		[NotNull]
-		protected override User DeleteInternal([NotNull] User entity) { return DeleteAsyncInternal(entity).Result; }
+		protected override User DeleteInternal([NotNull] User entity) { return DeleteAsyncInternal(entity).GetAwaiter().GetResult(); }
 
 		/// <inheritdoc />
 		[ItemNotNull]
@@ -225,30 +217,22 @@ namespace DatingApp.Data.Repositories
 		}
 		
 		public string NormalizeName(string name) { return UserManager.NormalizeName(name); }
+		
 		public string NormalizeEmail(string email) { return UserManager.NormalizeEmail(email); }
 
 		public string GetUserId(ClaimsPrincipal principal) { return UserManager.GetUserId(principal); }
+		
 		public string GetUserName(ClaimsPrincipal principal) { return UserManager.GetUserName(principal); }
+
 		public User FindByName(string userName)
 		{
 			ThrowIfDisposed();
-			return FindByNameInternal(userName);
-		}
-
-		protected virtual User FindByNameInternal([NotNull] string userName)
-		{
-			return UserManager.FindByNameAsync(userName).Result;
+			return UserManager.FindByNameAsync(userName).GetAwaiter().GetResult();
 		}
 
 		public ValueTask<User> FindByNameAsync(string userName, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-			return FindByNameAsyncInternal(userName, token);
-		}
-
-		protected virtual ValueTask<User> FindByNameAsyncInternal([NotNull] string userName, CancellationToken token = default(CancellationToken))
-		{
 			token.ThrowIfCancellationRequested();
 			return new ValueTask<User>(UserManager.FindByNameAsync(userName));
 		}
@@ -256,23 +240,12 @@ namespace DatingApp.Data.Repositories
 		public User FindByEmail(string email)
 		{
 			ThrowIfDisposed();
-			return FindByEmailInternal(email);
-		}
-
-		protected virtual User FindByEmailInternal([NotNull] string email)
-		{
-			return UserManager.FindByEmailAsync(email).Result;
+			return UserManager.FindByEmailAsync(email).GetAwaiter().GetResult();
 		}
 
 		public ValueTask<User> FindByEmailAsync(string email, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-			return FindByEmailAsyncInternal(email, token);
-		}
-
-		protected virtual ValueTask<User> FindByEmailAsyncInternal([NotNull] string email, CancellationToken token = default(CancellationToken))
-		{
 			token.ThrowIfCancellationRequested();
 			return new ValueTask<User>(UserManager.FindByEmailAsync(email));
 		}
@@ -517,22 +490,14 @@ namespace DatingApp.Data.Repositories
 
 		public async ValueTask<string> SignInAsync(string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
-			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-			User user = await FindByNameAsyncInternal(userName, token);
+			User user = await FindByNameAsync(userName, token);
 			if (user == null) return null;
-			return await SignInAsyncInternal(user, password, lockoutOnFailure, token);
+			return await SignInAsync(user, password, lockoutOnFailure, token);
 		}
 
-		public ValueTask<string> SignInAsync(User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
+		public async ValueTask<string> SignInAsync(User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-			return SignInAsyncInternal(user, password, lockoutOnFailure, token);
-		}
-
-		protected virtual async ValueTask<string> SignInAsyncInternal([NotNull] User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
-		{
 			token.ThrowIfCancellationRequested();
 			SignInResult result;
 

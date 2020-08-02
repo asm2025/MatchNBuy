@@ -56,10 +56,10 @@ namespace DatingApp.Data.Repositories
 		}
 
 		/// <inheritdoc />
-		protected override ValueTask<List<Forecast>> ListAsyncInternal(IPagination settings = null, CancellationToken token = default(CancellationToken))
+		protected override ValueTask<IList<Forecast>> ListAsyncInternal(IPagination settings = null, CancellationToken token = default(CancellationToken))
 		{
 			token.ThrowIfCancellationRequested();
-			return new ValueTask<List<Forecast>>(ListInternal(settings).ToListAsync(token));
+			return new ValueTask<IList<Forecast>>(ListInternal(settings).ToListAsync(token).As<List<Forecast>, IList<Forecast>>());
 		}
 
 		/// <inheritdoc />

@@ -1,10 +1,11 @@
 using System;
 using asm.Extensions;
+using asm.Patterns.Pagination;
 
 namespace DatingApp.Model.Parameters
 {
 	[Serializable]
-	public class UserList : UserSortablePagination
+	public class UserList : SortablePagination
 	{
 		private int? _minAge;
 		private int? _maxAge;

@@ -14,7 +14,6 @@ namespace DatingApp.Model
 		public AutoMapperProfiles()
 		{
 			CreateMap<SortablePagination, ListSettings>().ReverseMap();
-			CreateMap<UserSortablePagination, ListSettings>().ReverseMap();
 			CreateMap<UserList, ListSettings>().ReverseMap();
 
 			CreateMap<Country, CountryForList>();
@@ -25,13 +24,9 @@ namespace DatingApp.Model
 			CreateMap<UserToRegister, User>().ReverseMap();
 			CreateMap<UserToUpdate, User>().ReverseMap();
 			CreateMap<User, UserForList>()
-				.ForMember(e => e.Age, opt => opt.MapFrom(e => DateTime.Today.Years(e.DateOfBirth)))
-				.ForMember(e => e.Likers, opt => opt.MapFrom(e => e.Likers.Count))
-				.ForMember(e => e.Likees, opt => opt.MapFrom(e => e.Likees.Count));
+				.ForMember(e => e.Age, opt => opt.MapFrom(e => DateTime.Today.Years(e.DateOfBirth)));
 			CreateMap<User, UserForDetails>()
 				.ForMember(e => e.Age, opt => opt.MapFrom(e => DateTime.Today.Years(e.DateOfBirth)))
-				.ForMember(e => e.Likers, opt => opt.MapFrom(e => e.Likers.Count))
-				.ForMember(e => e.Likees, opt => opt.MapFrom(e => e.Likees.Count))
 				.ForMember(e => e.City, opt => opt.MapFrom(e => e.City != null ? e.City.Name : string.Empty))
 				.ForMember(e => e.Country, opt => opt.MapFrom(e => e.City != null && e.City.Country != null ? e.City.Country.Name : string.Empty))
 				.ForMember(e => e.Interests, opt => opt.MapFrom(e => e.UserInterests.Select(x => x.Interest.Name).ToArray()))

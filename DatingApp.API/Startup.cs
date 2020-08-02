@@ -110,7 +110,7 @@ namespace DatingApp.API
 				.AddDbContext<DataContext>((provider, builder) =>
 				{
 					builder.UseLazyLoadingProxies();
-					builder.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
+					builder.UseSqlite(_configuration.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
 					builder.EnableDetailedErrors(_environment.IsDevelopment());
 				}/*, ServiceLifetime.Singleton*/)
 				// Add CityRepository for a special case: needs to be a Singleton

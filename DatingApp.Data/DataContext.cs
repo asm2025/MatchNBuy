@@ -48,17 +48,27 @@ namespace DatingApp.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<Country>()
-					.HasMany(e => e.Cities)
-					.WithOne(e => e.Country)
-					.HasForeignKey(e => e.CountryCode)
-					.OnDelete(DeleteBehavior.Cascade);
+			modelBuilder.Entity<Country>(country =>
+			{
+				country.Property(e => e.Code)
+						.HasConversion(e => e, s => s.ToUpper());
 
-			modelBuilder.Entity<City>()
-					.HasMany(e => e.Users)
+				country.HasMany(e => e.Cities)
+						.WithOne(e => e.Country)
+						.HasForeignKey(e => e.CountryCode)
+						.OnDelete(DeleteBehavior.Cascade);
+			});
+
+			modelBuilder.Entity<City>(city =>
+			{
+				city.Property(e => e.CountryCode)
+					.HasConversion(e => e, s => s.ToUpper());
+
+				city.HasMany(e => e.Users)
 					.WithOne(e => e.City)
 					.HasForeignKey(e => e.CityId)
 					.OnDelete(DeleteBehavior.Restrict);
+			});
 
 			modelBuilder.Entity<UserRole>(userRole =>
 			{
@@ -72,6 +82,7 @@ namespace DatingApp.Data
 							.WithMany(e => e.UserRoles)
 							.HasForeignKey(e => e.UserId)
 							.OnDelete(DeleteBehavior.Restrict);
+
 				userRole.HasOne(e => e.Role)
 							.WithMany(e => e.UserRoles)
 							.HasForeignKey(e => e.RoleId)
@@ -90,6 +101,7 @@ namespace DatingApp.Data
 							.WithMany(e => e.UserInterests)
 							.HasForeignKey(e => e.UserId)
 							.OnDelete(DeleteBehavior.Restrict);
+				
 				userInterest.HasOne(e => e.Interest)
 							.WithMany(e => e.UserInterests)
 							.HasForeignKey(e => e.InterestId)

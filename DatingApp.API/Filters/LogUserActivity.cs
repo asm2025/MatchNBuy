@@ -15,7 +15,7 @@ namespace DatingApp.API.Filters
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, [NotNull] ActionExecutionDelegate next)
 		{
 			ActionExecutedContext resultContext = await next();
-			string userId = resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			string userId = resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			IUserRepository userRepository = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
 			User user = await userRepository.GetAsync(userId);
 			user.LastActive = DateTime.Now;

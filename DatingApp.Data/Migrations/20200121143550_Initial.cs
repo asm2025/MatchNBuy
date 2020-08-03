@@ -243,6 +243,7 @@ namespace DatingApp.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    ThreadId = table.Column<string>(maxLength: 256, nullable: false),
                     SenderId = table.Column<string>(maxLength: 128, nullable: false),
                     RecipientId = table.Column<string>(maxLength: 128, nullable: false),
                     Content = table.Column<string>(maxLength: 512, nullable: false),

@@ -106,23 +106,23 @@ namespace DatingApp.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			settings ??= new Pagination();
 
-			var groups = from message in DbSet
-						join sender in Context.Users on message.SenderId equals sender.Id
-						join recipient in Context.Users on message.RecipientId equals recipient.Id
-						where message.RecipientId == userId && !message.RecipientDeleted || message.SenderId == userId && !message.SenderDeleted
-						group message by new
-						{
-							message.SenderId,
-							message.RecipientId
-						}
-						into g
-						select new
-						{
-							g.Key.SenderId,
-							g.Key.RecipientId,
-						};
+			var messages = DbSet
+							.Include(e => e.Sender)
+							.Include(e => e.Recipient)
+							.Where(e => e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted)
+							.GroupBy(e => e.ThreadId)
+							.Select(e => new
+							{
+								//SenderId = e.SenderId,
+								//SenderKnownAs = e.First().Sender.KnownAs,
+								//SenderPhotoUrl = e.First().Sender.PhotoUrl,
+								//RecipientId = e.Key.RecipientId,
+								//RecipientKnownAs = e.First().Recipient.KnownAs,
+								//RecipientPhotoUrl = e.First().Recipient.PhotoUrl,
+								Count = e.Count()
+							});
 
-			settings.Count = await groups.CountAsync(token);
+			settings.Count = await messages.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
 			//List<MessageThread> threads = await groups.Paginate(settings)

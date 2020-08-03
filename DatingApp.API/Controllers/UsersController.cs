@@ -51,7 +51,7 @@ namespace DatingApp.API.Controllers
 			token.ThrowIfCancellationRequested();
 			pagination ??= new UserList();
 
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			listSettings.Include = new[]
 			{
@@ -198,7 +198,7 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
-			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
+			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
@@ -219,7 +219,7 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
-			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
+			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);

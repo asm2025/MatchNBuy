@@ -53,7 +53,7 @@ namespace DatingApp.API.Controllers
 		public async Task<IActionResult> List(string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
 			
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			StringBuilder filter = new StringBuilder();
@@ -98,7 +98,7 @@ namespace DatingApp.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
 
 			Stream stream = null;
 			Image image = null;
@@ -145,7 +145,7 @@ namespace DatingApp.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
 
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
 
 			Photo photo = await _repository.GetAsync(token, id);
@@ -171,7 +171,7 @@ namespace DatingApp.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
 
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
 			
 			Photo photo = await _repository.GetAsync(token, id);
@@ -210,7 +210,7 @@ namespace DatingApp.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
 
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
 			Photo photo = await _repository.GetAsync(new object[] {id}, token);
 			token.ThrowIfCancellationRequested();

@@ -110,6 +110,9 @@ namespace DatingApp.API
 				.AddDbContext<DataContext>((provider, builder) =>
 				{
 					builder.UseLazyLoadingProxies();
+					// https://docs.microsoft.com/en-us/ef/core/querying/tracking
+					// https://stackoverflow.com/questions/12726878/global-setting-for-asnotracking
+					//builder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 					builder.UseSqlite(_configuration.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
 					builder.EnableDetailedErrors(_environment.IsDevelopment());
 				}/*, ServiceLifetime.Singleton*/)

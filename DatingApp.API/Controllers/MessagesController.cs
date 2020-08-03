@@ -19,7 +19,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace DatingApp.API.Controllers
 {
-	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	[AllowAnonymous]
 	[Route("users/{userId}/[controller]")]
 	public class MessagesController : ApiController
 	{
@@ -39,7 +40,7 @@ namespace DatingApp.API.Controllers
 		public async Task<IActionResult> List(string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value)) return Unauthorized(userId);
+			//if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 
 			Paginated<MessageThread> threads = await _repository.ListThreadsAsync(userId, pagination, token);
 			token.ThrowIfCancellationRequested();
@@ -66,7 +67,7 @@ namespace DatingApp.API.Controllers
 		//public async Task<IActionResult> Add(string userId, [FromForm][NotNull] MessageToAdd messageParams, CancellationToken token)
 		//{
 		//	token.ThrowIfCancellationRequested();
-		//	if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value)) return Unauthorized(userId);
+		//	if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 		//	if (await _userRepository.GetAsync(token, messageParams.RecipientId) == null) return NotFound(messageParams.RecipientId);
 
 		//	Message message = _mapper.Map<Message>(messageParams);
@@ -89,7 +90,7 @@ namespace DatingApp.API.Controllers
 		//	token.ThrowIfCancellationRequested();
 		//	if (id.IsEmpty()) return BadRequest();
 		//	bool isAdmin = User.IsInRole(Role.Administrators);
-		//	if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !isAdmin) return Unauthorized(userId);
+		//	if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !isAdmin) return Unauthorized(userId);
 		//	Message message = await _repository.GetAsync(token, id);
 		//	token.ThrowIfCancellationRequested();
 		//	if (message == null) return NotFound(id);
@@ -112,7 +113,7 @@ namespace DatingApp.API.Controllers
 		//	token.ThrowIfCancellationRequested();
 		//	if (id.IsEmpty()) return BadRequest();
 		//	bool isAdmin = User.IsInRole(Role.Administrators);
-		//	if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier).Value) && !isAdmin) return Unauthorized(userId);
+		//	if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !isAdmin) return Unauthorized(userId);
 		//	Message message = await _repository.GetAsync(token, id);
 		//	token.ThrowIfCancellationRequested();
 		//	if (message == null) return NotFound(id);

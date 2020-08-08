@@ -23,6 +23,7 @@ namespace DatingApp.Model
 			CreateMap<User, UserForSerialization>().ReverseMap();
 			CreateMap<UserToRegister, User>().ReverseMap();
 			CreateMap<UserToUpdate, User>().ReverseMap();
+			CreateMap<User, UserForLoginDisplay>().ReverseMap();
 			CreateMap<User, UserForList>()
 				.ForMember(e => e.Age, opt => opt.MapFrom(e => DateTime.Today.Years(e.DateOfBirth)));
 			CreateMap<User, UserForDetails>()
@@ -35,10 +36,17 @@ namespace DatingApp.Model
 			CreateMap<Photo, PhotoForList>();
 			CreateMap<PhotoToEdit, Photo>().ReverseMap();
 
+			CreateMap<IGrouping<string, Message>, MessageThread>()
+				.ForMember(m => m.ThreadId, opt => opt.MapFrom(g => g.Key))
+				.ForMember(m => m.Count, opt => opt.MapFrom(g => g.Count()))
+				.ForMember(m => m.IsRead, opt => opt.MapFrom(g => g.All(e => e.DateRead == null)))
+				.ForMember(m => m.LastModified, opt => opt.MapFrom(g => g.OrderByDescending(e => e.MessageSent).First().MessageSent));
+
 			CreateMap<MessageToAdd, Message>().ReverseMap();
+			CreateMap<MessageToEdit, Message>().ReverseMap();
 			CreateMap<Message, MessageForList>()
-				.ForMember(m => m.SenderPhotoUrl, opt => opt.MapFrom(u => u.Sender.PhotoUrl))
-				.ForMember(m => m.RecipientPhotoUrl, opt => opt.MapFrom(u => u.Recipient.PhotoUrl));
+				.ForMember(m => m.Sender, opt => opt.MapFrom(u => u.Sender))
+				.ForMember(m => m.Recipient, opt => opt.MapFrom(u => u.Recipient));
 		}
 	}
 }

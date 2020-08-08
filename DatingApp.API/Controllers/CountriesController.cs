@@ -95,10 +95,10 @@ namespace DatingApp.API.Controllers
 			return Ok(cities);
 		}
 
-		[HttpGet("/City/{id}")]
+		[HttpGet("{code}/[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> GetCity(Guid id, CancellationToken token)
+		public async Task<IActionResult> Cities(Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return NotFound();

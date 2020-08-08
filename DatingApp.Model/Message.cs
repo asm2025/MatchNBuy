@@ -2,26 +2,21 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using asm.Data.Model;
-using asm.Extensions;
 
 namespace DatingApp.Model
 {
 	[Serializable]
     public class Message : IEntity
 	{
-		private string _threadId;
 		private string _senderId;
 		private string _recipientId;
 
 		[Key]
 		public Guid Id { get; set; }
 
+		[Required]
 		[StringLength(256)]
-		public string ThreadId
-		{
-			get => _threadId;
-			set => _threadId = value;
-		}
+		public string ThreadId { get; protected set; }
 
 		[Required]
 		[StringLength(128)]
@@ -58,22 +53,14 @@ namespace DatingApp.Model
         public DateTime MessageSent { get; set; }
         public bool SenderDeleted { get; set; }
         public bool RecipientDeleted { get; set; }
-
-		[NotMapped]
-		public bool IsRead => DateRead > DateTime.MinValue;
+        public bool IsArchived { get; set; }
 
 		private void UpdateThread()
 		{
-			if (string.IsNullOrEmpty(_threadId) && !string.IsNullOrEmpty(_senderId) && !string.IsNullOrEmpty(_recipientId))
-			{
-				_threadId = _senderId.IsLessThanOrEqual(_recipientId)
-								? $"{_senderId}{_recipientId}"
-								: $"{_recipientId}{_senderId}";
-			}
-			else
-			{
-				_threadId = null;
-			}
+			if (_senderId == null || _recipientId == null) return;
+			ThreadId = string.CompareOrdinal(_senderId, _recipientId) <= 0
+							? $"{_senderId}{_recipientId}"
+							: $"{_recipientId}{_senderId}";
 		}
     }
 }

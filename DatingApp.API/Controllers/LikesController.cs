@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace DatingApp.API.Controllers
 {
 	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-	[Route("users/{userId}/[controller]")]
+	[Route("Users/{userId}/[controller]")]
 	public class LikesController : ApiController
 	{
 		private readonly ILikeRepository _repository;

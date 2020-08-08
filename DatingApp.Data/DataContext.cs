@@ -131,11 +131,15 @@ namespace DatingApp.Data
 			{
 				message.HasOne(e => e.Sender)
 						.WithMany(e => e.MessagesSent)
+						.HasForeignKey(e => e.SenderId)
 						.OnDelete(DeleteBehavior.Restrict);
 
 				message.HasOne(u => u.Recipient)
 						.WithMany(m => m.MessagesReceived)
+						.HasForeignKey(e => e.RecipientId)
 						.OnDelete(DeleteBehavior.Restrict);
+
+				message.HasIndex(e => e.ThreadId);
 			});
 		}
 

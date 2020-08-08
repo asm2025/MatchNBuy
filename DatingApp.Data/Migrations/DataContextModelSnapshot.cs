@@ -73,31 +73,30 @@ namespace DatingApp.Data.Migrations
 
             modelBuilder.Entity("DatingApp.Model.Like", b =>
                 {
-                    b.Property<string>("LikerId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LikeeId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("Id")
+                    b.Property<string>("LikerId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("LikerId", "LikeeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("LikeeId");
+
+                    b.HasIndex("LikerId");
 
                     b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("DatingApp.Model.Message", b =>
                 {
-                    b.Property<string>("SenderId")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(128);
-
-                    b.Property<string>("RecipientId")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(128);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -107,8 +106,8 @@ namespace DatingApp.Data.Migrations
                     b.Property<DateTime?>("DateRead")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("MessageSent")
                         .HasColumnType("TEXT");
@@ -116,12 +115,31 @@ namespace DatingApp.Data.Migrations
                     b.Property<bool>("RecipientDeleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("RecipientId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
+
                     b.Property<bool>("SenderDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("SenderId", "RecipientId");
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
+
+                    b.Property<string>("ThreadId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
 
                     b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("ThreadId");
 
                     b.ToTable("Messages");
                 });
@@ -429,14 +447,12 @@ namespace DatingApp.Data.Migrations
                     b.HasOne("DatingApp.Model.User", "Likee")
                         .WithMany("Likers")
                         .HasForeignKey("LikeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DatingApp.Model.User", "Liker")
                         .WithMany("Likees")
                         .HasForeignKey("LikerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("DatingApp.Model.Message", b =>

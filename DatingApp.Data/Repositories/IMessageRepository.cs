@@ -13,14 +13,19 @@ namespace DatingApp.Data.Repositories
 	public interface IMessageRepository : IRepository<DataContext, Message>
 	{
 		[NotNull]
-		IQueryable<Message> ListByUser([NotNull] string userId, IPagination settings = null);
-		Task<IList<Message>> ListByUserAsync([NotNull] string userId, IPagination settings = null, CancellationToken token = default(CancellationToken));
-		[NotNull]
-		Paginated<MessageThread> ListThreads([NotNull] string userId, IPagination settings = null);
+		IQueryable<Message> List([NotNull] string userId, IPagination settings = null);
 		[ItemNotNull]
-		Task<Paginated<MessageThread>> ListThreadsAsync([NotNull] string userId, IPagination settings = null, CancellationToken token = default(CancellationToken));
+		Task<IList<Message>> ListAsync([NotNull] string userId, IPagination settings = null, CancellationToken token = default(CancellationToken));
 		[NotNull]
-		IQueryable<Message> ListByThread([NotNull] string userId, [NotNull] string recipientId, IPagination settings = null);
-		Task<IList<Message>> ListByThreadAsync([NotNull] string userId, [NotNull] string recipientId, IPagination settings = null, CancellationToken token = default(CancellationToken));
+		Paginated<MessageThread> Threads([NotNull] string userId, IPagination settings = null);
+		[ItemNotNull]
+		Task<Paginated<MessageThread>> ThreadsAsync([NotNull] string userId, IPagination settings = null, CancellationToken token = default(CancellationToken));
+		[NotNull]
+		IQueryable<Message> Thread([NotNull] string userId, [NotNull] string recipientId, IPagination settings = null);
+		Task<IList<Message>> ThreadAsync([NotNull] string userId, [NotNull] string recipientId, IPagination settings = null, CancellationToken token = default(CancellationToken));
+		void ArchiveThread([NotNull] string userId, [NotNull] string recipientId);
+		Task ArchiveThreadAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
+		void Archive([NotNull] Message message);
+		Task ArchiveAsync([NotNull] Message message, CancellationToken token = default(CancellationToken));
 	}
 }

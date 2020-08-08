@@ -8,6 +8,7 @@ using asm.Core.Data.Entity.Patterns.Repository;
 using asm.Extensions;
 using asm.Patterns.Pagination;
 using asm.Patterns.Sorting;
+using AutoMapper;
 using DatingApp.Model;
 using DatingApp.Model.Parameters;
 using DatingApp.Model.TransferObjects;
@@ -22,24 +23,28 @@ namespace DatingApp.Data.Repositories
 	{
 		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(Message).GetProperty(nameof(Message.Id))}, LazyThreadSafetyMode.PublicationOnly);
 
+		private readonly IMapper _mapper;
+
 		/// <inheritdoc />
-		public MessageRepository([NotNull] DataContext context, [NotNull] IConfiguration configuration, ILogger<MessageRepository> logger)
+		public MessageRepository([NotNull] DataContext context, [NotNull] IMapper mapper, [NotNull] IConfiguration configuration, ILogger<MessageRepository> logger)
 			: base(context, configuration, logger)
 		{
+			_mapper = mapper;
 		}
 
 		/// <inheritdoc />
 		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
 
-		public IQueryable<Message> ListByUser(string userId, IPagination settings = null)
+		/// <inheritdoc />
+		public IQueryable<Message> List(string userId, IPagination settings = null)
 		{
-			ThrowIfDisposed();
-			
 			MessageContainers container = settings is MessageList messageList
 											? messageList.Container
 											: MessageContainers.Default;
-			IQueryable<Message> queryable = DbSet;
-
+			IQueryable<Message> queryable = DbSet
+											.Include(e => e.Sender)
+											.Include(e => e.Recipient)
+											.Where(e => !e.IsArchived);
 			switch (container)
 			{
 				case MessageContainers.Inbox:
@@ -49,104 +54,73 @@ namespace DatingApp.Data.Repositories
 					queryable = queryable.Where(e => e.SenderId == userId && !e.SenderDeleted);
 					break;
 				default:
-					queryable = queryable.Where(e => e.RecipientId == userId && !e.RecipientDeleted && !e.IsRead);
+					queryable = queryable.Where(e => e.RecipientId == userId && !e.RecipientDeleted && e.DateRead == null);
 					break;
 			}
 
-			return PrepareListQuery(queryable, settings);
+			return queryable;
 		}
 
-		public Task<IList<Message>> ListByUserAsync(string userId, IPagination settings = null, CancellationToken token = default(CancellationToken))
+		/// <inheritdoc />
+		public async Task<IList<Message>> ListAsync(string userId, IPagination settings = null, CancellationToken token = default(CancellationToken))
 		{
 			token.ThrowIfCancellationRequested();
-			settings ??= new Pagination();
-			return ListByUser(userId, settings).Paginate(settings).ToListAsync(token).As<List<Message>, IList<Message>>();
+			IQueryable<Message> queryable = List(userId, settings);
+			return await queryable.ToListAsync(token);
 		}
 
-		public Paginated<MessageThread> ListThreads(string userId, IPagination settings = null)
+		/// <inheritdoc />
+		public Paginated<MessageThread> Threads(string userId, IPagination settings = null)
 		{
 			ThrowIfDisposed();
-			settings ??= new Pagination();
-			
-			var groups = DbSet
-						.Include(e => e.Sender)
-						.Include(e => e.Recipient)
-						.Where(e => e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted)
-						.GroupBy(e => new
-						{
-							e.SenderId,
-							e.RecipientId
-						});
-
-			settings.Count = groups.Count();
-
-			var scope = groups.Paginate(settings).ToList();
-			List<MessageThread> threads = new List<MessageThread>();
-
-			foreach (var item in scope)
-			{
-				Message message = item.FirstOrDefault();
-				threads.Add(new MessageThread
-				{
-					SenderId = item.Key.SenderId,
-					SenderKnownAs = message?.Sender.KnownAs,
-					SenderPhotoUrl = message?.Sender.PhotoUrl,
-					RecipientId = item.Key.RecipientId,
-					RecipientKnownAs = message?.Recipient.KnownAs,
-					RecipientPhotoUrl = message?.Recipient.PhotoUrl,
-					Count = item.Count()
-				});
-			}
-
-			return new Paginated<MessageThread>(threads, settings);
-		}
-
-		public async Task<Paginated<MessageThread>> ListThreadsAsync(string userId, IPagination settings = null, CancellationToken token = default(CancellationToken))
-		{
-			token.ThrowIfCancellationRequested();
-			settings ??= new Pagination();
-
-			var messages = DbSet
-							.Include(e => e.Sender)
-							.Include(e => e.Recipient)
-							.Where(e => e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted)
-							.GroupBy(e => e.ThreadId)
-							.Select(e => new
-							{
-								//SenderId = e.SenderId,
-								//SenderKnownAs = e.First().Sender.KnownAs,
-								//SenderPhotoUrl = e.First().Sender.PhotoUrl,
-								//RecipientId = e.Key.RecipientId,
-								//RecipientKnownAs = e.First().Recipient.KnownAs,
-								//RecipientPhotoUrl = e.First().Recipient.PhotoUrl,
-								Count = e.Count()
-							});
-
-			settings.Count = await messages.CountAsync(token);
-			token.ThrowIfCancellationRequested();
-
-			//List<MessageThread> threads = await groups.Paginate(settings)
-			//									.Select(e => new MessageThread
-			//									{
-			//										SenderId = e.Key.SenderId,
-			//										SenderKnownAs = e.First().Sender.KnownAs,
-			//										SenderPhotoUrl = e.First().Sender.PhotoUrl,
-			//										RecipientId = e.Key.RecipientId,
-			//										RecipientKnownAs = e.First().Recipient.KnownAs,
-			//										RecipientPhotoUrl = e.First().Recipient.PhotoUrl,
-			//										Count = e.Count()
-			//									})
-			//									.ToListAsync(token);
-
+			settings ??= new MessageList();
+			// todo
 			return new Paginated<MessageThread>(Enumerable.Empty<MessageThread>(), settings);
 		}
 
-		public IQueryable<Message> ListByThread(string userId, string recipientId, IPagination settings = null)
+		/// <inheritdoc />
+		public async Task<Paginated<MessageThread>> ThreadsAsync(string userId, IPagination settings = null, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			settings ??= new Pagination();
+
+			// todo EF fucking core does not support anything meaningful at all!
+			IQueryable<IGrouping<string, Message>> queryable = DbSet
+																//.Include(e => e.Sender)
+																//.Include(e => e.Recipient)
+																//.Where(e => !e.IsArchived &&
+																//			(e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted))
+																.GroupBy(e => e.ThreadId);
+			settings.Count = await queryable.CountAsync(token);
+			
+			IEnumerable<MessageThread> threads = settings.Count > 0
+													? (await queryable.Paginate(settings).ToListAsync(token))
+													.Select(e =>
+													{
+														MessageThread th = _mapper.Map<MessageThread>(e);
+														if (th.Count == 0) return null;
+
+														Message m = e.First(msg => msg.SenderId != userId || msg.RecipientId != userId);
+														User participant = m.SenderId == userId
+																				? m.Recipient
+																				: m.Sender;
+														th.Participant = _mapper.Map<UserForLoginDisplay>(participant);
+														return th;
+													})
+													.Where(e => e != null)
+													: Enumerable.Empty<MessageThread>();
+			return new Paginated<MessageThread>(threads, settings);
+		}
+
+		/// <inheritdoc />
+		public IQueryable<Message> Thread(string userId, string recipientId, IPagination settings = null)
 		{
 			ThrowIfDisposed();
 
-			IQueryable<Message> queryable = DbSet.Where(e => e.RecipientId == userId && e.SenderId == recipientId && !e.RecipientDeleted ||
-															e.RecipientId == recipientId && e.SenderId == userId && !e.SenderDeleted);
+			IQueryable<Message> queryable = DbSet.Where(e => !e.IsArchived &&
+															(e.RecipientId == userId && e.SenderId == recipientId && !e.RecipientDeleted ||
+															e.RecipientId == recipientId && e.SenderId == userId && !e.SenderDeleted));
 			
 			if (settings is ISortable sortable && (sortable.OrderBy == null || sortable.OrderBy.Count == 0))
 			{
@@ -159,11 +133,68 @@ namespace DatingApp.Data.Repositories
 			return PrepareListQuery(queryable, settings);
 		}
 
-		public Task<IList<Message>> ListByThreadAsync(string userId, string recipientId, IPagination settings = null, CancellationToken token = default(CancellationToken))
+		/// <inheritdoc />
+		public Task<IList<Message>> ThreadAsync(string userId, string recipientId, IPagination settings = null, CancellationToken token = default(CancellationToken))
 		{
 			token.ThrowIfCancellationRequested();
-			IQueryable<Message> queryable = ListByThread(userId, recipientId, settings);
+			IQueryable<Message> queryable = Thread(userId, recipientId, settings);
 			return queryable.ToListAsync(token).As<List<Message>, IList<Message>>();
+		}
+
+		/// <inheritdoc />
+		public void ArchiveThread(string userId, string recipientId)
+		{
+			ThrowIfDisposed();
+
+			IQueryable<Message> queryable = DbSet.Where(e => !e.IsArchived &&
+															(e.RecipientId == userId && e.SenderId == recipientId ||
+															e.RecipientId == recipientId && e.SenderId == userId));
+
+			foreach (Message message in queryable)
+			{
+				message.IsArchived = true;
+				Context.Entry(message).State = EntityState.Modified;
+			}
+
+			Context.SaveChanges();
+		}
+
+		/// <inheritdoc />
+		public async Task ArchiveThreadAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+
+			IQueryable<Message> queryable = DbSet.Where(e => !e.IsArchived &&
+															(e.RecipientId == userId && e.SenderId == recipientId ||
+															e.RecipientId == recipientId && e.SenderId == userId));
+
+			await foreach (Message message in queryable.AsAsyncEnumerable().WithCancellation(token))
+			{
+				message.IsArchived = true;
+				Context.Entry(message).State = EntityState.Modified;
+			}
+
+			await Context.SaveChangesAsync(token);
+		}
+
+		/// <inheritdoc />
+		public void Archive(Message message)
+		{
+			if (message.IsArchived) return;
+			message.IsArchived = true;
+			Context.Entry(message).State = EntityState.Modified;
+			Context.SaveChanges();
+		}
+
+		/// <inheritdoc />
+		public async Task ArchiveAsync(Message message, CancellationToken token = default(CancellationToken))
+		{
+			token.ThrowIfCancellationRequested();
+			if (message.IsArchived) return;
+			message.IsArchived = true;
+			Context.Entry(message).State = EntityState.Modified;
+			await Context.SaveChangesAsync(token);
 		}
 	}
 }

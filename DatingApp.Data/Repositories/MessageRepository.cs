@@ -85,17 +85,18 @@ namespace DatingApp.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			settings ??= new Pagination();
 
-			// todo EF fucking core does not support anything meaningful at all!
-			IQueryable<IGrouping<string, Message>> queryable = DbSet
-																//.Include(e => e.Sender)
-																//.Include(e => e.Recipient)
-																//.Where(e => !e.IsArchived &&
-																//			(e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted))
-																.GroupBy(e => e.ThreadId);
-			settings.Count = await queryable.CountAsync(token);
+			IQueryable<Message> queryable = DbSet
+											.Include(e => e.Sender)
+											.Include(e => e.Recipient)
+											.Where(e => !e.IsArchived &&
+														(e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted));
+			settings.Count = await queryable.GroupBy(e => e.ThreadId).CountAsync(token);
 			
 			IEnumerable<MessageThread> threads = settings.Count > 0
-													? (await queryable.Paginate(settings).ToListAsync(token))
+													// the new EF Core does not support much for now so we have to do group by on the client
+													? (await queryable.ToListAsync(token))
+													.GroupBy(e => e.ThreadId)
+													.Paginate(settings)
 													.Select(e =>
 													{
 														MessageThread th = _mapper.Map<MessageThread>(e);

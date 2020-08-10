@@ -7,7 +7,7 @@ namespace MatchNBuy.Model.TransferObjects
 	public class MessageToEdit
 	{
 		[Required]
-		[StringLength(512, MinimumLength = 1)]
+		[StringLength(512)]
 		public string Content { get; set; }
 	}
 }

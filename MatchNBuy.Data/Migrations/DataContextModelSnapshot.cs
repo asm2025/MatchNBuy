@@ -25,7 +25,7 @@ namespace MatchNBuy.Data.Migrations
                     b.Property<string>("CountryCode")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(10);
+                        .HasMaxLength(3);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -78,10 +78,14 @@ namespace MatchNBuy.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LikeeId")
-                        .HasColumnType("TEXT");
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
 
                     b.Property<string>("LikerId")
-                        .HasColumnType("TEXT");
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
 
                     b.HasKey("Id");
 
@@ -131,7 +135,7 @@ namespace MatchNBuy.Data.Migrations
                     b.Property<string>("ThreadId")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(256);
+                        .HasMaxLength(128);
 
                     b.HasKey("Id");
 
@@ -167,7 +171,8 @@ namespace MatchNBuy.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
 
                     b.HasKey("Id");
 
@@ -315,7 +320,8 @@ namespace MatchNBuy.Data.Migrations
             modelBuilder.Entity("MatchNBuy.Model.UserInterest", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
 
                     b.Property<Guid>("InterestId")
                         .HasColumnType("TEXT");
@@ -447,12 +453,14 @@ namespace MatchNBuy.Data.Migrations
                     b.HasOne("MatchNBuy.Model.User", "Likee")
                         .WithMany("Likers")
                         .HasForeignKey("LikeeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("MatchNBuy.Model.User", "Liker")
                         .WithMany("Likees")
                         .HasForeignKey("LikerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MatchNBuy.Model.Message", b =>

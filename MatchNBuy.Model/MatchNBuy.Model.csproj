@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <FileVersion>20.8.9.3</FileVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <FileVersion>20.8.10.10</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +21,10 @@
     <Reference Include="asm.Data">
       <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Data.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MatchNBuy.API\" />
   </ItemGroup>
 
 </Project>

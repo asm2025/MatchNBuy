@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using asm.Data.Model;
+using asm.Helpers;
 
 namespace MatchNBuy.Model
 {
@@ -15,11 +15,11 @@ namespace MatchNBuy.Model
 		public Guid Id { get; set; }
 
 		[Required]
-		[StringLength(256)]
+		[StringLength(128, MinimumLength = 128)]
 		public string ThreadId { get; protected set; }
 
 		[Required]
-		[StringLength(128)]
+		[StringLength(128, MinimumLength = 128)]
 		public string SenderId
 		{
 			get => _senderId;
@@ -33,7 +33,7 @@ namespace MatchNBuy.Model
 		public virtual User Sender { get; set; }
 
 		[Required]
-		[StringLength(128)]
+		[StringLength(128, MinimumLength = 128)]
 		public string RecipientId
 		{
 			get => _recipientId;
@@ -47,7 +47,7 @@ namespace MatchNBuy.Model
 		public virtual User Recipient { get; set; }
 
 		[Required]
-        [StringLength(512, MinimumLength = 1)]
+        [StringLength(512)]
         public string Content { get; set; }
         public DateTime? DateRead { get; set; }
         public DateTime MessageSent { get; set; }
@@ -57,10 +57,13 @@ namespace MatchNBuy.Model
 
 		private void UpdateThread()
 		{
-			if (_senderId == null || _recipientId == null) return;
-			ThreadId = string.CompareOrdinal(_senderId, _recipientId) <= 0
-							? $"{_senderId}{_recipientId}"
-							: $"{_recipientId}{_senderId}";
+			if (string.IsNullOrEmpty(_senderId) || string.IsNullOrEmpty(_recipientId))
+			{
+				ThreadId = null;
+				return;
+			}
+
+			ThreadId = GuidHelper.Combine(_senderId, _recipientId).ToString("D");
 		}
     }
 }

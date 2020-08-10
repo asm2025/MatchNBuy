@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using asm.Core.Data.Entity.Patterns.Repository;
 using asm.Extensions;
+using asm.Helpers;
+using asm.Patterns.DateTime;
 using asm.Patterns.Pagination;
 using asm.Patterns.Sorting;
 using AutoMapper;
@@ -38,13 +40,24 @@ namespace MatchNBuy.Data.Repositories
 		/// <inheritdoc />
 		public IQueryable<Message> List(string userId, IPagination settings = null)
 		{
-			MessageContainers container = settings is MessageList messageList
-											? messageList.Container
-											: MessageContainers.Default;
+			MessageContainers container;
+			DateTimeRange range;
+
+			if (settings is MessageList messageList)
+			{
+				container = messageList.Container;
+				range = DateTimeHelper.GetRange(messageList.FromDate, messageList.ToDate);
+			}
+			else
+			{
+				container = MessageContainers.Default;
+				range = DateTimeHelper.GetRange(null, null);
+			}
+			
 			IQueryable<Message> queryable = DbSet
 											.Include(e => e.Sender)
 											.Include(e => e.Recipient)
-											.Where(e => !e.IsArchived);
+											.Where(e => !e.IsArchived && e.MessageSent >= range.Start && e.MessageSent <= range.End);
 			switch (container)
 			{
 				case MessageContainers.Inbox:
@@ -74,8 +87,38 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			settings ??= new MessageList();
-			// todo
-			return new Paginated<MessageThread>(Enumerable.Empty<MessageThread>(), settings);
+
+			DateTimeRange range = settings is MessageList messageList
+									? DateTimeHelper.GetRange(messageList.FromDate, messageList.ToDate)
+									: DateTimeHelper.GetRange(null, null);
+			IQueryable<Message> queryable = DbSet
+											.Include(e => e.Sender)
+											.Include(e => e.Recipient)
+											.Where(e => !e.IsArchived && e.MessageSent >= range.Start && e.MessageSent <= range.End &&
+														(e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted));
+			settings.Count = queryable.GroupBy(e => e.ThreadId).Count();
+			
+			IEnumerable<MessageThread> threads = settings.Count > 0
+													// the new EF Core does not support much for now so we have to do group by on the client
+													// SQLite does not support stored procedures. I guess we have to do with what's available.
+													? queryable.AsEnumerable()
+																.GroupBy(e => e.ThreadId)
+																.Paginate(settings)
+																.Select(e =>
+																{
+																	MessageThread th = _mapper.Map<MessageThread>(e);
+																	if (th.Count == 0) return null;
+
+																	Message m = e.First(msg => msg.SenderId != userId || msg.RecipientId != userId);
+																	User participant = m.SenderId == userId
+																							? m.Recipient
+																							: m.Sender;
+																	th.Participant = _mapper.Map<UserForLoginDisplay>(participant);
+																	return th;
+																})
+																.Where(e => e != null)
+													: Enumerable.Empty<MessageThread>();
+			return new Paginated<MessageThread>(threads, settings);
 		}
 
 		/// <inheritdoc />
@@ -83,18 +126,25 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			settings ??= new Pagination();
-
+			settings ??= new MessageList();
+			/*
+			 * Sample .Net core 3.1 Web API back-end.\nTo test the users, some data has been seeded when this app first ran.\nFind the file .\\bin[\\Debug or Release\\...]\\UserSyncData.json for test data.
+			 */
+			DateTimeRange range = settings is MessageList messageList
+									? DateTimeHelper.GetRange(messageList.FromDate, messageList.ToDate)
+									: DateTimeHelper.GetRange(null, null);
 			IQueryable<Message> queryable = DbSet
 											.Include(e => e.Sender)
 											.Include(e => e.Recipient)
-											.Where(e => !e.IsArchived &&
+											.Where(e => !e.IsArchived && e.MessageSent >= range.Start && e.MessageSent <= range.End &&
 														(e.RecipientId == userId && !e.RecipientDeleted || e.SenderId == userId && !e.SenderDeleted));
 			settings.Count = await queryable.GroupBy(e => e.ThreadId).CountAsync(token);
+			token.ThrowIfCancellationRequested();
 			
 			IEnumerable<MessageThread> threads = settings.Count > 0
 													// the new EF Core does not support much for now so we have to do group by on the client
-													? (await queryable.ToListAsync(token))
+													// SQLite does not support stored procedures. I guess we have to do with what's available.
+													? queryable.AsEnumerable()
 													.GroupBy(e => e.ThreadId)
 													.Paginate(settings)
 													.Select(e =>

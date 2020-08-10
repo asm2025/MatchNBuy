@@ -7,6 +7,7 @@ namespace MatchNBuy.Model.TransferObjects
 	[Serializable]
 	public class MessageForList
 	{
+		public string ThreadId { get; set; }
 		public UserForLoginDisplay Sender { get; set; }
 		public UserForLoginDisplay Recipient { get; set; }
 		public string Content { get; set; }

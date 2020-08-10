@@ -72,7 +72,7 @@ namespace MatchNBuy.Data.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 255, nullable: false),
-                    CountryCode = table.Column<string>(maxLength: 10, nullable: false)
+                    CountryCode = table.Column<string>(maxLength: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -218,8 +218,8 @@ namespace MatchNBuy.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    LikerId = table.Column<string>(nullable: true),
-                    LikeeId = table.Column<string>(nullable: true)
+                    LikerId = table.Column<string>(maxLength: 128, nullable: false),
+                    LikeeId = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -243,7 +243,7 @@ namespace MatchNBuy.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    ThreadId = table.Column<string>(maxLength: 256, nullable: false),
+                    ThreadId = table.Column<string>(maxLength: 128, nullable: false),
                     SenderId = table.Column<string>(maxLength: 128, nullable: false),
                     RecipientId = table.Column<string>(maxLength: 128, nullable: false),
                     Content = table.Column<string>(maxLength: 512, nullable: false),
@@ -279,7 +279,7 @@ namespace MatchNBuy.Data.Migrations
                     Description = table.Column<string>(maxLength: 512, nullable: true),
                     DateAdded = table.Column<DateTime>(nullable: false),
                     IsDefault = table.Column<bool>(nullable: false),
-                    UserId = table.Column<string>(nullable: false)
+                    UserId = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -296,7 +296,7 @@ namespace MatchNBuy.Data.Migrations
                 name: "UserInterests",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
+                    UserId = table.Column<string>(maxLength: 128, nullable: false),
                     InterestId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>

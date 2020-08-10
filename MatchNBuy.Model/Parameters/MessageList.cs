@@ -7,5 +7,7 @@ namespace MatchNBuy.Model.Parameters
 	public class MessageList : SortablePagination
 	{
 		public MessageContainers Container { get; set; }
+		public DateTime? FromDate { get; set; }
+		public DateTime? ToDate { get; set; }
 	}
 }

@@ -9,10 +9,11 @@ namespace MatchNBuy.Model.TransferObjects
 	public class MessageToAdd
 	{
 		[Required]
+		[StringLength(128, MinimumLength = 128)]
 		public string RecipientId { get; set; }
 
 		[Required]
-		[StringLength(512, MinimumLength = 1)]
+		[StringLength(512)]
 		public string Content { get; set; }
 	}
 }

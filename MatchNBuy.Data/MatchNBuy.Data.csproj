@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.8.9.6</FileVersion>
+		<FileVersion>20.8.10.3</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -40,5 +40,9 @@
 		<Reference Include="asm.Newtonsoft">
 		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Newtonsoft.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="MatchNBuy.API\" />
 	</ItemGroup>
 </Project>

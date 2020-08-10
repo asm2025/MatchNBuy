@@ -25,7 +25,7 @@ namespace MatchNBuy.Model
 		}
 
 		[Required]
-		[StringLength(10)]
+		[StringLength(3, MinimumLength = 3)]
 		public string CountryCode { get; set; }
 
 		public virtual Country Country { get; set; }

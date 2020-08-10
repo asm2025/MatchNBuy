@@ -9,8 +9,12 @@ namespace MatchNBuy.Model
 	{
 		[Key]
 		public Guid Id { get; set; }
+		[Required]
+		[StringLength(128, MinimumLength = 128)]
 		public string LikerId { get; set; }
 		public virtual User Liker { get; set; }
+		[Required]
+		[StringLength(128, MinimumLength = 128)]
 		public string LikeeId { get; set; }
 		public virtual User Likee { get; set; }
 	}

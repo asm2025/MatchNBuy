@@ -7,8 +7,6 @@ namespace MatchNBuy.Model
 	[Serializable]
 	public class Like : IEntity
 	{
-		[Key]
-		public Guid Id { get; set; }
 		[Required]
 		[StringLength(128, MinimumLength = 128)]
 		public string LikerId { get; set; }

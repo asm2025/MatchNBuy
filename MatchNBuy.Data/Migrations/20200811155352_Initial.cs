@@ -217,13 +217,12 @@ namespace MatchNBuy.Data.Migrations
                 name: "Likes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
                     LikerId = table.Column<string>(maxLength: 128, nullable: false),
                     LikeeId = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Likes", x => x.Id);
+                    table.PrimaryKey("PK_Likes", x => new { x.LikerId, x.LikeeId });
                     table.ForeignKey(
                         name: "FK_Likes_AspNetUsers_LikeeId",
                         column: x => x.LikeeId,
@@ -367,11 +366,6 @@ namespace MatchNBuy.Data.Migrations
                 name: "IX_Likes_LikeeId",
                 table: "Likes",
                 column: "LikeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Likes_LikerId",
-                table: "Likes",
-                column: "LikerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_RecipientId",

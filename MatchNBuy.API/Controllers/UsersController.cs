@@ -17,7 +17,6 @@ using asm.Patterns.Pagination;
 using asm.Patterns.Sorting;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MatchNBuy.Data.ImageBuilders;
 using MatchNBuy.Data.Repositories;
 using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
@@ -37,20 +36,14 @@ namespace MatchNBuy.API.Controllers
 	[Route("[controller]")]
 	public class UsersController : ApiController
 	{
-		private readonly IUserRepository _usersRepository;
-		private readonly IPhotoRepository _photosRepository;
-		private readonly IMessageRepository _messageRepository;
-		private readonly IUserImageBuilder _userImageBuilder;
+		private readonly IUserRepository _repository;
 		private readonly IMapper _mapper;
 
 		/// <inheritdoc />
-		public UsersController([NotNull] IUserRepository usersRepository, [NotNull] IPhotoRepository photosRepository, [NotNull] IMessageRepository messageRepository, [NotNull] IUserImageBuilder userImageBuilder, [NotNull] IMapper mapper, [NotNull] IConfiguration configuration, ILogger<UsersController> logger)
+		public UsersController([NotNull] IUserRepository repository, [NotNull] IMapper mapper, [NotNull] IConfiguration configuration, ILogger<UsersController> logger)
 			: base(configuration, logger)
 		{
-			_usersRepository = usersRepository;
-			_photosRepository = photosRepository;
-			_messageRepository = messageRepository;
-			_userImageBuilder = userImageBuilder;
+			_repository = repository;
 			_mapper = mapper;
 		}
 
@@ -79,7 +72,7 @@ namespace MatchNBuy.API.Controllers
 				};
 			}
 
-			IQueryable<User> queryable = _usersRepository.List(listSettings);
+			IQueryable<User> queryable = _repository.List(listSettings);
 			listSettings.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 			
@@ -176,7 +169,7 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Get(string id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			User user = await _usersRepository.GetAsync(token, id);
+			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
 			UserForList userForList = _mapper.Map<UserForList>(user);
@@ -189,7 +182,7 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Login([FromBody][NotNull] UserForLogin loginParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			string userToken = await _usersRepository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
+			string userToken = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userToken)) return Unauthorized(loginParams.UserName);
 			return Ok(userToken);
@@ -202,7 +195,7 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			User user = _mapper.Map<User>(userParams);
-			user = await _usersRepository.AddAsync(user, userParams.Password, token);
+			user = await _repository.AddAsync(user, userParams.Password, token);
 			token.ThrowIfCancellationRequested();
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
 			return CreatedAtAction(nameof(Get), new { id = user.Id }, userForSerialization);
@@ -217,12 +210,12 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
 			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
-			User user = await _usersRepository.GetAsync(token, id);
+			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
 			user = _mapper.Map(userParams, user);
 			user.Id = id;
-			user = await _usersRepository.UpdateAsync(user, token);
+			user = await _repository.UpdateAsync(user, token);
 			token.ThrowIfCancellationRequested();
 			if (user == null) throw new Exception("Updating user failed.");
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
@@ -238,10 +231,10 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
 			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
-			User user = await _usersRepository.GetAsync(token, id);
+			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
-			await _usersRepository.DeleteAsync(user, token);
+			await _repository.DeleteAsync(user, token);
 			return Ok();
 		}
 		#endregion
@@ -266,7 +259,7 @@ namespace MatchNBuy.API.Controllers
 				Arguments = args.ToArray()
 			};
 
-			IQueryable<Photo> queryable = _photosRepository.List(listSettings);
+			IQueryable<Photo> queryable = _repository.Photos.List(listSettings);
 			pagination.Count = await queryable.LongCountAsync(token);
 			token.ThrowIfCancellationRequested();
 			IList<PhotoForList> photos = await queryable.Paginate(pagination)
@@ -285,7 +278,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			Photo photo = await _photosRepository.GetAsync(token, id);
+			Photo photo = await _repository.Photos.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) return NotFound(id);
 			if (!userId.IsSame(photo.UserId)) return Unauthorized(userId);
@@ -309,8 +302,8 @@ namespace MatchNBuy.API.Controllers
 
 			try
 			{
-				string imagesPath = Path.Combine(Environment.ContentRootPath, _userImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), userId);
-				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _userImageBuilder.FileExtension));
+				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), userId);
+				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
 				(int x, int y) = asm.Numeric.Math.AspectRatio(image.Width, image.Height, Configuration.GetValue("images:users:size", 128));
@@ -329,11 +322,11 @@ namespace MatchNBuy.API.Controllers
 
 			Photo photo = _mapper.Map<Photo>(photoParams);
 			photo.UserId = userId;
-			photo.Url = _userImageBuilder.Build(fileName).ToString();
-			photo = await _photosRepository.AddAsync(photo, token);
+			photo.Url = _repository.ImageBuilder.Build(fileName).ToString();
+			photo = await _repository.Photos.AddAsync(photo, token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception($"Add photo '{fileName}' for the user '{userId}' failed.");
-			await _photosRepository.Context.SaveChangesAsync(token);
+			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
@@ -350,14 +343,14 @@ namespace MatchNBuy.API.Controllers
 			if (id.IsEmpty()) return BadRequest();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 
-			Photo photo = await _photosRepository.GetAsync(token, id);
+			Photo photo = await _repository.Photos.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) return NotFound(id);
 			if (!photo.UserId.IsSame(userId)) return Unauthorized(userId);
-			photo = await _photosRepository.UpdateAsync(_mapper.Map(photoToParams, photo), token);
+			photo = await _repository.Photos.UpdateAsync(_mapper.Map(photoToParams, photo), token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception("Updating photo failed.");
-			await _photosRepository.Context.SaveChangesAsync(token);
+			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
@@ -374,14 +367,14 @@ namespace MatchNBuy.API.Controllers
 			if (id.IsEmpty()) return BadRequest();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			
-			Photo photo = await _photosRepository.GetAsync(token, id);
+			Photo photo = await _repository.Photos.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) return NotFound(id);
 			if (!photo.UserId.IsSame(userId) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
-			photo = await _photosRepository.DeleteAsync(photo, token);
+			photo = await _repository.Photos.DeleteAsync(photo, token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception("Deleting photo failed.");
-			await _photosRepository.Context.SaveChangesAsync(token);
+			await _repository.Context.SaveChangesAsync(token);
 			return Ok();
 		}
 
@@ -394,7 +387,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 
-			Photo photo = await _photosRepository.GetDefaultAsync(userId, token);
+			Photo photo = await _repository.Photos.GetDefaultAsync(userId, token);
 			if (photo == null) return NotFound(userId);
 			if (!photo.UserId.IsSame(userId)) return Unauthorized(userId);
 
@@ -412,11 +405,11 @@ namespace MatchNBuy.API.Controllers
 			if (id.IsEmpty()) return BadRequest();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 
-			Photo photo = await _photosRepository.GetAsync(new object[] {id}, token);
+			Photo photo = await _repository.Photos.GetAsync(new object[] {id}, token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) return NotFound(id);
 			if (!photo.UserId.IsSame(userId)) return Unauthorized(userId);
-			if (!await _photosRepository.SetDefaultAsync(photo, token)) return NotFound(id);
+			if (!await _repository.Photos.SetDefaultAsync(photo, token)) return NotFound(id);
 			return Ok();
 		}
 		#endregion
@@ -430,7 +423,7 @@ namespace MatchNBuy.API.Controllers
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			pagination ??= new MessageList();
 			
-			IQueryable<Message> queryable = _messageRepository.List(userId, pagination);
+			IQueryable<Message> queryable = _repository.Messages.List(userId, pagination);
 			pagination.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
@@ -449,7 +442,7 @@ namespace MatchNBuy.API.Controllers
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			pagination ??= new MessageList();
 			
-			Paginated<MessageThread> threads = await _messageRepository.ThreadsAsync(userId, pagination, token);
+			Paginated<MessageThread> threads = await _repository.Messages.ThreadsAsync(userId, pagination, token);
 			token.ThrowIfCancellationRequested();
 			return Ok(threads);
 		}
@@ -465,7 +458,7 @@ namespace MatchNBuy.API.Controllers
 			string claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (!userId.IsSame(claimId) && !recipientId.IsSame(claimId)) return Unauthorized(userId);
 			
-			IQueryable<Message> queryable = _messageRepository.Thread(userId, recipientId, pagination);
+			IQueryable<Message> queryable = _repository.Messages.Thread(userId, recipientId, pagination);
 			pagination.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
@@ -484,7 +477,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
 			
-			Message message = await _messageRepository.GetAsync(token, id);
+			Message message = await _repository.Messages.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (message == null) return NotFound(id);
 			
@@ -502,10 +495,10 @@ namespace MatchNBuy.API.Controllers
 			
 			Message message = _mapper.Map<Message>(messageParams);
 			message.SenderId = userId;
-			message = await _messageRepository.AddAsync(message, token);
+			message = await _repository.Messages.AddAsync(message, token);
 			token.ThrowIfCancellationRequested();
 			if (message == null) throw new Exception($"Add message for the user '{userId}' failed.");
-			await _messageRepository.Context.SaveChangesAsync(token);
+			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 			
 			MessageForList messageForList = _mapper.Map<MessageForList>(message);
@@ -524,14 +517,14 @@ namespace MatchNBuy.API.Controllers
 			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
 
-			Message message = await _messageRepository.GetAsync(token, id);
+			Message message = await _repository.Messages.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (message == null) return NotFound(id);
 			if (!message.SenderId.IsSame(userId)) return Unauthorized(userId);
-			message = await _messageRepository.UpdateAsync(_mapper.Map(messageToParams, message), token);
+			message = await _repository.Messages.UpdateAsync(_mapper.Map(messageToParams, message), token);
 			token.ThrowIfCancellationRequested();
 			if (message == null) throw new Exception("Updating message failed.");
-			await _messageRepository.Context.SaveChangesAsync(token);
+			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 			
 			MessageForList messageForList = _mapper.Map<MessageForList>(message);
@@ -550,15 +543,61 @@ namespace MatchNBuy.API.Controllers
 			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
 
-			Message message = await _messageRepository.GetAsync(token, id);
+			Message message = await _repository.Messages.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (message == null) return NotFound(id);
 			if (!message.SenderId.IsSame(userId) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
-			message = await _messageRepository.DeleteAsync(message, token);
+			message = await _repository.Messages.DeleteAsync(message, token);
 			token.ThrowIfCancellationRequested();
 			if (message == null) throw new Exception("Deleting message failed.");
-			await _messageRepository.Context.SaveChangesAsync(token);
+			await _repository.Context.SaveChangesAsync(token);
 			return Ok();
+		}
+		#endregion
+
+		#region Likes
+		[HttpPost("{userId}/[action]/{id}")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> Like(string userId, string recipientId, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
+			if (!await _repository.LikeAsync(userId, recipientId, token)) return BadRequest(recipientId);
+			return Ok();
+		}
+
+		[HttpPost("{userId}/[action]/{id}")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> Unlike(string userId, string recipientId, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
+			if (!await _repository.UnlikeAsync(userId, recipientId, token)) return BadRequest(recipientId);
+			return Ok();
+		}
+
+		[HttpPost("{userId}/[action]/{id}")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> Likes(string userId, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			int count = await _repository.LikesAsync(userId, token);
+			return Ok(count);
+		}
+
+		[HttpPost("{userId}/[action]/{id}")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> Likees(string userId, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			int count = await _repository.LikeesAsync(userId, token);
+			return Ok(count);
 		}
 		#endregion
 	}

@@ -73,25 +73,17 @@ namespace MatchNBuy.Data.Migrations
 
             modelBuilder.Entity("MatchNBuy.Model.Like", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                    b.Property<string>("LikerId")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(128);
 
                     b.Property<string>("LikeeId")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .HasMaxLength(128);
 
-                    b.Property<string>("LikerId")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(128);
-
-                    b.HasKey("Id");
+                    b.HasKey("LikerId", "LikeeId");
 
                     b.HasIndex("LikeeId");
-
-                    b.HasIndex("LikerId");
 
                     b.ToTable("Likes");
                 });

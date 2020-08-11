@@ -116,6 +116,12 @@ namespace MatchNBuy.Data
 
 			modelBuilder.Entity<Like>(like =>
 			{
+				like.HasKey(e => new
+				{
+					e.LikerId,
+					e.LikeeId
+				});
+
 				like.HasOne(e => e.Likee)
 					.WithMany(e => e.Likers)
 					.HasForeignKey(e => e.LikeeId)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading;
@@ -11,6 +12,7 @@ using asm.Extensions;
 using asm.Identity.Extensions;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Data.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,15 +27,24 @@ namespace MatchNBuy.Data.Repositories
 		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(User).GetProperty(nameof(User.Id))}, LazyThreadSafetyMode.PublicationOnly);
 
 		/// <inheritdoc />
-		public UserRepository([NotNull] DataContext context, [NotNull] SignInManager<User> signInManager, [NotNull] IConfiguration configuration, ILogger<UserRepository> logger)
+		public UserRepository([NotNull] DataContext context, [NotNull] SignInManager<User> signInManager, [NotNull] IPhotoRepository photosRepository, [NotNull] IMessageRepository messageRepository, [NotNull] IUserImageBuilder userImageBuilder, [NotNull] IConfiguration configuration, ILogger<UserRepository> logger)
 			: base(context, configuration, logger)
 		{
 			SignInManager = signInManager;
 			UserManager = SignInManager.UserManager;
+			Photos = photosRepository;
+			Messages = messageRepository;
+			ImageBuilder = userImageBuilder;
 		}
 
 		/// <inheritdoc />
 		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
+		
+		public IPhotoRepository Photos { get; }
+		
+		public IMessageRepository Messages { get; }
+		
+		public IUserImageBuilder ImageBuilder { get; }
 
 		[NotNull]
 		protected UserManager<User> UserManager { get; }
@@ -585,6 +596,122 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 			return new ValueTask<bool>(SignInManager.ValidateSecurityStampAsync(user, securityStamp));
+		}
+
+		/// <inheritdoc />
+		public bool Like(string userId, string recipientId)
+		{
+			ThrowIfDisposed();
+			Context.Likes.Add(new Like
+			{
+				LikerId = userId,
+				LikeeId = recipientId
+			});
+
+			try
+			{
+				Context.SaveChanges();
+				return true;
+			}
+			catch (DbUpdateException)
+			{
+				return false;
+			}
+		}
+
+		/// <inheritdoc />
+		public async ValueTask<bool> LikeAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			if (await Context.Likes.FirstOrDefaultAsync(e => e.LikerId == userId && e.LikeeId == recipientId, token) != null) return false;
+			token.ThrowIfCancellationRequested();
+			await Context.Likes.AddAsync(new Like
+			{
+				LikerId = userId,
+				LikeeId = recipientId
+			}, token);
+			token.ThrowIfCancellationRequested();
+	
+			try
+			{
+				await Context.SaveChangesAsync(token);
+				return true;
+			}
+			catch (DbUpdateException)
+			{
+				return false;
+			}
+		}
+
+		/// <inheritdoc />
+		public bool Unlike(string userId, string recipientId)
+		{
+			ThrowIfDisposed();
+			Like like = Context.Likes.FirstOrDefault(e => e.LikerId == userId && e.LikeeId == recipientId);
+			if (like == null) return false;
+			Context.Likes.Remove(like);
+	
+			try
+			{
+				Context.SaveChanges();
+				return true;
+			}
+			catch (DbUpdateException)
+			{
+				return false;
+			}
+		}
+
+		/// <inheritdoc />
+		public async ValueTask<bool> UnlikeAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			Like like = await Context.Likes.FirstOrDefaultAsync(e => e.LikerId == userId && e.LikeeId == recipientId, token);
+			token.ThrowIfCancellationRequested();
+			if (like == null) return false;
+			Context.Likes.Remove(like);
+	
+			try
+			{
+				await Context.SaveChangesAsync(token);
+				return true;
+			}
+			catch (DbUpdateException)
+			{
+				return false;
+			}
+		}
+
+		/// <inheritdoc />
+		public int Likes(string userId)
+		{
+			ThrowIfDisposed();
+			return Context.Likes.Count(e => e.LikerId == userId);
+		}
+
+		/// <inheritdoc />
+		public async ValueTask<int> LikesAsync(string userId, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			return await Context.Likes.CountAsync(e => e.LikerId == userId, token);
+		}
+
+		/// <inheritdoc />
+		public int Likees(string userId)
+		{
+			ThrowIfDisposed();
+			return Context.Likes.Count(e => e.LikeeId == userId);
+		}
+
+		/// <inheritdoc />
+		public async ValueTask<int> LikeesAsync(string userId, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			return await Context.Likes.CountAsync(e => e.LikeeId == userId, token);
 		}
 	}
 }

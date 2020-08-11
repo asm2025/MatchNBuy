@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 using asm.Core.Data.Entity.Patterns.Repository;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Data.ImageBuilders;
 using Microsoft.AspNetCore.Identity;
 
 namespace MatchNBuy.Data.Repositories
 {
 	public interface IUserRepository : IRepository<DataContext, User>
 	{
+		[NotNull]
+		public IPhotoRepository Photos { get; }
+		
+		[NotNull]
+		public IMessageRepository Messages { get; }
+		
+		[NotNull]
+		public IUserImageBuilder ImageBuilder { get; }
+		
 		string NormalizeName([NotNull] string name);
 		string NormalizeEmail([NotNull] string email);
 		string GetUserId([NotNull] ClaimsPrincipal principal);
@@ -66,5 +76,13 @@ namespace MatchNBuy.Data.Repositories
 		Task RefreshSignInAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
 		ValueTask<User> ValidateSecurityStampAsync([NotNull] ClaimsPrincipal principal, CancellationToken token = default(CancellationToken));
 		ValueTask<bool> ValidateSecurityStampAsync(User user, string securityStamp, CancellationToken token = default(CancellationToken));
+		bool Like([NotNull] string userId, [NotNull] string recipientId);
+		ValueTask<bool> LikeAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
+		bool Unlike([NotNull] string userId, [NotNull] string recipientId);
+		ValueTask<bool> UnlikeAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
+		int Likes([NotNull] string userId);
+		ValueTask<int> LikesAsync([NotNull] string userId, CancellationToken token = default(CancellationToken));
+		int Likees([NotNull] string userId);
+		ValueTask<int> LikeesAsync([NotNull] string userId, CancellationToken token = default(CancellationToken));
 	}
 }

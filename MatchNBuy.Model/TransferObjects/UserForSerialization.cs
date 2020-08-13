@@ -15,7 +15,11 @@ namespace MatchNBuy.Model.TransferObjects
 		public string LastName { get; set; }
 		public string KnownAs { get; set; }
 		public Genders Gender { get; set; }
+        public string PhotoUrl { get; set; }
         public DateTime DateOfBirth { get; set; }
+		public DateTime Created { get; set; }
+		public DateTime Modified { get; set; }
+		public DateTime LastActive { get; set; }
         public string Introduction { get; set; }
         public string LookingFor { get; set; }
 		public Guid CityId { get; set; }

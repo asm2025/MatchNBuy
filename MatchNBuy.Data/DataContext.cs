@@ -266,8 +266,6 @@ namespace MatchNBuy.Data
 				admin.Email = "admin@example.com";
 				admin.EmailConfirmed = true;
 				admin.PhoneNumberConfirmed = true;
-				admin.DateOfBirth = DateTime.Today;
-				admin.Gender = Genders.NotSpecified;
 				admin.LockoutEnabled = false;
 				logger?.LogInformation("Adding users data.");
 

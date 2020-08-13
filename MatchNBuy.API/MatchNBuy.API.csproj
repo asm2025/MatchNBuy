@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.8.11.0</FileVersion>
+		<FileVersion>20.8.13.7</FileVersion>
 		<LangVersion>8</LangVersion>
 	</PropertyGroup>
 
@@ -11,43 +11,44 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Files\images\users\user.jpg" />
 	  <None Remove="Files\images\users\user.png" />
 	  <None Remove="Files\images\weather\Bracing.png" />
+	  <None Remove="Files\images\weather\Bracing.svg" />
 	  <None Remove="Files\images\weather\Chilly.png" />
+	  <None Remove="Files\images\weather\Chilly.svg" />
 	  <None Remove="Files\images\weather\Cool.png" />
+	  <None Remove="Files\images\weather\Cool.svg" />
 	  <None Remove="Files\images\weather\Freezing.png" />
+	  <None Remove="Files\images\weather\Freezing.svg" />
 	  <None Remove="Files\images\weather\Hot.png" />
+	  <None Remove="Files\images\weather\Hot.svg" />
 	  <None Remove="Files\images\weather\Mild.png" />
 	  <None Remove="Files\images\weather\Scorching.png" />
 	  <None Remove="Files\images\weather\Warm.png" />
+	  <None Remove="Files\images\weather\Warm.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Files\images\users\user.png">
+	  <Content Include="Files\images\users\user.jpg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Files\images\weather\Bracing.png">
+	  <Content Include="Files\images\weather\Bracing.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Files\images\weather\Chilly.png">
+	  <Content Include="Files\images\weather\Chilly.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Files\images\weather\Cool.png">
+	  <Content Include="Files\images\weather\Cool.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Files\images\weather\Freezing.png">
+	  <Content Include="Files\images\weather\Freezing.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Files\images\weather\Hot.png">
+	  <Content Include="Files\images\weather\Hot.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Files\images\weather\Mild.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Scorching.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Warm.png">
+	  <Content Include="Files\images\weather\Warm.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
@@ -95,6 +96,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="5.1.2" />
 		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
 		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.1" />
+		<PackageReference Include="System.Management" Version="4.7.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
 	</ItemGroup>
 
@@ -131,10 +133,6 @@
 	  <Reference Include="asm.Newtonsoft">
 	    <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Newtonsoft.dll</HintPath>
 	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="MatchNBuy.API\" />
 	</ItemGroup>
 
 </Project>

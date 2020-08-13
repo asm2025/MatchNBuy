@@ -12,12 +12,14 @@ namespace MatchNBuy.API.ImageBuilders
 	public class UserImageBuilder : ImageBuilder, IUserImageBuilder
 	{
 		private readonly IHttpContextAccessor _context;
+		private readonly string _default;
 
 		/// <inheritdoc />
 		public UserImageBuilder([NotNull] IConfiguration configuration, [NotNull] IHttpContextAccessor context)
-			: base( UriHelper.Trim(configuration.GetValue<string>("images:users:url")))
+			: base(UriHelper.Trim(configuration.GetValue<string>("images:users:url")))
 		{
 			_context = context;
+			_default = UriHelper.Trim(configuration.GetValue<string>("images:users:default"));
 			FileExtension = UriHelper.Trim(configuration.GetValue<string>("images:users:extension")).Prefix('.');
 		}
 
@@ -33,7 +35,7 @@ namespace MatchNBuy.API.ImageBuilders
 		[NotNull]
 		public string BuildRelative(string imageName, ImageSize imageSize)
 		{
-			imageName = UriHelper.Trim(imageName) ?? throw new ArgumentNullException(nameof(imageName));
+			imageName = UriHelper.Trim(imageName) ?? _default ?? throw new ArgumentNullException(nameof(imageName));
 			return $"/{BaseUri}/{imageName}{FileExtension}";
 		}
 	}

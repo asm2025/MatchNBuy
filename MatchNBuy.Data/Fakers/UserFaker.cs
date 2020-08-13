@@ -4,7 +4,6 @@ using asm.Helpers;
 using Bogus;
 using Bogus.DataSets;
 using MatchNBuy.Model;
-using MatchNBuy.Model.Parameters;
 using JetBrains.Annotations;
 
 namespace MatchNBuy.Data.Fakers

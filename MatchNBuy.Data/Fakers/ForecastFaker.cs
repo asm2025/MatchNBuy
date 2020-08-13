@@ -15,11 +15,9 @@ namespace MatchNBuy.Data.Fakers
 			{ (int.MinValue, 0), ("Freezing", "A blast of Arctic air is sweeping the country with below-freezing temperatures.") }
 			, { (1, 5), ("Bracing", "Bracing for snow today with weather charts forecasting freezing temperatures to whip across the country.") }
 			, { (6, 9), ("Chilly", "Cold and cloudy with a sensation of sheerness.") }
-			, { (10, 14), ("Mild", "Light breeze of wind with mildly cold temperatures.") }
-			, { (15, 19), ("Cool", "Moderate coldness with partly cloudy gray skies.") }
-			, { (20, 27), ("Warm", "Warm and sunny blue skies.") }
-			, { (28, 33), ("Hot", "Hot weather with clear skies.") }
-			, { (34, int.MaxValue), ("Scorching", "It feels like an oven!") }
+			, { (10, 19), ("Cool", "Moderate coldness with partly cloudy gray skies.") }
+			, { (20, 29), ("Warm", "Warm and sunny blue skies.") }
+			, { (30, int.MaxValue), ("Hot", "Hot weather with clear skies.") }
 		});
 
 		/// <inheritdoc />

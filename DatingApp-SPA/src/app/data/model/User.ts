@@ -1,4 +1,5 @@
 import { Genders } from "@data/common/Genders";
+import { ISortablePagination } from "@common/pagination/SortablePagination";
 
 export interface IUser {
 	id: string;
@@ -62,4 +63,12 @@ export interface IUserToUpdate {
 	lookingFor?: string;
 	interests?: Array<string>;
 	roles?: Array<string>;
+}
+
+export interface IUserList extends ISortablePagination {
+	genders?: Genders;
+	minAge?: number;
+	maxAge?: number;
+	likees?: boolean;
+	likers?: boolean;
 }

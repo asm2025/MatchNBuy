@@ -6,8 +6,7 @@ import { map } from "rxjs/operators";
 import querystring from "querystring";
 
 import ApiClient from "@common/web/ApiClient";
-import { IUser, IUserForList, IUserForSerialization, IUserToRegister, IUserToUpdate } from "@data/model/User";
-import { IPagination } from "@common/pagination/Pagination";
+import { IUser, IUserForList, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
 import { IPaginated } from "@common/pagination/Paginated";
 
 import config from "@/config.json";
@@ -30,8 +29,8 @@ export default class UserClient extends ApiClient<HttpClient> {
 		this.photo.next(photoUrl || config.users.defaultImage);
 	}
 
-	list(pagination: IPagination): Observable<IPaginated<IUserForList>> {
-		const params = querystring.stringify(<any>pagination);
+	list(userList: IUserList): Observable<IPaginated<IUserForList>> {
+		const params = querystring.stringify(<any>userList);
 		return this.client.get<IPaginated<IUserForList>>(`${this.baseUrl}/?${params}`);
 	}
 

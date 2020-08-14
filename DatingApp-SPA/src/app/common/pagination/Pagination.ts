@@ -1,11 +1,9 @@
-﻿import * as _ from "lodash";
+import * as _ from "lodash";
 
 export interface IPagination {
 	page?: number;
 	pageSize?: number;
 	count?: number;
-	sortColumn?: string;
-	descending?: boolean;
 }
 
 export class Pagination implements IPagination {
@@ -42,7 +40,4 @@ export class Pagination implements IPagination {
 			? value
 			: 0;
 	}
-
-	sortColumn: string;
-	descending: boolean;
 }

@@ -47,9 +47,7 @@ namespace MatchNBuy.Model
 
 			CreateMap<MessageToAdd, Message>().ReverseMap();
 			CreateMap<MessageToEdit, Message>().ReverseMap();
-			CreateMap<Message, MessageForList>()
-				.ForMember(m => m.Sender, opt => opt.MapFrom(u => u.Sender))
-				.ForMember(m => m.Recipient, opt => opt.MapFrom(u => u.Recipient));
+			CreateMap<MessageForList, Message>().ReverseMap();
 		}
 	}
 }

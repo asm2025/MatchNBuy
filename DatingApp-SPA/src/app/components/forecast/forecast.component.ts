@@ -5,7 +5,7 @@ import { IForecast } from "@data/model/Forecast";
 @Component({
     selector: "app-forecast",
     templateUrl: "./forecast.component.html",
-    styleUrls: ["./forecast.component.css"]
+    styleUrls: ["./forecast.component.scss"]
 })
 export class ForecastComponent {
 	@Input()

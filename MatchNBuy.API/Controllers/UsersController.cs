@@ -182,10 +182,14 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Login([FromBody][NotNull] UserForLogin loginParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			string userToken = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
+			User user = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userToken)) return Unauthorized(loginParams.UserName);
-			return Ok(userToken);
+			if (user == null || string.IsNullOrEmpty(user.Token)) return Unauthorized(loginParams.UserName);
+			return Ok(new
+			{
+				token = user.Token,
+				user = _mapper.Map<UserForLoginDisplay>(user)
+			});
 		}
 
 		[AllowAnonymous]

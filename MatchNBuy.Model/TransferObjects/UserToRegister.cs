@@ -40,12 +40,12 @@ namespace MatchNBuy.Model.TransferObjects
 		
 		public DateTime DateOfBirth { get; set; }
 		
+		public Guid CityId { get; set; }
+		
 		[StringLength(255)]
 		public string Introduction { get; set; }
 		
 		[StringLength(255)]
 		public string LookingFor { get; set; }
-		
-		public Guid CityId { get; set; }
 	}
 }

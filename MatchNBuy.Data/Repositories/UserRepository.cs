@@ -499,14 +499,15 @@ namespace MatchNBuy.Data.Repositories
 			return new ValueTask<ClaimsPrincipal>(SignInManager.CreateUserPrincipalAsync(user));
 		}
 
-		public async ValueTask<string> SignInAsync(string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
+		public async ValueTask<User> SignInAsync(string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
 			User user = await FindByNameAsync(userName, token);
-			if (user == null) return null;
-			return await SignInAsync(user, password, lockoutOnFailure, token);
+			return user == null
+						? null
+						: await SignInAsync(user, password, lockoutOnFailure, token);
 		}
 
-		public async ValueTask<string> SignInAsync(User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
+		public async ValueTask<User> SignInAsync(User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
@@ -526,12 +527,11 @@ namespace MatchNBuy.Data.Repositories
 
 			if (!result.Succeeded)
 			{
-				string message;
-
-				if (result.RequiresTwoFactor) message = "User login requires two factors authentication.";
-				else if (result.IsLockedOut) message = "User is locked out.";
-				else message = "User is not allowed.";
-
+				string message = result.RequiresTwoFactor
+									? "User login requires two factors authentication."
+									: result.IsLockedOut
+										? "User is locked out."
+										: "User is not allowed.";
 				throw new Exception(message);
 			}
 
@@ -561,7 +561,7 @@ namespace MatchNBuy.Data.Repositories
 			user.Token = SecurityTokenHelper.Value(securityToken);
 			Context.Entry(user).State = EntityState.Modified;
 			await Context.SaveChangesAsync(token);
-			return user.Token;
+			return user;
 		}
 
 		public bool IsSignedIn(ClaimsPrincipal principal)

@@ -79,8 +79,8 @@
 		"strictInjectionParameters": true
 	},
 	"include": [
-		"src/**/*",
-		"./typings"
+		"./typings",
+		"src/**/**"
 	],
 	"exclude": [
 		"node_modules",

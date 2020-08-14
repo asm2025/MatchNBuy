@@ -1,0 +1,68 @@
+.stretch-card {
+	> .card {
+		width: 100%;
+		min-width: 100%;
+	}
+}
+
+.card {
+	border: 0;
+	border-radius: 2px position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	word-wrap: break-word;
+	background-color: #fff;
+	background-clip: border-box;
+	border: 1px solid rgba(0, 0, 0, 0.125);
+	border-radius: 0.25rem;
+
+	.card-body {
+		flex: 1 1 auto;
+		padding: 1.25rem;
+	}
+}
+
+.card-weather {
+	background: #e1ecff;
+	background-image: linear-gradient(to left bottom, #d6eef6, #dff0fa, #e7f3fc, #eff6fe, #f6f9ff);
+
+	.card-body {
+		background: #ffffff;
+	}
+
+	.card-body:first-child {
+		background: url('@images/weather.svg') no-repeat center;
+		background-size: cover;
+	}
+
+	.weather-data {
+		padding: 0 0 4.75rem;
+	}
+
+	.weather-date-location {
+		padding: 0 0 38px;
+	}
+
+	.weakly-weather {
+		background: #ffffff;
+		overflow-x: auto;
+	}
+
+	.weakly-weather {
+		.weakly-weather-item {
+			flex: 0 0 14.28%;
+			border-right: 1px solid #f2f2f2;
+			padding: 1rem;
+			text-align: center;
+
+			i {
+				font-size: 1.2rem;
+			}
+		}
+	}
+}
+
+.mb-0, .my-0 {
+	margin-bottom: 0 !important;
+}

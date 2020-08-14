@@ -5,6 +5,12 @@ import { HttpClientModule } from "@angular/common/http";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgbPaginationConfig } from "@ng-bootstrap/ng-bootstrap";
 
+/*
+ * https://material.io/resources/icons/?style=baseline
+ * <mat-icon>location_off</mat-icon>
+ */
+import { MatIconModule } from "@angular/material/icon";
+
 import { AppComponent } from "@/app.component";
 import { MessageComponent } from "@components/message/message.component";
 import { NavComponent } from "@components/nav/nav.component";
@@ -19,7 +25,8 @@ import UserClient from "@services/web/UserClient";
 		BrowserModule,
 		BrowserAnimationsModule,
 		HttpClientModule,
-		NgbModule
+		NgbModule,
+		MatIconModule
 	],
   declarations: [
 		AppComponent,

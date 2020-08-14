@@ -20,18 +20,21 @@ namespace MatchNBuy.Model
 
 			CreateMap<City, CityForList>();
 
-			CreateMap<User, UserForSerialization>().ReverseMap();
 			CreateMap<UserToRegister, User>().ReverseMap();
 			CreateMap<UserToUpdate, User>().ReverseMap();
-			CreateMap<User, UserForLoginDisplay>().ReverseMap();
-			CreateMap<User, UserForList>()
-				.ForMember(e => e.Age, opt => opt.MapFrom(e => DateTime.Today.Years(e.DateOfBirth)));
-			CreateMap<User, UserForDetails>()
+			CreateMap<User, UserForLoginDisplay>()
 				.ForMember(e => e.Age, opt => opt.MapFrom(e => DateTime.Today.Years(e.DateOfBirth)))
-				.ForMember(e => e.City, opt => opt.MapFrom(e => e.City != null ? e.City.Name : string.Empty))
+				.ForMember(e => e.CountryCode, opt => opt.MapFrom(e => e.City == null ? string.Empty : e.City.CountryCode))
 				.ForMember(e => e.Country, opt => opt.MapFrom(e => e.City != null && e.City.Country != null ? e.City.Country.Name : string.Empty))
+				.ForMember(e => e.City, opt => opt.MapFrom(e => e.City != null ? e.City.Name : string.Empty));
+			CreateMap<User, UserForList>()
+				.IncludeBase<User, UserForLoginDisplay>();
+			CreateMap<User, UserForDetails>()
+				.IncludeBase<User, UserForList>()
 				.ForMember(e => e.Interests, opt => opt.MapFrom(e => e.UserInterests.Select(x => x.Interest.Name).ToArray()))
 				.ForMember(e => e.Roles, opt => opt.MapFrom(e => e.UserRoles.Select(x => x.Role.Name).ToArray()));
+			CreateMap<User, UserForSerialization>()
+				.IncludeBase<User, UserForList>();
 
 			CreateMap<Photo, PhotoForList>();
 			CreateMap<PhotoToEdit, Photo>().ReverseMap();

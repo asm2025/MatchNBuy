@@ -1,3 +1,13 @@
+declare module "*.scss" {
+	const content: { [className: string]: string };
+	export default content;
+}
+
+declare module "*.sass" {
+	const content: { [className: string]: string };
+	export default content;
+}
+
 // This will allow you to load `.json` files from disk
 // import * as graph from './data/graph.json';
 declare module "*.json" {

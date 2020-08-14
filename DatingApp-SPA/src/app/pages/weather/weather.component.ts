@@ -9,13 +9,13 @@ import { IPaginated } from "@common/pagination/Paginated";
 @Component({
     selector: "app-weather",
     templateUrl: "./weather.component.html",
-    styleUrls: ["./weather.component.css"]
+    styleUrls: ["./weather.component.scss"]
 })
 export class WeatherComponent implements OnInit {
     protected paginated: IPaginated<IForecast> = { pagination: { page: 1, pageSize: 7, count: 0 } };
     protected messages: IMessage[];
 
-    constructor(private weatherClient: WeatherClient) {
+    constructor(private readonly _weatherClient: WeatherClient) {
     }
 
     ngOnInit(): void {
@@ -24,7 +24,7 @@ export class WeatherComponent implements OnInit {
 
     list() {
 		this.clearMessages();
-        this.weatherClient.list(this.paginated.pagination)
+        this._weatherClient.list(this.paginated.pagination)
             .subscribe((paginated: IPaginated<IForecast>) => this.paginated = paginated
                 , (error: any) => {
 					this.messages.push({

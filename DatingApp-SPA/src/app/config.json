@@ -1,5 +1,13 @@
 {
-	"datingApp": {
+	"title": "Dating App",
+	"description": "Sample Angular App to work with a .net core back-end. To test the users, see the description in the back-end API, file appsettings.json.",
+	"company": "asm",
+	"email": "asm2025@outlook.com",
+	"website": "https://github.com/asm2025/",
+	"backend": {
 		"url": "http://localhost:8000"
+	},
+	"users": {
+		"defaultImage": "@images/user.jpg"
 	} 
 }

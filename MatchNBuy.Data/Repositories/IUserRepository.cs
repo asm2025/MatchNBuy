@@ -69,8 +69,9 @@ namespace MatchNBuy.Data.Repositories
 		ValueTask<IList<User>> GetUsersForClaimAsync([NotNull] Claim claim, CancellationToken token = default(CancellationToken));
 		ValueTask<IList<User>> GetUsersInRoleAsync([NotNull] string roleName, CancellationToken token = default(CancellationToken));
 		ValueTask<ClaimsPrincipal> CreateUserPrincipalAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
-		ValueTask<string> SignInAsync([NotNull] string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
-		ValueTask<string> SignInAsync([NotNull] User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
+		ValueTask<User> SignInAsync([NotNull] string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
+		[ItemNotNull]
+		ValueTask<User> SignInAsync([NotNull] User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
 		bool IsSignedIn([NotNull] ClaimsPrincipal principal);
 		ValueTask<bool> CanSignInAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
 		Task RefreshSignInAsync([NotNull] User user, CancellationToken token = default(CancellationToken));

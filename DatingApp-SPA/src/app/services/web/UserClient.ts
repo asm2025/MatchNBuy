@@ -7,6 +7,8 @@ import querystring from "querystring";
 
 import ApiClient from "@common/web/ApiClient";
 import { IUser, IUserForList, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
+import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
+import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { IPaginated } from "@common/pagination/Paginated";
 
 import config from "@/config.json";
@@ -22,7 +24,7 @@ export default class UserClient extends ApiClient<HttpClient> {
 	photoUrl = this.photo.asObservable();
 
 	constructor(client: HttpClient) {
-		super(`${config.backend.url}/users/`, client);
+		super(`${config.backend.url}/Users`, client);
 	}
 
 	changeMemberPhoto(photoUrl: string | null | undefined) {
@@ -35,7 +37,7 @@ export default class UserClient extends ApiClient<HttpClient> {
 	}
 
 	get(id: string): Observable<IUserForList> {
-		return this.client.get<IUserForList>(`${this.baseUrl}?${id}`);
+		return this.client.get<IUserForList>(`${this.baseUrl}/${encodeURIComponent(id)}`);
 	}
 
 	login(userName: string, password: string): Observable<boolean> {
@@ -69,10 +71,39 @@ export default class UserClient extends ApiClient<HttpClient> {
 	}
 
 	update(id: string, user: IUserToUpdate): Observable<IUserForSerialization> {
-		return this.client.put<IUserForSerialization>(`${this.baseUrl}/${id}/update`, user);
+		return this.client.put<IUserForSerialization>(`${this.baseUrl}/${encodeURIComponent(id)}/update`, user);
 	}
 
 	delete(id: string): Observable<any> {
-		return this.client.delete(`${this.baseUrl}/${id}/delete`);
+		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(id)}/delete`);
+	}
+
+	photos(userId: string, pagination: ISortablePagination): Observable<IPaginated<IPhoto>> {
+		const params = querystring.stringify(<any>pagination);
+		return this.client.get<IPaginated<IPhoto>>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/?${params}`);
+	}
+
+	getPhoto(userId: string, id: string): Observable<IPhoto> {
+		return this.client.get<IPhoto>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/${encodeURIComponent(id)}`);
+	}
+
+	addPhoto(userId: string, photoToAdd: FormData): Observable<string> {
+		return this.client.post<string>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/Add`, photoToAdd);
+	}
+
+	updatePhoto(userId: string, id: string, photoToEdit: IPhotoToEdit): Observable<IPhoto> {
+		return this.client.put<IPhoto>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/${encodeURIComponent(id)}/Update`, photoToEdit);
+	}
+
+	deletePhoto(userId: string, id: string): Observable<any> {
+		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/${encodeURIComponent(id)}/Delete`);
+	}
+
+	defaultPhoto(userId: string): Observable<IPhoto> {
+		return this.client.get<IPhoto>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/Default`);
+	}
+
+	setDefaultPhoto(userId: string, id: string): Observable<IPhoto> {
+		return this.client.put<IPhoto>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/${encodeURIComponent(id)}/SetDefault`, null);
 	}
 }

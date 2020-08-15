@@ -13,17 +13,17 @@ import config from "@/config.json";
 
 @Injectable()
 export default class WeatherClient extends ApiClient<HttpClient> {
-    constructor(client: HttpClient) {
-        super(`${config.backend.url}/weather`, client);
-    }
+	constructor(client: HttpClient) {
+		super(`${config.backend.url}/Weather`, client);
+	}
 
-    list(pagination: IPagination): Observable<IPaginated<IForecast>> {
+	list(pagination: IPagination): Observable<IPaginated<IForecast>> {
 		const params = querystring.stringify(<any>pagination);
 		return this.client.get<IPaginated<IForecast>>(`${this.baseUrl}/?${params}`);
-    }
+	}
 
-    get(date: any): Observable<IForecast> {
+	get(date: any): Observable<IForecast> {
 		const d = encodeURIComponent(moment(date).format("yyyy-MM-dd"));
-        return this.client.get<IForecast>(`${this.baseUrl}/date=${d}`);
-    }
+		return this.client.get<IForecast>(`${this.baseUrl}/${d}`);
+	}
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { IMessage, MessageType } from "@common/Message";
+import { IMessage, MessageType } from "@/common/Alert";
 
 import UserClient from "@services/web/UserClient";
 import { IUser } from "@data/model/User";

@@ -6,10 +6,10 @@ import { catchError } from "rxjs/operators";
 import { IPaginated } from "@common/pagination/Paginated";
 import { IUserForList, IUserList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import { RouterStateSnapshot } from "@node/@angular/router/router";
+import AlertifyService from "@services/alertify.service";
 
 @Injectable()
-export default class UsersResolver implements Resolve<IPaginated<IUserForList>> {
+export default class ListsResolver implements Resolve<IPaginated<IUserForList>> {
 	userList = {
 		page: 1,
 		pageSize: 10,
@@ -17,7 +17,9 @@ export default class UsersResolver implements Resolve<IPaginated<IUserForList>> 
 		maxAge: 99
 	} as IUserList;
 
-	constructor(private _userService: UserClient, private _router: Router) {
+	constructor(private readonly _userService: UserClient,
+		private readonly _router: Router,
+		private readonly _alertify: AlertifyService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IPaginated<IUserForList>> | Promise<IPaginated<IUserForList>> | IPaginated<IUserForList> {
@@ -26,7 +28,7 @@ export default class UsersResolver implements Resolve<IPaginated<IUserForList>> 
 			.pipe(
 				catchError(error => {
 					console.log(error);
-					this._router.navigate(["/home"]);
+					this._router.navigate(["/"]);
 					return of(null);
 				}));
 	}

@@ -5,8 +5,4 @@
     <FileVersion>20.8.13.0</FileVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="src\app\_guards\" />
-  </ItemGroup>
-
 </Project>

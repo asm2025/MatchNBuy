@@ -59,7 +59,7 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet("{code}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Get(string code, CancellationToken token)
+		public async Task<IActionResult> Get([FromRoute] string code, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrWhiteSpace(code)) return BadRequest(code);
@@ -73,7 +73,7 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet("{code}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Cities(string code, CancellationToken token)
+		public async Task<IActionResult> Cities([FromRoute] string code, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrWhiteSpace(code)) return NotFound();
@@ -95,7 +95,7 @@ namespace MatchNBuy.API.Controllers
 			return Ok(cities);
 		}
 
-		[HttpGet("{code}/[action]/{id}")]
+		[HttpGet("[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
 		public async Task<IActionResult> Cities(Guid id, CancellationToken token)

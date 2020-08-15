@@ -1,0 +1,6 @@
+<ngb-toast *ngFor="let toast of _toastService.toasts"
+			[]="getAlertType(alert)"
+			[autohide]="isDismissible(alert)"
+			(hide)="_toastService.remove(toast)">
+	{{ message.content }}
+</ngb-toast>

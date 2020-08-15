@@ -41,7 +41,7 @@ namespace MatchNBuy.API.Controllers
 		}
 
 		[HttpGet("{date}")]
-		public IActionResult Get(DateTime date)
+		public IActionResult Get([FromRoute] DateTime date)
 		{
 			Forecast result = _repository.Get(date);
 			return Ok(result);

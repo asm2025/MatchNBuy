@@ -166,7 +166,7 @@ namespace MatchNBuy.API.Controllers
 
 		[HttpGet("{id}")]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Get(string id, CancellationToken token)
+		public async Task<IActionResult> Get([FromRoute] string id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			User user = await _repository.GetAsync(token, id);
@@ -209,7 +209,7 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Update(string id, [FromBody] UserToUpdate userParams, CancellationToken token)
+		public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UserToUpdate userParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
@@ -230,7 +230,7 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> Delete(string id, CancellationToken token)
+		public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
@@ -239,14 +239,14 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
 			await _repository.DeleteAsync(user, token);
-			return Ok();
+			return NoContent();
 		}
 		#endregion
 
 		#region Photos
 		[HttpGet("{userId}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Photos(string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
+		public async Task<IActionResult> Photos([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
@@ -277,7 +277,7 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> GetPhoto(string userId, Guid id, CancellationToken token)
+		public async Task<IActionResult> GetPhoto([FromRoute] string userId, Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
@@ -293,11 +293,11 @@ namespace MatchNBuy.API.Controllers
 		[HttpPost("{userId}/Photos/Add")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.Created)]
-		public async Task<IActionResult> AddPhoto(string userId, [FromForm][NotNull] PhotoToAdd photoParams, CancellationToken token)
+		public async Task<IActionResult> AddPhoto([FromRoute] string userId, [FromForm][NotNull] PhotoToAdd photoParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
 
 			Stream stream = null;
 			Image image = null;
@@ -341,7 +341,7 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> UpdatePhoto(string userId, Guid id, [FromBody] PhotoToEdit photoToParams, CancellationToken token)
+		public async Task<IActionResult> UpdatePhoto([FromRoute] string userId, Guid id, [FromBody] PhotoToEdit photoToParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
@@ -365,7 +365,7 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> DeletePhoto(string userId, Guid id, CancellationToken token)
+		public async Task<IActionResult> DeletePhoto([FromRoute] string userId, Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
@@ -379,14 +379,14 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception("Deleting photo failed.");
 			await _repository.Context.SaveChangesAsync(token);
-			return Ok();
+			return NoContent();
 		}
 
 		[HttpGet("{userId}/Photos/Default")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> GetDefaultPhoto(string userId, CancellationToken token)
+		public async Task<IActionResult> GetDefaultPhoto([FromRoute] string userId, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
@@ -403,7 +403,7 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> SetDefaultPhoto(string userId, Guid id, CancellationToken token)
+		public async Task<IActionResult> SetDefaultPhoto([FromRoute] string userId, Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
@@ -414,14 +414,16 @@ namespace MatchNBuy.API.Controllers
 			if (photo == null) return NotFound(id);
 			if (!photo.UserId.IsSame(userId)) return Unauthorized(userId);
 			if (!await _repository.Photos.SetDefaultAsync(photo, token)) return NotFound(id);
-			return Ok();
+
+			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
+			return Ok(photoForList);
 		}
 		#endregion
 
 		#region Messages
 		[HttpGet("{userId}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Messages(string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
+		public async Task<IActionResult> Messages([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
@@ -440,7 +442,7 @@ namespace MatchNBuy.API.Controllers
 
 		[HttpGet("{userId}/Messages/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Threads(string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
+		public async Task<IActionResult> Threads([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
@@ -453,7 +455,7 @@ namespace MatchNBuy.API.Controllers
 
 		[HttpGet("{userId}/Messages/[action]/{recipientId}")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Thread(string userId, string recipientId, [FromQuery] SortablePagination pagination, CancellationToken token)
+		public async Task<IActionResult> Thread([FromRoute] string userId, [FromRoute] string recipientId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
@@ -476,11 +478,12 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet("{userId}/Messages/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> GetMessage(Guid id, CancellationToken token)
+		public async Task<IActionResult> GetMessage([FromRoute] string userId, Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
-			
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+	
 			Message message = await _repository.Messages.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (message == null) return NotFound(id);
@@ -492,7 +495,7 @@ namespace MatchNBuy.API.Controllers
 		[HttpPost("{userId}/Messages/Add")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.Created)]
-		public async Task<IActionResult> AddMessage(string userId, [FromBody][NotNull] MessageToAdd messageParams, CancellationToken token)
+		public async Task<IActionResult> AddMessage([FromRoute] string userId, [FromBody][NotNull] MessageToAdd messageParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
@@ -513,13 +516,11 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> UpdateMessage(Guid id, [FromBody] MessageToEdit messageToParams, CancellationToken token)
+		public async Task<IActionResult> UpdateMessage([FromRoute] string userId, Guid id, [FromBody] MessageToEdit messageToParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
-
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 
 			Message message = await _repository.Messages.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
@@ -539,13 +540,11 @@ namespace MatchNBuy.API.Controllers
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
-		public async Task<IActionResult> DeleteMessage(Guid id, CancellationToken token)
+		public async Task<IActionResult> DeleteMessage([FromRoute] string userId, Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
-
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 
 			Message message = await _repository.Messages.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
@@ -555,7 +554,34 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (message == null) throw new Exception("Deleting message failed.");
 			await _repository.Context.SaveChangesAsync(token);
-			return Ok();
+			return NoContent();
+		}
+
+		[HttpDelete("{userId}/Messages/{id}/IsRead?{isRead}")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		public async Task<IActionResult> MarkMessage([FromRoute] string userId, Guid id, bool isRead, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (id.IsEmpty()) return BadRequest();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+
+			Message message = await _repository.Messages.GetAsync(token, id);
+			token.ThrowIfCancellationRequested();
+			if (message == null) return NotFound(id);
+			if (!message.RecipientId.IsSame(userId)) return Unauthorized(userId);
+			
+			if (isRead)
+				message.DateRead = DateTime.UtcNow;
+			else
+				message.DateRead = null;
+
+			message = await _repository.Messages.UpdateAsync(message, token);
+			token.ThrowIfCancellationRequested();
+			if (message == null) throw new Exception("Updating message failed.");
+			await _repository.Context.SaveChangesAsync(token);
+			return NoContent();
 		}
 		#endregion
 
@@ -563,30 +589,30 @@ namespace MatchNBuy.API.Controllers
 		[HttpPost("{userId}/[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Like(string userId, string recipientId, CancellationToken token)
+		public async Task<IActionResult> Like([FromRoute] string userId, [FromRoute] string recipientId, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
 			if (!await _repository.LikeAsync(userId, recipientId, token)) return BadRequest(recipientId);
-			return Ok();
+			return NoContent();
 		}
 
 		[HttpPost("{userId}/[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Unlike(string userId, string recipientId, CancellationToken token)
+		public async Task<IActionResult> Unlike([FromRoute] string userId, [FromRoute] string recipientId, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
 			if (!await _repository.UnlikeAsync(userId, recipientId, token)) return BadRequest(recipientId);
-			return Ok();
+			return NoContent();
 		}
 
 		[HttpPost("{userId}/[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Likes(string userId, CancellationToken token)
+		public async Task<IActionResult> Likes([FromRoute] string userId, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
@@ -596,7 +622,7 @@ namespace MatchNBuy.API.Controllers
 
 		[HttpPost("{userId}/[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Likees(string userId, CancellationToken token)
+		public async Task<IActionResult> Likees([FromRoute] string userId, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);

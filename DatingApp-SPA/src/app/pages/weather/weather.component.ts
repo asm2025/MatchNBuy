@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 
-import { IMessage, MessageType } from "@common/Message";
+import { IAlert, AlertType } from "@common/Alert";
 
 import WeatherClient from "@services/web/WeatherClient";
 import { IForecast } from "@data/model/Forecast";
@@ -13,7 +13,7 @@ import { IPaginated } from "@common/pagination/Paginated";
 })
 export class WeatherComponent implements OnInit {
     protected paginated: IPaginated<IForecast> = { pagination: { page: 1, pageSize: 7, count: 0 } };
-    protected messages: IMessage[];
+    protected alerts: IAlert[];
 
     constructor(private readonly _weatherClient: WeatherClient) {
     }
@@ -27,18 +27,18 @@ export class WeatherComponent implements OnInit {
         this._weatherClient.list(this.paginated.pagination)
             .subscribe((paginated: IPaginated<IForecast>) => this.paginated = paginated
                 , (error: any) => {
-					this.messages.push({
-						type: MessageType.Error,
+					this.alerts.push({
+						type: AlertType.Error,
 						content: <string>error.message
 					});
 				});
     }
 
     clearMessages() {
-        if (!this.messages) {
-            this.messages = [];
+        if (!this.alerts) {
+            this.alerts = [];
         } else {
-            this.messages.length = 0;
+            this.alerts.length = 0;
         }
     }
 }

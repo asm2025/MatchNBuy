@@ -1,6 +1,6 @@
 {
 	"title": "Dating App",
-	"description": "Sample Angular App to work with a .net core back-end. To test the users, see the description in the back-end API, file appsettings.json.",
+	"description": "Sample Angular App to work with a .net core back-end on Udemy course: Build an app with ASPNET Core and Angular from scratch with some modification. To test the users, see the description in the back-end API, file appsettings.json.",
 	"company": "asm",
 	"email": "asm2025@outlook.com",
 	"website": "https://github.com/asm2025/",
@@ -9,5 +9,5 @@
 	},
 	"users": {
 		"defaultImage": "@images/user.jpg"
-	} 
+	}
 }

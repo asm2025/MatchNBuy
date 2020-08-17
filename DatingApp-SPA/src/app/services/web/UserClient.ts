@@ -6,10 +6,11 @@ import { map } from "rxjs/operators";
 import querystring from "querystring";
 
 import ApiClient from "@common/web/ApiClient";
-import { IUser, IUserForList, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
-import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
 import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { IPaginated } from "@common/pagination/Paginated";
+import { IUser, IUserForList, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
+import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
+import { IMessageThread, IMessage, IMessageToAdd, IMessageToEdit } from "@data/model/Message";
 
 import config from "@/config.json";
 
@@ -27,6 +28,7 @@ export default class UserClient extends ApiClient<HttpClient> {
 		super(`${config.backend.url}/Users`, client);
 	}
 
+	// #region User
 	changeMemberPhoto(photoUrl: string | null | undefined) {
 		this.photo.next(photoUrl || config.users.defaultImage);
 	}
@@ -77,7 +79,9 @@ export default class UserClient extends ApiClient<HttpClient> {
 	delete(id: string): Observable<any> {
 		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(id)}/delete`);
 	}
+	// #endregion
 
+	// #region Photos
 	photos(userId: string, pagination: ISortablePagination): Observable<IPaginated<IPhoto>> {
 		const params = querystring.stringify(<any>pagination);
 		return this.client.get<IPaginated<IPhoto>>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/?${params}`);
@@ -106,4 +110,60 @@ export default class UserClient extends ApiClient<HttpClient> {
 	setDefaultPhoto(userId: string, id: string): Observable<IPhoto> {
 		return this.client.put<IPhoto>(`${this.baseUrl}/${encodeURIComponent(userId)}/Photos/${encodeURIComponent(id)}/SetDefault`, null);
 	}
+	// #endregion
+
+	// #region Messages
+	threads(userId: string, pagination: ISortablePagination): Observable<IPaginated<IMessageThread>> {
+		const params = querystring.stringify(<any>pagination);
+		return this.client.get<IPaginated<IMessageThread>>(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/Threads/?${params}`);
+	}
+
+	thread(userId: string, recipientId: string, pagination: ISortablePagination): Observable<IPaginated<IMessage>> {
+		const params = querystring.stringify(<any>pagination);
+		return this.client.get<IPaginated<IMessage>>(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/Thread/${encodeURIComponent(recipientId)}/?${params}`);
+	}
+
+	messages(userId: string, pagination: ISortablePagination): Observable<IPaginated<IMessage>> {
+		const params = querystring.stringify(<any>pagination);
+		return this.client.get<IPaginated<IMessage>>(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/?${params}`);
+	}
+
+	getMessage(userId: string, id: string): Observable<IMessage> {
+		return this.client.get<IMessage>(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/${encodeURIComponent(id)}`);
+	}
+
+	addMessage(userId: string, messageToAdd: IMessageToAdd): Observable<string> {
+		return this.client.post<string>(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/Add`, messageToAdd);
+	}
+
+	updateMessage(userId: string, id: string, messageToEdit: IMessageToEdit): Observable<IMessage> {
+		return this.client.put<IMessage>(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/${encodeURIComponent(id)}/Update`, messageToEdit);
+	}
+
+	deleteMessage(userId: string, id: string): Observable<any> {
+		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/${encodeURIComponent(id)}/Delete`);
+	}
+
+	markMessage(userId: string, id: string, isRead: boolean): Observable<any> {
+		return this.client.put(`${this.baseUrl}/${encodeURIComponent(userId)}/Messages/${encodeURIComponent(id)}/?isRead=${isRead}`, null);
+	}
+	// #endregion
+
+	// #region Likes
+	like(userId: string, recipientId: string): Observable<any> {
+		return this.client.post(`${this.baseUrl}/${encodeURIComponent(userId)}/Like/${encodeURIComponent(recipientId)}`, null);
+	}
+
+	unlike(userId: string, recipientId: string): Observable<any> {
+		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(userId)}/Unlike/${encodeURIComponent(recipientId)}`);
+	}
+
+	likes(userId: string): Observable<number> {
+		return this.client.get<number>(`${this.baseUrl}/${encodeURIComponent(userId)}/Likes`);
+	}
+
+	likees(userId: string): Observable<number> {
+		return this.client.get<number>(`${this.baseUrl}/${encodeURIComponent(userId)}/Likees`);
+	}
+	// #endregion
 }

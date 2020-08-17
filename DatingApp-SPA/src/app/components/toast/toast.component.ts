@@ -1,22 +1,30 @@
-import { Component } from "@angular/core";
-import alertUtil, { IAlert, AlertType, AlertTheme } from "@common/Alert";
+import { Component, TemplateRef } from "@angular/core";
+import alertUtil, { IAlert, AlertType } from "@common/Alert";
 import ToastService from "@services/toast.service";
 
 @Component({
 	selector: "app-toast",
 	templateUrl: "./toast.component.html",
-	styleUrls: ["./toast.component.scss"]
+	styleUrls: ["./toast.component.scss"],
+	host: {'[class.ngb-toasts]': "true"}
 })
 export class ToastComponent {
 	constructor(private readonly _toastService: ToastService) {
 	}
 
-	protected getAlertType(alert: IAlert): string {
-		const alertTheme = alertUtil.toAlertTheme((alert.type || AlertType.Default));
-		return AlertTheme[alertTheme].toLowerCase();
+	success(message: string | TemplateRef<any>) {
+		this._toastService.success(message);
 	}
 
-	protected isDismissible(alert: IAlert): boolean {
-		return alertUtil.isDismissible(alert);
+	error(message: string | TemplateRef<any>) {
+		this._toastService.error(message);
+	}
+
+	warning(message: string | TemplateRef<any>) {
+		this._toastService.warning(message);
+	}
+
+	alert(message: string | TemplateRef<any>) {
+		this._toastService.alert(message);
 	}
 }

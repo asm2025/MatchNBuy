@@ -421,25 +421,6 @@ namespace MatchNBuy.API.Controllers
 		#endregion
 
 		#region Messages
-		[HttpGet("{userId}/[action]")]
-		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Messages([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
-		{
-			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			pagination ??= new MessageList();
-			
-			IQueryable<Message> queryable = _repository.Messages.List(userId, pagination);
-			pagination.Count = await queryable.CountAsync(token);
-			token.ThrowIfCancellationRequested();
-
-			IList<MessageForList> messages = await queryable.Paginate(pagination)
-															.ProjectTo<MessageForList>(_mapper.ConfigurationProvider)
-															.ToListAsync(token);
-			token.ThrowIfCancellationRequested();
-			return Ok(new Paginated<MessageForList>(messages, pagination));
-		}
-
 		[HttpGet("{userId}/Messages/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Threads([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
@@ -465,6 +446,25 @@ namespace MatchNBuy.API.Controllers
 			if (!userId.IsSame(claimId) && !recipientId.IsSame(claimId)) return Unauthorized(userId);
 			
 			IQueryable<Message> queryable = _repository.Messages.Thread(userId, recipientId, pagination);
+			pagination.Count = await queryable.CountAsync(token);
+			token.ThrowIfCancellationRequested();
+
+			IList<MessageForList> messages = await queryable.Paginate(pagination)
+															.ProjectTo<MessageForList>(_mapper.ConfigurationProvider)
+															.ToListAsync(token);
+			token.ThrowIfCancellationRequested();
+			return Ok(new Paginated<MessageForList>(messages, pagination));
+		}
+
+		[HttpGet("{userId}/[action]")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> Messages([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			pagination ??= new MessageList();
+			
+			IQueryable<Message> queryable = _repository.Messages.List(userId, pagination);
 			pagination.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
@@ -557,7 +557,7 @@ namespace MatchNBuy.API.Controllers
 			return NoContent();
 		}
 
-		[HttpDelete("{userId}/Messages/{id}/IsRead?{isRead}")]
+		[HttpPut("{userId}/Messages/{id}/{isRead}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
@@ -586,7 +586,7 @@ namespace MatchNBuy.API.Controllers
 		#endregion
 
 		#region Likes
-		[HttpPost("{userId}/[action]/{id}")]
+		[HttpPost("{userId}/[action]/{recipientId}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Like([FromRoute] string userId, [FromRoute] string recipientId, CancellationToken token)
@@ -598,7 +598,7 @@ namespace MatchNBuy.API.Controllers
 			return NoContent();
 		}
 
-		[HttpPost("{userId}/[action]/{id}")]
+		[HttpDelete("{userId}/[action]/{recipientId}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Unlike([FromRoute] string userId, [FromRoute] string recipientId, CancellationToken token)
@@ -610,7 +610,7 @@ namespace MatchNBuy.API.Controllers
 			return NoContent();
 		}
 
-		[HttpPost("{userId}/[action]/{id}")]
+		[HttpGet("{userId}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Likes([FromRoute] string userId, CancellationToken token)
 		{
@@ -620,7 +620,7 @@ namespace MatchNBuy.API.Controllers
 			return Ok(count);
 		}
 
-		[HttpPost("{userId}/[action]/{id}")]
+		[HttpGet("{userId}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Likees([FromRoute] string userId, CancellationToken token)
 		{

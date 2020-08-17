@@ -44,7 +44,7 @@
 			"dom.Iterable"
 		],
 		"paths": {
-			"@node/*": [
+			"~/*": [
 				"node_modules/*"
 			],
 			"@/*": [
@@ -52,6 +52,9 @@
 			],
 			"@common/*": [
 				"src/app/common/*"
+			],
+			"@pages/*": [
+				"src/app/pages/*"
 			],
 			"@components/*": [
 				"src/app/components/*"
@@ -80,7 +83,7 @@
 	},
 	"include": [
 		"./typings",
-		"src/**/**"
+		"src/**/*"
 	],
 	"exclude": [
 		"node_modules",

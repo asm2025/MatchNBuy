@@ -5,4 +5,11 @@
     <FileVersion>20.8.13.0</FileVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="src\app\pages\members\details\" />
+    <Folder Include="src\app\pages\members\edit\" />
+    <Folder Include="src\app\pages\lists\" />
+    <Folder Include="src\app\pages\messages\" />
+  </ItemGroup>
+
 </Project>

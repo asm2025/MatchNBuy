@@ -1,8 +1,6 @@
 import { Injectable, TemplateRef } from "@angular/core";
 import { IAlert, AlertType } from "@common/Alert";
 
-const TIMEOUT = 1000;
-
 @Injectable({
 	providedIn: "root"
 })
@@ -12,36 +10,28 @@ export default class ToastService {
 	success(message: string | TemplateRef<any>) {
 		this.toasts.push({
 			type: AlertType.Success,
-			content: message,
-			dismissable: true,
-			delay: TIMEOUT
+			content: message
 		});
 	}
 
 	error(message: string | TemplateRef<any>) {
 		this.toasts.push({
 			type: AlertType.Error,
-			content: message,
-			dismissable: true,
-			delay: TIMEOUT
+			content: message
 		});
 	}
 
 	warning(message: string | TemplateRef<any>) {
 		this.toasts.push({
 			type: AlertType.Warning,
-			content: message,
-			dismissable: true,
-			delay: TIMEOUT
+			content: message
 		});
 	}
 
 	alert(message: string | TemplateRef<any>) {
 		this.toasts.push({
 			type: AlertType.Information,
-			content: message,
-			dismissable: true,
-			delay: TIMEOUT
+			content: message
 		});
 	}
 

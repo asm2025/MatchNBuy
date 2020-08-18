@@ -1,0 +1,17 @@
+<app-alert [alerts]="_alerts">
+</app-alert>
+<div class="container mt-3">
+	<div class="row">
+		<div class="btn-group">
+			<button class="btn btn-primary" [(ngModel)]="likesParam" btnRadio="Likers" (click)="loadUsers()">Who likes me</button>
+			<button class="btn btn-primary" [(ngModel)]="likesParam" btnRadio="Likees" (click)="loadUsers()">Whom I like</button>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div *ngFor="let user of users" class="col-sm-6 col-md-4 col-lg-4 col-xl-2">
+			<app-card [user]="user"></app-card>
+		</div>
+	</div>
+</div>
+<ngb-pagination [collectionSize]="_pagination.count" [(page)]="_pagination.page"></ngb-pagination>

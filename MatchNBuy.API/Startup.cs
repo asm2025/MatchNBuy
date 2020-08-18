@@ -100,7 +100,6 @@ namespace MatchNBuy.API
 				// Helpers
 				.AddHttpContextAccessor()
 
-				.AddSingleton<IWeatherImageBuilder, WeatherImageBuilder>()
 				.AddSingleton<IUserImageBuilder, UserImageBuilder>()
 				// Mapper
 				.AddAutoMapper(options => options.AddProfile(new AutoMapperProfiles()),

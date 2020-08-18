@@ -10,7 +10,6 @@ using asm.Data.Patterns.Repository;
 using asm.Extensions;
 using asm.Patterns.Pagination;
 using MatchNBuy.Data.Fakers;
-using MatchNBuy.Data.ImageBuilders;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
@@ -31,10 +30,10 @@ namespace MatchNBuy.Data.Repositories
 		private readonly Lazy<ForecastFaker> _forecasts;
 
 		/// <inheritdoc />
-		public ForecastRepository(IWeatherImageBuilder imageBuilder, [NotNull] IConfiguration configuration, ILogger<ForecastRepository> logger)
+		public ForecastRepository([NotNull] IConfiguration configuration, ILogger<ForecastRepository> logger)
 			: base(configuration, logger)
 		{
-			_forecasts = new Lazy<ForecastFaker>(() => new ForecastFaker(imageBuilder));
+			_forecasts = new Lazy<ForecastFaker>(() => new ForecastFaker());
 		}
 
 		/// <inheritdoc />

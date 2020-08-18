@@ -6,10 +6,44 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="src\assets\images\weather\icons\Bracing.svg" />
+    <None Remove="src\assets\images\weather\icons\Chilly.svg" />
+    <None Remove="src\assets\images\weather\icons\Cool.svg" />
+    <None Remove="src\assets\images\weather\icons\Freezing.svg" />
+    <None Remove="src\assets\images\weather\icons\Hot.svg" />
+    <None Remove="src\assets\images\weather\icons\Warm.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="src\assets\images\weather\icons\Bracing.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="src\assets\images\weather\icons\Chilly.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="src\assets\images\weather\icons\Cool.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="src\assets\images\weather\icons\Freezing.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="src\assets\images\weather\icons\Hot.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="src\assets\images\weather\icons\Warm.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="src\app\pages\members\details\" />
     <Folder Include="src\app\pages\members\edit\" />
-    <Folder Include="src\app\pages\lists\" />
+    <Folder Include="src\app\pages\members\card\" />
+    <Folder Include="src\app\pages\members\list\" />
+    <Folder Include="src\app\pages\members\messages\" />
+    <Folder Include="src\app\pages\members\photo-editor\" />
     <Folder Include="src\app\pages\messages\" />
+    <Folder Include="src\assets\images\weather\backdrops\" />
   </ItemGroup>
 
 </Project>

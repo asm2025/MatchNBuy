@@ -1,5 +1,4 @@
 import { Component, TemplateRef } from "@angular/core";
-import alertUtil, { IAlert, AlertType } from "@common/Alert";
 import ToastService from "@services/toast.service";
 
 @Component({

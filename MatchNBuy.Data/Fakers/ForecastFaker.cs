@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using asm.Collections;
 using asm.Helpers;
-using asm.Patterns.Images;
 using Bogus;
 using MatchNBuy.Model;
 
@@ -21,11 +20,11 @@ namespace MatchNBuy.Data.Fakers
 		});
 
 		/// <inheritdoc />
-		public ForecastFaker(IImageBuilder imageBuilder)
+		public ForecastFaker()
 		{
 			base.RuleFor(e => e.Date, DateTime.Today);
+			base.RuleFor(e => e.Keyword, (f, e) => __summaries[e.TemperatureC].Name);
 			base.RuleFor(e => e.TemperatureC, () => RNGRandomHelper.Next(-20, 50));
-			base.RuleFor(e => e.ImageUrl, (f, e) => imageBuilder?.Build(__summaries[e.TemperatureC].Name)?.ToString());
 			base.RuleFor(e => e.Summary, (f, e) => __summaries[e.TemperatureC].Description);
 		}
 	}

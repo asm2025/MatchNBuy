@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+
 import UserClient from "@services/web/UserClient";
 
 @Component({
@@ -7,7 +8,7 @@ import UserClient from "@services/web/UserClient";
 	styleUrls: ["./home.component.scss"]
 })
 export class HomeComponent implements OnInit {
-	private _registerMode = false;
+	registerMode = false;
 
 	constructor(private readonly _userClient: UserClient) {
 	}
@@ -17,10 +18,6 @@ export class HomeComponent implements OnInit {
 	}
 
 	registerToggle() {
-		this._registerMode = true;
-	}
-
-	cancelRegisterMode(registerMode: boolean) {
-		this._registerMode = registerMode;
+		this.registerMode = !this.registerMode;
 	}
 }

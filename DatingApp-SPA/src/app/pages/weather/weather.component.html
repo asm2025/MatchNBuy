@@ -1,6 +1,10 @@
-<app-message [alerts]="alerts">
-</app-message>
-<table class="table" *ngIf="paginated && paginated.result && paginated.result.length > 0">
+<app-alert [alerts]="_alerts">
+</app-alert>
+<ngb-carousel *ngIf="_forecasts && _forecasts.length > 0">
+
+</ngb-carousel>
+
+<table class="table">
 	<thead>
 		<tr class="d-flex">
 			<th class="col-1" scope="col"></th>
@@ -20,4 +24,4 @@
 		</tr>
 	</tbody>
 </table>
-<ngb-pagination [collectionSize]="paginated.pagination.count" [(page)]="paginated.pagination.page"></ngb-pagination>
+<ngb-pagination [pageSize]="_pagination.pageSize" [collectionSize]="_pagination.count"  [(page)]="_pagination.page"></ngb-pagination>

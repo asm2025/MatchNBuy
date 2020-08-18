@@ -15,12 +15,12 @@ namespace MatchNBuy.Model
 
 		[NotNull]
 		public string DayName => Date.ToString("ddd");
+
+		public string Keyword { get; set; }
 		
 		public int TemperatureC { get; set; }
 
 		public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-
-		public string ImageUrl { get; set; }
 
 		public string Summary { get; set; }
 	}

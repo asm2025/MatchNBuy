@@ -13,42 +13,10 @@
 	<ItemGroup>
 	  <None Remove="Files\images\users\user.jpg" />
 	  <None Remove="Files\images\users\user.png" />
-	  <None Remove="Files\images\weather\Bracing.png" />
-	  <None Remove="Files\images\weather\Bracing.svg" />
-	  <None Remove="Files\images\weather\Chilly.png" />
-	  <None Remove="Files\images\weather\Chilly.svg" />
-	  <None Remove="Files\images\weather\Cool.png" />
-	  <None Remove="Files\images\weather\Cool.svg" />
-	  <None Remove="Files\images\weather\Freezing.png" />
-	  <None Remove="Files\images\weather\Freezing.svg" />
-	  <None Remove="Files\images\weather\Hot.png" />
-	  <None Remove="Files\images\weather\Hot.svg" />
-	  <None Remove="Files\images\weather\Mild.png" />
-	  <None Remove="Files\images\weather\Scorching.png" />
-	  <None Remove="Files\images\weather\Warm.png" />
-	  <None Remove="Files\images\weather\Warm.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="Files\images\users\user.jpg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Bracing.svg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Chilly.svg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Cool.svg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Freezing.svg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Hot.svg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Files\images\weather\Warm.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

@@ -7,7 +7,7 @@ import UserClient from "@services/web/UserClient";
 	templateUrl: "./home.component.html",
 	styleUrls: ["./home.component.scss"]
 })
-export class HomeComponent implements OnInit {
+export default class HomeComponent implements OnInit {
 	registerMode = false;
 
 	constructor(private readonly _userClient: UserClient) {

@@ -1,57 +1,78 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { NgbCarousel, NgbCarouselConfig, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
+import moment from "moment";
 
 import { IAlert, AlertType } from "@common/Alert";
 import WeatherClient from "@services/web/WeatherClient";
 import { IForecast } from "@data/model/Forecast";
-import { IPagination } from "@common/pagination/Pagination";
-import { IPaginated } from "@common/pagination/Paginated";
 
 @Component({
 	selector: "app-weather",
 	templateUrl: "./weather.component.html",
 	styleUrls: ["./weather.component.scss"]
 })
-export class WeatherComponent implements OnInit {
-	private _alerts: IAlert[];
-	private _forecasts: IForecast[];
-	private _pagination: IPagination = {
-		page: 1,
-		pageSize: 7
-	};
+export default class WeatherComponent implements OnInit {
+	alerts: IAlert[];
+	forecasts: IForecast[];
+	selectedDate = new Date();
+	@ViewChild("carouselControl", { static: true }) carouselControl: NgbCarousel;
 
 	constructor(private readonly _rout: ActivatedRoute,
-		private readonly _weatherClient: WeatherClient) {
+		private readonly _weatherClient: WeatherClient,
+		config: NgbCarouselConfig) {
+		config.showNavigationArrows = false;
+		config.showNavigationIndicators = false;
 	}
 
 	ngOnInit(): void {
-		this._rout.data.subscribe(d => {
-			console.log(d);
-			this._forecasts = d["result"];
-			this._pagination = <IPagination>d["pagination"];
+		this._rout.data.subscribe(data => {
+			this.forecasts = data["resolved"];
 		});
+	}
+
+	onDateChanged($event: any) {
+		console.log($event);
+		this.selectedDate = moment($event).toDate();
+		this.list();
 	}
 
 	list() {
 		this.clearMessages();
-		this._weatherClient.list(this._pagination)
-			.subscribe((res: IPaginated<IForecast>) => {
-					this._forecasts = res.result;
-					this._pagination = res.pagination;
+		this._weatherClient.list(this.selectedDate)
+			.subscribe((res: IForecast[]) => {
+					this.forecasts = res || [];
 				},
 				(error: any) => {
-					this._alerts.push({
+					this.alerts.push({
 						type: AlertType.Error,
 						content: error.toString()
 					});
 				});
 	}
 
+	select(forecast: IForecast) {
+		const id = this.key(forecast);
+		this.carouselControl.select(id, NgbSlideEventSource.INDICATOR);
+	}
+
+	key(forecast: IForecast): string {
+		return forecast.date.toISOString();
+	}
+
+	icon(forecast: IForecast): string {
+		return `@images/weather/icons/${forecast.keyword}.svg`;
+	}
+
+	image(forecast: IForecast): string {
+		return `@images/weather/backdrops/${forecast.keyword}.jpg`;
+	}
+
 	clearMessages() {
-		if (!this._alerts) {
-			this._alerts = [];
+		if (!this.alerts) {
+			this.alerts = [];
 		} else {
-			this._alerts.length = 0;
+			this.alerts.length = 0;
 		}
 	}
 }

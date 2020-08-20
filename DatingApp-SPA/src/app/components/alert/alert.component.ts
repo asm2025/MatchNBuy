@@ -6,7 +6,7 @@ import alertUtil, { IAlert, AlertType, AlertTheme } from "@common/Alert";
 	templateUrl: "./alert.component.html",
 	styleUrls: ["./alert.component.scss"]
 })
-export class AlertComponent {
+export default class AlertComponent {
 	@Input() alerts: IAlert[];
 
 	protected getAlertType(alert: IAlert): string {

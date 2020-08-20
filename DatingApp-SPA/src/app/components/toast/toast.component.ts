@@ -5,9 +5,9 @@ import ToastService from "@services/toast.service";
 	selector: "app-toast",
 	templateUrl: "./toast.component.html",
 	styleUrls: ["./toast.component.scss"],
-	host: {'[class.ngb-toasts]': "true"}
+	host: { '[class.ngb-toasts]': "true" }
 })
-export class ToastComponent {
+export default class ToastComponent {
 	constructor(private readonly _toastService: ToastService) {
 	}
 

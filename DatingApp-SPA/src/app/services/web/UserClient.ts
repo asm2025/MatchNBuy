@@ -8,7 +8,7 @@ import querystring from "querystring";
 import ApiClient from "@common/web/ApiClient";
 import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { IPaginated } from "@common/pagination/Paginated";
-import { IUser, IUserForList, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
+import { IUser, IUserForList, IUserForDetails, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
 import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
 import { IMessageThread, IMessage, IMessageToAdd, IMessageToEdit } from "@data/model/Message";
 
@@ -18,19 +18,30 @@ import config from "@/config.json";
 	providedIn: "root"
 })
 export default class UserClient extends ApiClient<HttpClient> {
-	jwt = new JwtHelperService();
-	token?: string | null | undefined;
-	user: IUser | null | undefined;
-	photo = new BehaviorSubject<string>(config.users.defaultImage);
-	photoUrl = this.photo.asObservable();
+	private readonly _jwt = new JwtHelperService();
+
+	token: any;
+	private _user: IUser | null | undefined;
+	private _photo = new BehaviorSubject<string>(config.users.defaultImage);
+
+	photoUrl = this._photo.asObservable();
 
 	constructor(client: HttpClient) {
 		super(`${config.backend.url}/Users`, client);
 	}
 
 	// #region User
-	changeMemberPhoto(photoUrl: string | null | undefined) {
-		this.photo.next(photoUrl || config.users.defaultImage);
+	init() {
+		const jsonToken = localStorage.getItem("token");
+		const jsonUser = jsonToken ? localStorage.getItem("user") : null;
+
+		this.token = jsonToken ? this._jwt.decodeToken(jsonToken) : null;
+		debugger;
+		console.log(this.token);
+		this._user = jsonUser ? JSON.parse(jsonUser) as IUser : null;
+
+		const photoUrl = this._user ? this._user.photoUrl : null;
+		this._photo.next(photoUrl || config.users.defaultImage);
 	}
 
 	list(userList: IUserList): Observable<IPaginated<IUserForList>> {
@@ -38,34 +49,36 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this.client.get<IPaginated<IUserForList>>(`${this.baseUrl}/?${params}`);
 	}
 
-	get(id: string): Observable<IUserForList> {
-		return this.client.get<IUserForList>(`${this.baseUrl}/${encodeURIComponent(id)}`);
+	get(id: string): Observable<IUserForDetails> {
+		return this.client.get<IUserForDetails>(`${this.baseUrl}/${encodeURIComponent(id)}`);
 	}
 
 	login(userName: string, password: string): Observable<boolean> {
 		return this.client.post(`${this.baseUrl}/login`, { userName, password })
 			.pipe(map((res: any) => {
-				this.user = res.user as IUser;
+				this._user = res._user as IUser;
 
-				if (!this.user) {
-					localStorage.removeItem("token");
-					localStorage.removeItem("user");
-					this.token = null;
-					this.changeMemberPhoto(null);
+				if (!this._user) {
+					this.logout();
 					return false;
 				}
 
-				localStorage.setItem("token", res.token);
-				localStorage.setItem("user", JSON.stringify(this.user));
-				this.token = this.jwt.decodeToken(res.token);
-				this.changeMemberPhoto(this.user.photoUrl);
-				return true;
+				localStorage.setItem("token", res._token);
+				localStorage.setItem("user", JSON.stringify(this._user));
+				this.init();
+				return this._user !== null;
 			}));
+	}
+
+	logout() {
+		localStorage.removeItem("token");
+		localStorage.removeItem("user");
+		this.init();
 	}
 
 	isSignedIn(): boolean {
 		const token = localStorage.getItem("token");
-		return !!token && !this.jwt.isTokenExpired(token);
+		return !!token && !this._jwt.isTokenExpired(token);
 	}
 
 	register(user: IUserToRegister): Observable<string> {

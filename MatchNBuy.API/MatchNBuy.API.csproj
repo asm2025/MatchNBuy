@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.8.13.12</FileVersion>
+		<FileVersion>20.8.19.0</FileVersion>
 		<LangVersion>8</LangVersion>
 	</PropertyGroup>
 
@@ -63,7 +63,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="5.1.2" />
 		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.1" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.2" />
 		<PackageReference Include="System.Management" Version="4.7.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
 	</ItemGroup>

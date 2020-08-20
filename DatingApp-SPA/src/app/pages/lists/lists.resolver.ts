@@ -10,22 +10,22 @@ import ToastService from "@services/toast.service";
 
 @Injectable()
 export default class ListsResolver implements Resolve<IPaginated<IUserForList>> {
-	private _pagination = {
+	private _pagination: IUserList = {
 		page: 1,
 		pageSize: 10,
-	} as IUserList;
+	};
 
 	constructor(private readonly _router: Router,
-		private readonly _userService: UserClient,
+		private readonly _userClient: UserClient,
 		private readonly _toastService: ToastService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IPaginated<IUserForList>> {
-		return this._userService
+		return this._userClient
 			.list(this._pagination)
 			.pipe(
 				catchError(error => {
-					this._toastService.error(error);
+					this._toastService.error(error.toString());
 					this._router.navigate(["/"]);
 					return of({
 						pagination: this._pagination

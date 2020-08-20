@@ -14,9 +14,7 @@ namespace MatchNBuy.Model
 		public DateTime Date { get; set; }
 
 		[NotNull]
-		public string DayName => Date.ToString("ddd");
-
-		public string Keyword { get; set; }
+		public string Keyword { get; set; } = string.Empty;
 		
 		public int TemperatureC { get; set; }
 

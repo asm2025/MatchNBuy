@@ -11,10 +11,10 @@ import { IPaginated } from "@common/pagination/Paginated";
 	templateUrl: "./lists.component.html",
 	styleUrls: ["./lists.component.scss"]
 })
-export class ListsComponent implements OnInit {
-	private _alerts: IAlert[];
-	private _users: IUserForList[];
-	private _pagination: IUserList = {
+export default class ListsComponent implements OnInit {
+	alerts: IAlert[];
+	users: IUserForList[];
+	pagination: IUserList = {
 		page: 1,
 		pageSize: 10
 	};
@@ -25,10 +25,9 @@ export class ListsComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this._rout.data.subscribe(d => {
-			console.log(d);
-			this._users = d["result"];
-			this._pagination = <IUserList>d["pagination"];
+		this._rout.data.subscribe(data => {
+			this.users = data["resolved"].result;
+			this.pagination = <IUserList>data["resolved"].pagination;
 		});
 	}
 
@@ -37,26 +36,26 @@ export class ListsComponent implements OnInit {
 
 		switch (this._likesParam) {
 			case "Likers":
-				this._pagination.likers = true;
-				this._pagination.likees = false;
+				this.pagination.likers = true;
+				this.pagination.likees = false;
 				break;
 			case "Likees":
-				this._pagination.likers = false;
-				this._pagination.likees = true;
+				this.pagination.likers = false;
+				this.pagination.likees = true;
 				break;
 			default:
-				this._pagination.likers = false;
-				this._pagination.likees = false;
+				this.pagination.likers = false;
+				this.pagination.likees = false;
 				break;
 		}
 
-		this._userClient.list(this._pagination)
+		this._userClient.list(this.pagination)
 			.subscribe((res: IPaginated<IUserForList>) => {
-					this._users = res.result || [];
-					this._pagination = res.pagination;
+					this.users = res.result || [];
+					this.pagination = res.pagination;
 				},
 				error => {
-					this._alerts.push({
+					this.alerts.push({
 						type: AlertType.Error,
 						content: error.toString()
 					});
@@ -64,15 +63,15 @@ export class ListsComponent implements OnInit {
 	}
 
 	pageChanged(event: any): void {
-		this._pagination.page = event.page;
+		this.pagination.page = event.page;
 		this.loadUsers();
 	}
 
 	clearMessages() {
-		if (!this._alerts) {
-			this._alerts = [];
+		if (!this.alerts) {
+			this.alerts = [];
 		} else {
-			this._alerts.length = 0;
+			this.alerts.length = 0;
 		}
 	}
 }

@@ -7,15 +7,12 @@ import { IUser } from "@data/model/User";
 import { IPaginated } from "@common/pagination/Paginated";
 
 @Component({
-    selector: "app-nav",
-    templateUrl: "./nav.component.html",
-    styleUrls: ["./nav.component.scss"]
+	selector: "app-nav",
+	templateUrl: "./nav.component.html",
+	styleUrls: ["./nav.component.scss"]
 })
-export class NavComponent implements OnInit {
-
-    constructor() { }
-
-    ngOnInit() {
-    }
-
+export default class NavComponent implements OnInit {
+	ngOnInit() {
+		//
+	}
 }

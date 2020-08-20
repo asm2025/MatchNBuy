@@ -1,27 +1,46 @@
-<app-alert [alerts]="_alerts">
+<app-alert [alerts]="alerts">
 </app-alert>
-<ngb-carousel *ngIf="_forecasts && _forecasts.length > 0">
-
-</ngb-carousel>
-
-<table class="table">
-	<thead>
-		<tr class="d-flex">
-			<th class="col-1" scope="col"></th>
-			<th class="col-2" scope="col">Date</th>
-			<th class="col-1" scope="col">Temperature (C)</th>
-			<th class="col-1" scope="col">Temperature (F)</th>
-			<th class="col-7" scope="col">Summery</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr class="d-flex" *ngFor="let forecast of paginated.result">
-			<td class="col-1"><img [src]="forecast.imageUrl" class="img-fluid" alt="" style="max-width: 48px;" /></td>
-			<td class="col-2">{{ forecast.date | date:'EEEE, MMM d' }}</td>
-			<td class="col-1">{{ forecast.temperatureC | number }}</td>
-			<td class="col-1">{{ forecast.temperatureF | number }}</td>
-			<td class="col-7">{{ forecast.summary }}</td>
-		</tr>
-	</tbody>
-</table>
-<ngb-pagination [pageSize]="_pagination.pageSize" [collectionSize]="_pagination.count"  [(page)]="_pagination.page"></ngb-pagination>
+<div class="form-group form-group-sm row">
+	<label for="selectedDate" class="col-sm-2 col-form-label">Date: </label>
+	<div class="col-sm-10">
+		<input id="selectedDate" type="date" placeholder="yyyy-MM-dd" class="form-control" [ngModel]="selectedDate | date:'yyyy-MM-dd'" (ngModelChange)="onDateChanged($event)"/>
+	</div>
+</div>
+<div class="weather-padding">
+	<div class="row container d-flex justify-content-center">
+		<div class="col-lg-8 grid-margin stretch-card">
+			<div class="card card-weather">
+				<div class="card-body">
+					<ngb-carousel *ngIf="forecasts && forecasts.length > 0" [showNavigationArrows]="false"
+								  [showNavigationIndicators]="false" [interval]="false" #carouselControl>
+						<ng-template ngbSlide [id]="key(forecast)" *ngFor="let forecast of forecasts">
+							<div class="picsum-img-wrapper">
+								<img [src]="image(forecast)" alt="" />
+							</div>
+							<div class="carousel-caption">
+								<div class="weather-date-location">
+									<h3>{{ forecast.date | date:'EEEE' }}</h3>
+									<p>{{ forecast.date | date:'d MMMM, yyyy' }}</p>
+								</div>
+								<div class="weather-data d-flex">
+									<div class="mr-auto">
+										<h4 class="display-3">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
+										<p>{{ forecast.keyword }}</p>
+										<p>{{ forecast.summary }}</p>
+									</div>
+								</div>
+							</div>
+						</ng-template>
+					</ngb-carousel>
+				</div>
+				<div class="card-body p-0">
+					<div *ngFor="let forecast of forecasts" class="d-flex weakly-weather" (click)="select(forecast)">
+						<p class="mb-1">{{ forecast.date | date:'EEE' }}</p>
+						<img [src]="icon(forecast)" alt="" />
+						<p class="mb-0">{{ forecast.temperatureC }} <span class="symbol">°</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

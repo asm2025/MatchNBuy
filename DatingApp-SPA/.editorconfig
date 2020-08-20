@@ -1,16 +1,19 @@
+root=true
 # Editor configuration, see https://editorconfig.org
-root = true
 
 [*]
-charset = utf-8
-indent_style = tab
-indent_size = 4
-insert_final_newline = true
-trim_trailing_whitespace = true
+charset=utf-8
+indent_style=tab
+indent_size=4
+insert_final_newline=true
+trim_trailing_whitespace=true
+
+# ReSharper inspection severities
+resharper_string_literal_wrong_quotes_highlighting=suggestion
 
 [*.ts]
-quote_type = double
+quote_type=double
 
 [*.md]
-max_line_length = off
-trim_trailing_whitespace = true
+max_line_length=off
+trim_trailing_whitespace=true

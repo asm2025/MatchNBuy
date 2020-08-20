@@ -172,8 +172,8 @@ namespace MatchNBuy.API.Controllers
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
-			UserForList userForList = _mapper.Map<UserForList>(user);
-			return Ok(userForList);
+			UserForDetails userForDetails = _mapper.Map<UserForDetails>(user);
+			return Ok(userForDetails);
 		}
 
 		[AllowAnonymous]

@@ -1,5 +1,8 @@
 <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
-	<a class="navbar-brand" [routerLink]="['/']">{{ title }}</a>
+	<a class="navbar-brand" [routerLink]="['/']">
+		<img class="border-0" src="assets/images/logo_64x64.png" alt="logo" />
+		<span class="px-2">{{ title }}</span>
+	</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
@@ -33,25 +36,9 @@
 				</li>
 			</ul>
 			<ng-template #loginTemplate>
-				<form #loginForm="ngForm" (ngSubmit)="login()">
-					<div class="form-row align-items-center">
-						<input class="form-control mr-sm-2"
-								type="text"
-								placeholder="Username"
-								name="username"
-								required
-								[(ngModel)]="loginInfo.username"/>
-						<input class="form-control mr-sm-2"
-								type="password"
-								placeholder="Password"
-								name="password"
-								required
-								[(ngModel)]="loginInfo.password"/>
-						<button [disabled]="!loginForm.valid"
-								class="btn btn-success my-2 my-sm-0"
-								type="submit">Login</button>
-					</div>
-				</form>
+				<div class="nav-item" routerLinkActive="active">
+					<a [routerLink]="['/login']" class="nav-link">Sign in</a>
+				</div>
 			</ng-template>
 		</div>
 	</div>

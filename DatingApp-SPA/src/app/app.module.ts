@@ -1,6 +1,7 @@
 import { NgModule, Injectable } from "@angular/core";
 import {
 	BrowserModule,
+	Title,
 	HammerGestureConfig,
 	HAMMER_GESTURE_CONFIG
 } from "@angular/platform-browser";
@@ -35,8 +36,9 @@ import ToastsComponent from "@components/toast/toasts/toasts.component";
 import NavComponent from "@components/nav/nav.component";
 
 import HomeComponent from "@pages/home/home.component";
-import SignInComponent from "@pages/home/sign-in/sign-in.component";
-import SignUpComponent from "@pages/home/sign-up/sign-up.component";
+
+import SignInComponent from "@pages/sign-in/sign-in.component";
+import SignUpComponent from "@pages/sign-up/sign-up.component";
 
 import ListsComponent from "@pages/lists/lists.component";
 import ListsResolver from "@pages/lists/lists.resolver";
@@ -122,6 +124,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 	],
 	providers: [
 		{ provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig },
+		Title,
 		ErrorInterceptorProvider,
 		NgbAlertConfig,
 		NgbToastConfig,

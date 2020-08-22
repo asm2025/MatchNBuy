@@ -4,6 +4,9 @@ import AuthGuard from "@/_guards/auth.guard";
 
 import HomeComponent from "@pages/home/home.component";
 
+import SignInComponent from "@pages/sign-in/sign-in.component";
+import SignUpComponent from "@pages/sign-up/sign-up.component";
+
 import ListsComponent from "@pages/lists/lists.component";
 import ListsResolver from "@pages/lists/lists.resolver";
 import MemberListComponent from "@pages/members/member-list/member-list.component";
@@ -32,13 +35,11 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: "login",
-		component: HomeComponent,
-		outlet: "login"
+		component: SignInComponent
 	},
 	{
 		path: "register",
-		component: HomeComponent,
-		outlet: "register"
+		component: SignUpComponent
 	},
 	{
 		path: "weather",

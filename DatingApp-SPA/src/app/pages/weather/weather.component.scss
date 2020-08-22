@@ -76,8 +76,12 @@
 			font-size: 1.2rem;
 		}
 
+		&.active {
+			background-color: lightgrey;
+		}
+
 		&:hover {
-			background-color: aliceblue;
+			background-color: gainsboro;
 		}
 	}
 }

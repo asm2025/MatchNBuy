@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import {
 	NgbAlertConfig,
 	NgbToastConfig,
@@ -27,6 +28,7 @@ export default class AppComponent implements OnInit {
 		paginationConfig: NgbPaginationConfig,
 		modalConfig: NgbModalConfig,
 		progressBarConfig: NgbProgressbarConfig,
+		private readonly _titleService: Title,
 		private readonly _userClient: UserClient) {
 
 		// customize default values used by this component tree
@@ -47,6 +49,8 @@ export default class AppComponent implements OnInit {
 		modalConfig.scrollable = true;
 
 		progressBarConfig.showValue = true;
+
+		this._titleService.setTitle(config.title);
 	}
 
 	ngOnInit() {

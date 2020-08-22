@@ -5,6 +5,8 @@ import { IUserForLogin } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import ToastService from "@services/toast.service";
 
+import config from "@/config.json";
+
 @Component({
 	selector: "app-nav",
 	templateUrl: "./nav.component.html",
@@ -16,6 +18,7 @@ export default class NavComponent implements OnInit {
 		password: ""
 	};
 	photoUrl: string;
+	title = config.title;
 
 	constructor(private readonly _router: Router,
 		private readonly _userClient: UserClient,

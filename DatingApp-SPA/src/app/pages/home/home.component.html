@@ -1,12 +1,11 @@
-<div *ngIf="activeView === 0" class="text-center">
+<div class="text-center">
 	<h1>Find your match</h1>
 	<p class="lead">
 		Come on in to view your matches... All you need to do is sign up!
 	</p>
 	<div class="text-center">
-		<button class="btn btn-primary btn-lg mr-2" (click)="registerToggle()">Register</button>
+		<button class="btn btn-primary btn-lg mr-2" [routerLink]="['/login']">Sign in</button>
+		<button class="btn btn-primary btn-lg mr-2" [routerLink]="['/register']">Sign up</button>
 		<button class="btn btn-info btn-lg">Learn more</button>
 	</div>
 </div>
-<app-sign-in *ngIf="activeView === 1"></app-sign-in>
-<app-sign-up *ngIf="activeView === 2" (cancelRegister)="registerView(false)"></app-sign-up>

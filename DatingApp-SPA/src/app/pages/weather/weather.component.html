@@ -6,12 +6,14 @@
 			<div class="form-group form-group-sm row">
 				<label for="selectedDate" class="col-sm-2 col-form-label">Date: </label>
 				<div class="col-sm-10">
-					<input id="selectedDate" type="date" placeholder="yyyy-MM-dd" class="form-control" [ngModel]="selectedDate | date:'yyyy-MM-dd'" (ngModelChange)="onDateChanged($event)"/>
+					<input id="selectedDate" type="date" placeholder="yyyy-MM-dd" class="form-control"
+							[ngModel]="selectedDate | date:'yyyy-MM-dd'" (ngModelChange)="onDateChanged($event)" />
 				</div>
 			</div>
 			<div class="card card-weather">
 				<div class="card-body">
-					<ngb-carousel [showNavigationArrows]="false" [showNavigationIndicators]="false" [interval]="false" #carouselControl="ngbCarousel">
+					<ngb-carousel #weatherCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
+								[interval]="false" [activeId]="selectedDate">
 						<ng-template ngbSlide [id]="key(forecast.date)" *ngFor="let forecast of forecasts">
 							<div class="picsum-img-wrapper">
 								<img [src]="image(forecast)" alt="" />
@@ -31,8 +33,9 @@
 					</ngb-carousel>
 				</div>
 				<div class="card-body pt-0 d-flex weakly-weather">
-					<div *ngFor="let forecast of forecasts" class="weakly-weather-item" (click)="select(key(forecast.date))">
-						<div class="d-flex mx-1">
+					<div *ngFor="let forecast of forecasts" class="weakly-weather-item px-2"
+						[class.active]="forecast.date === selectedDate" (click)="select(forecast.date)">
+						<div class="d-flex">
 							<div>{{ forecast.date | date:'EEE' }}</div>
 							<div class="ml-auto">{{ forecast.temperatureC }} <span class="symbol">°</span></div>
 						</div>

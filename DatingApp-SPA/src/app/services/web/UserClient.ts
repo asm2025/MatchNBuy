@@ -20,8 +20,8 @@ import config from "@/config.json";
 export default class UserClient extends ApiClient<HttpClient> {
 	private readonly _jwt = new JwtHelperService();
 
-	token: any;
-	private _user: IUser | null | undefined;
+	token: any = null;
+	private _user: IUser | null | undefined = null;
 	private _photo = new BehaviorSubject<string>(config.users.defaultImage);
 
 	photoUrl = this._photo.asObservable();
@@ -36,7 +36,6 @@ export default class UserClient extends ApiClient<HttpClient> {
 		const jsonUser = jsonToken ? localStorage.getItem("user") : null;
 
 		this.token = jsonToken ? this._jwt.decodeToken(jsonToken) : null;
-		debugger;
 		console.log(this.token);
 		this._user = jsonUser ? JSON.parse(jsonUser) as IUser : null;
 
@@ -85,12 +84,16 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this.client.post<string>(`${this.baseUrl}/register`, user);
 	}
 
+	edit(id: string): Observable<IUserToUpdate> {
+		return this.client.get<IUserToUpdate>(`${this.baseUrl}/${encodeURIComponent(id)}/Edit`);
+	}
+
 	update(id: string, user: IUserToUpdate): Observable<IUserForSerialization> {
-		return this.client.put<IUserForSerialization>(`${this.baseUrl}/${encodeURIComponent(id)}/update`, user);
+		return this.client.put<IUserForSerialization>(`${this.baseUrl}/${encodeURIComponent(id)}/Update`, user);
 	}
 
 	delete(id: string): Observable<any> {
-		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(id)}/delete`);
+		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(id)}/Delete`);
 	}
 	// #endregion
 

@@ -1,6 +1,11 @@
 import { Genders } from "@data/common/Genders";
 import { ISortablePagination } from "@common/pagination/SortablePagination";
 
+export interface IUserForLogin {
+	userName: string;
+	password: string;
+}
+
 export interface IUser {
 	id: string;
 	userName: string;
@@ -52,12 +57,12 @@ export interface IUserToRegister {
 }
 
 export interface IUserToUpdate {
-	phoneNumber: string;
 	firstName: string;
 	lastName?: string;
 	knownAs: string;
 	gender: Genders;
 	dateOfBirth: Date;
+	phoneNumber: string;
 	cityId: string;
 	introduction?: string;
 	lookingFor?: string;

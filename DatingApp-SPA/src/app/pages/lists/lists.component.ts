@@ -20,12 +20,12 @@ export default class ListsComponent implements OnInit {
 	};
 	private _likesParam = "";
 
-	constructor(private readonly _rout: ActivatedRoute,
+	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient) {
 	}
 
 	ngOnInit() {
-		this._rout.data.subscribe(data => {
+		this._route.data.subscribe(data => {
 			this.users = data["resolved"].result;
 			this.pagination = <IUserList>data["resolved"].pagination;
 		});

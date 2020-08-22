@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, Injectable } from "@angular/core";
 import {
 	BrowserModule,
 	HammerGestureConfig,
@@ -30,10 +30,14 @@ import { appRoutes } from "./routes";
 
 import AppComponent from "@/app.component";
 import AlertComponent from "@components/alert/alert.component";
-import ToastComponent from "@components/toast/toast.component";
+import ToastsContainerComponent from "@components/toast/toasts-container/toasts-container.component";
+import ToastsComponent from "@components/toast/toasts/toasts.component";
 import NavComponent from "@components/nav/nav.component";
+
 import HomeComponent from "@pages/home/home.component";
-import RegisterComponent from "@pages/home/register/register.component";
+import SignInComponent from "@pages/home/sign-in/sign-in.component";
+import SignUpComponent from "@pages/home/sign-up/sign-up.component";
+
 import ListsComponent from "@pages/lists/lists.component";
 import ListsResolver from "@pages/lists/lists.resolver";
 import MemberListComponent from "@pages/members/member-list/member-list.component";
@@ -46,10 +50,14 @@ import MemberEditUnsavedChanges from "@pages/members/member-edit/member-edit-uns
 import MemberDetailComponent from "@pages/members/member-detail/member-detail.component";
 import MemberDetailResolver from "@pages/members/member-detail/member-detail.resolver";
 import MemberMessagesComponent from "@pages/members/member-messages/member-messages.component";
+
 import MessagesComponent from "@pages/messages/messages.component";
 import MessagesResolver from "@pages/messages/messages.resolver";
 import MessageThreadsComponent from "@pages/messages/message-threads/message-threads.component";
 import MessageThreadsResolver from "@pages/messages/message-threads/message-threads.resolver";
+import ThreadMessagesComponent from "@pages/messages/thread-messages/thread-messages.component";
+import ThreadMessagesResolver from "@pages/messages/thread-messages/thread-messages.resolver";
+
 import WeatherComponent from "@pages/weather/weather.component";
 import WeatherResolver from "@pages/weather/weather.resolver";
 
@@ -63,6 +71,7 @@ export function tokenGetter() {
 	return localStorage.getItem("token");
 }
 
+@Injectable()
 export class CustomHammerConfig extends HammerGestureConfig {
 	overrides = {
 		pinch: { enable: false },
@@ -93,10 +102,12 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		TimeAgoPipe,
 		AppComponent,
 		AlertComponent,
-		ToastComponent,
+		ToastsContainerComponent,
+		ToastsComponent,
 		NavComponent,
 		HomeComponent,
-		RegisterComponent,
+		SignInComponent,
+		SignUpComponent,
 		ListsComponent,
 		MemberListComponent,
 		PhotoEditorComponent,
@@ -106,6 +117,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		MemberMessagesComponent,
 		MessagesComponent,
 		MessageThreadsComponent,
+		ThreadMessagesComponent,
 		WeatherComponent
 	],
 	providers: [
@@ -127,6 +139,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		MemberDetailResolver,
 		MessagesResolver,
 		MessageThreadsResolver,
+		ThreadMessagesResolver,
 		WeatherResolver
 	],
 	bootstrap: [

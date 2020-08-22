@@ -6,7 +6,7 @@
 		"rootDir": "./",
 		"outDir": "./dist/out-tsc",
 		"sourceMap": true,
-		"declaration": false,
+		//"declaration": false,
 		"downlevelIteration": true,
 		"experimentalDecorators": true,
 		"moduleResolution": "node",
@@ -33,10 +33,6 @@
 		"typeRoots": [
 			"node_modules/@types",
 			"./typings"
-		],
-		"types": [
-			"node",
-			"lodash"
 		],
 		"lib": [
 			"es2018",
@@ -83,9 +79,10 @@
 	},
 	"include": [
 		"./typings",
-		"src/**/*"
+		"src/**/*",
+		"src/**/*.json"
 	],
-	"exclude": [
+		"exclude": [
 		"node_modules",
 		"dist",
 		"public"

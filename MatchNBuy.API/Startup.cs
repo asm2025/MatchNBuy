@@ -20,6 +20,7 @@ using asm.Core.Swagger.Extensions;
 using asm.Data.Patterns.Repository;
 using asm.Extensions;
 using asm.Helpers;
+using asm.Newtonsoft.Serialization;
 using asm.Patterns.Images;
 using AutoMapper;
 using MatchNBuy.API.ImageBuilders;
@@ -33,6 +34,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Scrutor;
 using Swashbuckle.AspNetCore.Filters;
@@ -222,7 +224,34 @@ namespace MatchNBuy.API
 				.AddNewtonsoftJson(options =>
 				{
 					JsonHelper.SetDefaults(options.SerializerSettings, contractResolver: new CamelCasePropertyNamesContractResolver());
-					options.SerializerSettings.AddConverters();
+					options.SerializerSettings.DateFormatString = DateTimeHelper.LONG_DATE_TIME_FORMAT;
+					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+
+					/*
+					 * add all the converters except the iso date formatter.
+					 * Why? because the formatted date sometimes lack the time
+					 * zone anyway, which is weird ;(. Not sure why the serializer
+					 * sometimes produces dates with timezone and sometimes not.
+					 * Is this another bug?
+					 *
+					 * Another reason is the date actually will be a string on the other
+					 * end in spite of the damn type specification! Which means we'll have
+					 * to deal with both JS date and string even if the TypeScript has date
+					 * type specified. Apparently, the type is lost when converted to JavaScript
+					 * code. All in all, JS date time zone's is not reliable and its compatibility
+					 * is absolute garbage!! So forget it.
+					 *
+					 * The better option is to fix the date format string.
+					 * options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+					 * is important otherwise, the serializer will suddenly use Microsoft date format Date(number)
+					 * because some psycho decided for some weird unwelcome reason to use the strange MS date format.
+					 * Take your wildest guesses!
+					 */
+					JsonSerializerSettingsConverters allConverters = EnumHelper<JsonSerializerSettingsConverters>.GetAllFlags() &
+																	~(JsonSerializerSettingsConverters.IsoDateTime |
+																	JsonSerializerSettingsConverters.JavaScriptDateTime |
+																	JsonSerializerSettingsConverters.UnixDateTime);
+					options.SerializerSettings.AddConverters(allConverters);
 				});
 		}
 

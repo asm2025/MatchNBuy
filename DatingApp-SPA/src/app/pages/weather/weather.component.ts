@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { Subscription } from "rxjs";
 import { NgbCarousel, NgbCarouselConfig, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
-import moment from "moment";
 
 import { IAlert, AlertType } from "@common/Alert";
 import WeatherClient from "@services/web/WeatherClient";
-import { IForecast } from "@data/model/Forecast";
+import { IForecastResult, IForecast } from "@data/model/Forecast";
 
 @Component({
 	selector: "app-weather",
@@ -15,10 +15,12 @@ import { IForecast } from "@data/model/Forecast";
 export default class WeatherComponent implements OnInit {
 	alerts: IAlert[];
 	forecasts: IForecast[];
-	selectedDate = new Date();
-	@ViewChild("carouselControl", { static: true }) carouselControl: NgbCarousel;
+	selectedDate: Date;
+	@ViewChild("carouselControl", { static: true }) carouselControl!: NgbCarousel;
 
-	constructor(private readonly _rout: ActivatedRoute,
+	private _forecastsSubscription: Subscription;
+
+	constructor(private readonly _route: ActivatedRoute,
 		private readonly _weatherClient: WeatherClient,
 		config: NgbCarouselConfig) {
 		config.showNavigationArrows = false;
@@ -26,22 +28,29 @@ export default class WeatherComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this._rout.data.subscribe(data => {
-			this.forecasts = data["resolved"];
+		this._forecastsSubscription = this._route.data.subscribe(data => {
+			this.selectedDate = data["resolved"].selectedDate;
+			this.forecasts = data["resolved"].forecasts || [];
+			if (this.forecasts.length > 0) this.select(this.key(this.selectedDate));
 		});
 	}
 
+	ngOnDestroy() {
+		this._forecastsSubscription.unsubscribe();
+	}
+
 	onDateChanged($event: any) {
-		console.log($event);
-		this.selectedDate = moment($event).toDate();
+		this.selectedDate = new Date($event);
 		this.list();
 	}
 
 	list() {
 		this.clearMessages();
 		this._weatherClient.list(this.selectedDate)
-			.subscribe((res: IForecast[]) => {
-					this.forecasts = res || [];
+			.subscribe((res: IForecastResult) => {
+					this.selectedDate = res.selectedDate;
+					this.forecasts = res.forecasts || [];
+					if (this.forecasts.length > 0) this.select(this.key(this.selectedDate));
 				},
 				(error: any) => {
 					this.alerts.push({
@@ -51,21 +60,21 @@ export default class WeatherComponent implements OnInit {
 				});
 	}
 
-	select(forecast: IForecast) {
-		const id = this.key(forecast);
+	select(id: string) {
 		this.carouselControl.select(id, NgbSlideEventSource.INDICATOR);
 	}
 
-	key(forecast: IForecast): string {
-		return forecast.date.toISOString();
+	key(date: Date | string): string {
+		if (typeof date !== "string") return date.toISOString();
+		return new Date(date).toISOString();
 	}
 
 	icon(forecast: IForecast): string {
-		return `@images/weather/icons/${forecast.keyword}.svg`;
+		return `assets/images/weather/icons/${forecast.keyword}.svg`;
 	}
 
 	image(forecast: IForecast): string {
-		return `@images/weather/backdrops/${forecast.keyword}.jpg`;
+		return `assets/images/weather/backdrops/${forecast.keyword}.jpg`;
 	}
 
 	clearMessages() {

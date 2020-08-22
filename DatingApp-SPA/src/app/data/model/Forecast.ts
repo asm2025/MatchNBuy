@@ -5,3 +5,8 @@ export interface IForecast {
 	temperatureF: number;
 	summary: string;
 }
+
+export interface IForecastResult {
+	selectedDate: Date;
+	forecasts: IForecast[];
+}

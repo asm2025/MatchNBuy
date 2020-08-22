@@ -26,8 +26,13 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet]
 		public IActionResult List(DateTime date)
 		{
+			if (date == DateTime.MinValue || date == DateTime.MaxValue) date = DateTime.Today;
 			IList<Forecast> forecasts = _repository.List(date);
-			return Ok(forecasts);
+			return Ok(new
+			{
+				selectedDate = date,
+				forecasts
+			});
 		}
 
 		[HttpGet("{date}")]

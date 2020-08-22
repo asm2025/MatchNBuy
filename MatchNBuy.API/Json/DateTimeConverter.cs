@@ -10,8 +10,9 @@ namespace MatchNBuy.API.Json
 		/// <inheritdoc />
 		public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			if (!typeof(DateTime).IsAssignableFrom(typeToConvert)) throw new InvalidOperationException();
-			return DateTime.Parse(reader.GetString());
+			return !typeof(DateTime).IsAssignableFrom(typeToConvert)
+						? throw new InvalidOperationException()
+						: DateTime.Parse(reader.GetString());
 		}
 
 		/// <inheritdoc />

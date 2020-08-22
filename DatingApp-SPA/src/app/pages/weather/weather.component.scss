@@ -11,7 +11,7 @@
 }
 
 .weather-padding {
-	padding: 5rem
+	padding: 4rem
 }
 
 .stretch-card {
@@ -21,15 +21,45 @@
 
 .card-weather {
 	.weather-data {
-		padding: 0 0 4.75rem;
+		padding: 0;
 	}
 
 	.weather-date-location {
-		padding: 0 0 38px;
+		padding: 0 0 10px;
 	}
 
 	.display-3 {
 		font-size: 2.5rem
+	}
+
+	.picsum-img-wrapper {
+		img {
+			position: relative;
+			width: 100%;
+		}
+
+		&:after {
+			content: '\A';
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			background: rgba(0,0,0,0.6);
+			opacity: 65;
+		}
+	}
+
+	.carousel-caption {
+		text-align: left;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		margin: 0 2%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 }
 
@@ -39,11 +69,15 @@
 	.weakly-weather-item {
 		flex: 0 0 14.28%;
 		border-right: 1px solid #f2f2f2;
-		padding: 1rem;
 		text-align: center;
+		cursor: pointer;
 
 		i {
 			font-size: 1.2rem;
+		}
+
+		&:hover {
+			background-color: aliceblue;
 		}
 	}
 }

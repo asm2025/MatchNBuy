@@ -6,12 +6,15 @@
 */
 {
 	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true
+	},
 	"references": [
-		{
-			"path": "./tsconfig.app.json"
-		},
-		{
-			"path": "./tsconfig.spec.json"
-		}
-	]
-}
+			{
+				"path": "./tsconfig.app.json"
+			},
+			{
+				"path": "./tsconfig.spec.json"
+			}
+		]
+	}

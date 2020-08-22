@@ -205,6 +205,22 @@ namespace MatchNBuy.API.Controllers
 			return CreatedAtAction(nameof(Get), new { id = user.Id }, userForSerialization);
 		}
 
+		[HttpGet("{id}/[action]")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		public async Task<IActionResult> Edit([FromRoute] string id, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(id)) return BadRequest();
+			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
+			User user = await _repository.GetAsync(token, id);
+			token.ThrowIfCancellationRequested();
+			if (user == null) return NotFound(id);
+			UserToUpdate userToUpdate = _mapper.Map<UserToUpdate>(user);
+			return Ok(userToUpdate);
+		}
+
 		[HttpPut("{id}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]

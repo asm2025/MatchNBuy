@@ -23,8 +23,8 @@ namespace MatchNBuy.Data.Fakers
 		public ForecastFaker()
 		{
 			base.RuleFor(e => e.Date, DateTime.Today);
-			base.RuleFor(e => e.Keyword, (f, e) => __summaries[e.TemperatureC].Name);
 			base.RuleFor(e => e.TemperatureC, () => RNGRandomHelper.Next(-20, 50));
+			base.RuleFor(e => e.Keyword, (f, e) => __summaries[e.TemperatureC].Name);
 			base.RuleFor(e => e.Summary, (f, e) => __summaries[e.TemperatureC].Description);
 		}
 	}

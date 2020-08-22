@@ -8,16 +8,16 @@ import UserClient from "@services/web/UserClient";
 import ToastService from "@services/toast.service";
 
 @Injectable()
-export default class MemberEditResolver implements Resolve<IUserToUpdate> {
+export default class MemberEditResolver implements Resolve<IUserToUpdate | null | undefined> {
 	constructor(private readonly _router: Router,
 		private readonly _userClient: UserClient,
 		private readonly _toastService: ToastService) {
 	}
 
-	resolve(route: ActivatedRouteSnapshot): Observable<IUserToUpdate> {
+	resolve(route: ActivatedRouteSnapshot): Observable<IUserToUpdate | null | undefined> {
 		const id = this._userClient.token.nameid;
 		return this._userClient
-			.get(id)
+			.edit(id)
 			.pipe(
 				catchError(error => {
 					this._toastService.error(error.toString());

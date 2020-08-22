@@ -1,13 +1,13 @@
 import { Component, TemplateRef } from "@angular/core";
+
 import ToastService from "@services/toast.service";
 
 @Component({
-	selector: "app-toast",
-	templateUrl: "./toast.component.html",
-	styleUrls: ["./toast.component.scss"],
-	host: { '[class.ngb-toasts]': "true" }
+	selector: "app-toasts",
+	templateUrl: "./toasts.component.html",
+	styleUrls: ["./toasts.component.scss"],
 })
-export default class ToastComponent {
+export default class ToastsGlobalComponent {
 	constructor(private readonly _toastService: ToastService) {
 	}
 

@@ -2,8 +2,10 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.8.19.3</FileVersion>
+		<FileVersion>20.8.21.3</FileVersion>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+		<OutputType>Library</OutputType>
+		<AssemblyName>DatingApp.SPA</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -29,6 +31,13 @@
 
 	<ItemGroup>
 		<Folder Include="src\assets\images\weather\backdrops\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.2">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>

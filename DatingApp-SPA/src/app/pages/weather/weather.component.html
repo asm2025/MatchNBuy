@@ -1,19 +1,18 @@
 <app-alert [alerts]="alerts">
 </app-alert>
-<div class="form-group form-group-sm row">
-	<label for="selectedDate" class="col-sm-2 col-form-label">Date: </label>
-	<div class="col-sm-10">
-		<input id="selectedDate" type="date" placeholder="yyyy-MM-dd" class="form-control" [ngModel]="selectedDate | date:'yyyy-MM-dd'" (ngModelChange)="onDateChanged($event)"/>
-	</div>
-</div>
 <div class="weather-padding">
 	<div class="row container d-flex justify-content-center">
 		<div class="col-lg-8 grid-margin stretch-card">
+			<div class="form-group form-group-sm row">
+				<label for="selectedDate" class="col-sm-2 col-form-label">Date: </label>
+				<div class="col-sm-10">
+					<input id="selectedDate" type="date" placeholder="yyyy-MM-dd" class="form-control" [ngModel]="selectedDate | date:'yyyy-MM-dd'" (ngModelChange)="onDateChanged($event)"/>
+				</div>
+			</div>
 			<div class="card card-weather">
 				<div class="card-body">
-					<ngb-carousel *ngIf="forecasts && forecasts.length > 0" [showNavigationArrows]="false"
-								  [showNavigationIndicators]="false" [interval]="false" #carouselControl>
-						<ng-template ngbSlide [id]="key(forecast)" *ngFor="let forecast of forecasts">
+					<ngb-carousel [showNavigationArrows]="false" [showNavigationIndicators]="false" [interval]="false" #carouselControl="ngbCarousel">
+						<ng-template ngbSlide [id]="key(forecast.date)" *ngFor="let forecast of forecasts">
 							<div class="picsum-img-wrapper">
 								<img [src]="image(forecast)" alt="" />
 							</div>
@@ -22,22 +21,23 @@
 									<h3>{{ forecast.date | date:'EEEE' }}</h3>
 									<p>{{ forecast.date | date:'d MMMM, yyyy' }}</p>
 								</div>
-								<div class="weather-data d-flex">
-									<div class="mr-auto">
-										<h4 class="display-3">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
-										<p>{{ forecast.keyword }}</p>
-										<p>{{ forecast.summary }}</p>
-									</div>
+								<div class="weather-data">
+									<h4 class="display-3">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
+									<p>{{ forecast.keyword }}</p>
+									<p>{{ forecast.summary }}</p>
 								</div>
 							</div>
 						</ng-template>
 					</ngb-carousel>
 				</div>
-				<div class="card-body p-0">
-					<div *ngFor="let forecast of forecasts" class="d-flex weakly-weather" (click)="select(forecast)">
-						<p class="mb-1">{{ forecast.date | date:'EEE' }}</p>
+				<div class="card-body pt-0 d-flex weakly-weather">
+					<div *ngFor="let forecast of forecasts" class="weakly-weather-item" (click)="select(key(forecast.date))">
+						<div class="d-flex mx-1">
+							<div>{{ forecast.date | date:'EEE' }}</div>
+							<div class="ml-auto">{{ forecast.temperatureC }} <span class="symbol">°</span></div>
+						</div>
+						<div class="text-left">{{ forecast.date | date:'d-M' }}</div>
 						<img [src]="icon(forecast)" alt="" />
-						<p class="mb-0">{{ forecast.temperatureC }} <span class="symbol">°</span></p>
 					</div>
 				</div>
 			</div>

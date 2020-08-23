@@ -1,9 +1,7 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Subscription } from "rxjs";
 
-import { IUserForLogin } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import ToastService from "@services/toast.service";
 
 import config from "@/config.json";
 
@@ -12,30 +10,21 @@ import config from "@/config.json";
 	templateUrl: "./nav.component.html",
 	styleUrls: ["./nav.component.scss"]
 })
-export default class NavComponent implements OnInit {
-	loginInfo: IUserForLogin = {
-		userName: "",
-		password: ""
-	};
+export default class NavComponent implements OnInit, OnDestroy {
 	photoUrl: string;
 	title = config.title;
 
-	constructor(private readonly _router: Router,
-		private readonly _userClient: UserClient,
-		private readonly _toastService: ToastService) {
+	private _photoUrlSubscription: Subscription;
+
+	constructor(private readonly _userClient: UserClient) {
 	}
 
 	ngOnInit() {
-		this._userClient.photoUrl.subscribe(url => this.photoUrl = url);
+		this._photoUrlSubscription = this._userClient.photoUrl.subscribe(url => this.photoUrl = url);
 	}
 
-	login() {
-		this._userClient.login(this.loginInfo.userName, this.loginInfo.password)
-			.subscribe(() => {
-					this._toastService.success("Logged in successfully.");
-					this._router.navigate(["/members"]);
-				},
-				error => this._toastService.error(error.toString()));
+	ngOnDestroy() {
+		this._photoUrlSubscription.unsubscribe();
 	}
 
 	logout() {

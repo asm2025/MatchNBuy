@@ -1,0 +1,46 @@
+.alerts {
+	position: relative;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	min-width: 100%;
+	min-height: 100%;
+	z-index: 1200;
+	pointer-events: none;
+
+	.alert {
+		pointer-events: all;
+	}
+}
+
+.toasts-container {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	min-width: 100%;
+	min-height: 100%;
+	margin: 0 !important;
+	padding: 0 !important;
+	z-index: 1200 !important;
+	pointer-events: none;
+	background: none !important;
+
+	.toasts {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		min-width: 100%;
+		min-height: 100%;
+		z-index: 1200;
+		pointer-events: none;
+
+		.toast {
+			pointer-events: all;
+		}
+	}
+}

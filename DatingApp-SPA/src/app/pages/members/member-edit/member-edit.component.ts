@@ -1,29 +1,34 @@
 import {
 	Component,
 	OnInit,
+	OnDestroy,
 	ViewChild,
 	HostListener
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { NgForm } from "@angular/forms";
+import { Subscription } from "rxjs";
 
 import { IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import ToastService from "@services/toast.service";
+import AlertService from "@/services/alert.service";
 
 @Component({
 	selector: "app-member-edit",
 	templateUrl: "./member-edit.component.html",
 	styleUrls: ["./member-edit.component.scss"]
 })
-export default class MemberEditComponent implements OnInit {
+export default class MemberEditComponent implements OnInit, OnDestroy {
 	@ViewChild("editForm") editForm: NgForm;
 	user: IUserToUpdate | null | undefined;
 	photoUrl: string;
 
+	private _routeSubscription: Subscription;
+	private _photoSubscription: Subscription;
+
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
-		private readonly _toastService: ToastService) {
+		private readonly _alertService: AlertService) {
 	}
 
 	@HostListener("window:beforeunload", ["$event"])
@@ -32,8 +37,13 @@ export default class MemberEditComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this._route.data.subscribe(data => this.user = data["user"]);
-		this._userClient.photoUrl.subscribe(url => this.photoUrl = url);
+		this._routeSubscription = this._route.data.subscribe(data => this.user = data["user"]);
+		this._photoSubscription = this._userClient.photoUrl.subscribe(url => this.photoUrl = url);
+	}
+
+	ngOnDestroy() {
+		this._routeSubscription.unsubscribe();
+		this._photoSubscription.unsubscribe();
 	}
 
 	updateUser() {
@@ -42,11 +52,11 @@ export default class MemberEditComponent implements OnInit {
 			.update(this._userClient.token.nameid, this.user)
 			.subscribe(
 				() => {
-					this._toastService.success("Profile updated successfully.");
+					this._alertService.toasts.success("Profile updated successfully.");
 					this.editForm.reset(this.user);
 				},
 				error => {
-					this._toastService.error(error.toString());
+					this._alertService.toasts.error(error.toString());
 				}
 			);
 	}

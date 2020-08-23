@@ -5,13 +5,13 @@ import { catchError } from "rxjs/operators";
 
 import { IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import ToastService from "@services/toast.service";
+import AlertService from "@/services/alert.service";
 
 @Injectable()
 export default class MemberEditResolver implements Resolve<IUserToUpdate | null | undefined> {
 	constructor(private readonly _router: Router,
 		private readonly _userClient: UserClient,
-		private readonly _toastService: ToastService) {
+		private readonly _alertService: AlertService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IUserToUpdate | null | undefined> {
@@ -20,7 +20,7 @@ export default class MemberEditResolver implements Resolve<IUserToUpdate | null 
 			.edit(id)
 			.pipe(
 				catchError(error => {
-					this._toastService.error(error.toString());
+					this._alertService.toasts.error(error.toString());
 					this._router.navigate(["/members"]);
 					return of(null);
 				})

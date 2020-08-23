@@ -29,27 +29,35 @@ export interface IAlert {
 	delay?: number;
 }
 
+export interface IToast extends IAlert {
+	title?: string | null | undefined;
+}
+
 const alertUtil = {
 	toAlertTheme: (alertType: AlertType): AlertTheme => {
 		let type: AlertTheme;
 
 		switch (alertType) {
-		case AlertType.Information:
-			type = AlertTheme.Info;
-			break;
-		case AlertType.Success:
-			type = AlertTheme.Success;
-			break;
-		case AlertType.Warning:
-			type = AlertTheme.Warning;
-			break;
-		case AlertType.Error:
-		case AlertType.Fatal:
-			type = AlertTheme.Danger;
-			break;
-		default:
-			type = AlertTheme.Light;
-			break;
+			case AlertType.Trace:
+			case AlertType.Debug:
+				type = AlertTheme.Secondary;
+				break;
+			case AlertType.Information:
+				type = AlertTheme.Info;
+				break;
+			case AlertType.Success:
+				type = AlertTheme.Success;
+				break;
+			case AlertType.Warning:
+				type = AlertTheme.Warning;
+				break;
+			case AlertType.Error:
+			case AlertType.Fatal:
+				type = AlertTheme.Danger;
+				break;
+			default:
+				type = AlertTheme.Light;
+				break;
 		}
 
 		return type;

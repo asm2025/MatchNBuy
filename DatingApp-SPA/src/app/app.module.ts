@@ -30,9 +30,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { appRoutes } from "./routes";
 
 import AppComponent from "@/app.component";
-import AlertComponent from "@components/alert/alert.component";
-import ToastsContainerComponent from "@components/toast/toasts-container/toasts-container.component";
-import ToastsComponent from "@components/toast/toasts/toasts.component";
+import AlertsComponent from "@components/alert/alerts/alerts.component";
 import NavComponent from "@components/nav/nav.component";
 
 import HomeComponent from "@pages/home/home.component";
@@ -66,7 +64,7 @@ import WeatherResolver from "@pages/weather/weather.resolver";
 import CountriesClient from "@services/web/CountriesClient";
 import WeatherClient from "@services/web/WeatherClient";
 import UserClient from "@services/web/UserClient";
-import ToastService from "@services/toast.service";
+import AlertService from "@/services/alert.service";
 import { ErrorInterceptorProvider } from "@services/error.service";
 
 export function tokenGetter() {
@@ -103,9 +101,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 	declarations: [
 		TimeAgoPipe,
 		AppComponent,
-		AlertComponent,
-		ToastsContainerComponent,
-		ToastsComponent,
+		AlertsComponent,
 		NavComponent,
 		HomeComponent,
 		SignInComponent,
@@ -134,7 +130,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		CountriesClient,
 		WeatherClient,
 		UserClient,
-		ToastService,
+		AlertService,
 		ListsResolver,
 		MemberListResolver,
 		MemberEditResolver,

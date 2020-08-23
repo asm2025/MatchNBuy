@@ -224,11 +224,9 @@ namespace MatchNBuy.API
 				.AddNewtonsoftJson(options =>
 				{
 					JsonHelper.SetDefaults(options.SerializerSettings, contractResolver: new CamelCasePropertyNamesContractResolver());
-					options.SerializerSettings.DateFormatString = DateTimeHelper.LONG_DATE_TIME_FORMAT;
-					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
 
 					/*
-					 * add all the converters except the iso date formatter.
+					 * add all the converters except date formatters.
 					 * Why? because the formatted date sometimes lack the time
 					 * zone anyway, which is weird ;(. Not sure why the serializer
 					 * sometimes produces dates with timezone and sometimes not.
@@ -247,6 +245,9 @@ namespace MatchNBuy.API
 					 * because some psycho decided for some weird unwelcome reason to use the strange MS date format.
 					 * Take your wildest guesses!
 					 */
+					options.SerializerSettings.DateFormatString = DateTimeHelper.LONG_DATE_TIME_FORMAT;
+					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+
 					JsonSerializerSettingsConverters allConverters = EnumHelper<JsonSerializerSettingsConverters>.GetAllFlags() &
 																	~(JsonSerializerSettingsConverters.IsoDateTime |
 																	JsonSerializerSettingsConverters.JavaScriptDateTime |

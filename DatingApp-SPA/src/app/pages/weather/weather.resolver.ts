@@ -5,13 +5,13 @@ import { catchError } from "rxjs/operators";
 
 import { IForecastResult } from "@data/model/Forecast";
 import WeatherClient from "@services/web/WeatherClient";
-import ToastService from "@services/toast.service";
+import AlertService from "@/services/alert.service";
 
 @Injectable()
 export default class ListsResolver implements Resolve<IForecastResult> {
 	constructor(private readonly _router: Router,
 		private readonly _weatherClient: WeatherClient,
-		private readonly _toastService: ToastService) {
+		private readonly _alertService: AlertService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IForecastResult> {
@@ -20,7 +20,7 @@ export default class ListsResolver implements Resolve<IForecastResult> {
 			.list(date)
 			.pipe(
 				catchError(error => {
-					this._toastService.error(error.toString());
+					this._alertService.toasts.error(error.toString());
 					this._router.navigate(["/"]);
 					return of({
 						selectedDate: date,

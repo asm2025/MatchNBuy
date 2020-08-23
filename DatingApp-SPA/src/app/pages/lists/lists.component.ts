@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { Subscription } from "rxjs";
 
-import { IAlert, AlertType } from "@common/Alert";
 import UserClient from "@services/web/UserClient";
+import AlertService from "@services/alert.service";
 import { IUserForList, IUserList } from "@data/model/User";
 import { IPaginated } from "@common/pagination/Paginated";
 
@@ -11,29 +12,33 @@ import { IPaginated } from "@common/pagination/Paginated";
 	templateUrl: "./lists.component.html",
 	styleUrls: ["./lists.component.scss"]
 })
-export default class ListsComponent implements OnInit {
-	alerts: IAlert[];
+export default class ListsComponent implements OnInit, OnDestroy {
 	users: IUserForList[];
 	pagination: IUserList = {
 		page: 1,
 		pageSize: 10
 	};
+
 	private _likesParam = "";
+	private _routeSubscription: Subscription;
 
 	constructor(private readonly _route: ActivatedRoute,
-		private readonly _userClient: UserClient) {
+		private readonly _userClient: UserClient,
+		private readonly _alertService: AlertService) {
 	}
 
 	ngOnInit() {
-		this._route.data.subscribe(data => {
+		this._routeSubscription = this._route.data.subscribe(data => {
 			this.users = data["resolved"].result;
 			this.pagination = <IUserList>data["resolved"].pagination;
 		});
 	}
 
-	loadUsers() {
-		this.clearMessages();
+	ngOnDestroy() {
+		this._routeSubscription.unsubscribe();
+	}
 
+	loadUsers() {
 		switch (this._likesParam) {
 			case "Likers":
 				this.pagination.likers = true;
@@ -49,29 +54,19 @@ export default class ListsComponent implements OnInit {
 				break;
 		}
 
-		this._userClient.list(this.pagination)
-			.subscribe((res: IPaginated<IUserForList>) => {
-					this.users = res.result || [];
-					this.pagination = res.pagination;
-				},
-				error => {
-					this.alerts.push({
-						type: AlertType.Error,
-						content: error.toString()
-					});
-				});
+		try {
+			this._userClient.list(this.pagination)
+				.subscribe((res: IPaginated<IUserForList>) => {
+						this.users = res.result || [];
+						this.pagination = res.pagination;
+					}, error => this._alertService.alerts.error(error.toString()));
+		} catch (e) {
+			this._alertService.alerts.error(e.toString());
+		} 
 	}
 
 	pageChanged(event: any): void {
 		this.pagination.page = event.page;
 		this.loadUsers();
-	}
-
-	clearMessages() {
-		if (!this.alerts) {
-			this.alerts = [];
-		} else {
-			this.alerts.length = 0;
-		}
 	}
 }

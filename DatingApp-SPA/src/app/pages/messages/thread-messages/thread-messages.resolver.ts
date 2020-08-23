@@ -8,7 +8,7 @@ import { SortType } from "@common/sorting/SortType";
 import { IPaginated } from "@common/pagination/Paginated";
 import { IMessage } from "@data/model/Message";
 import UserClient from "@services/web/UserClient";
-import ToastService from "@services/toast.service";
+import AlertService from "@/services/alert.service";
 
 @Injectable()
 export default class ThreadMessagesResolver implements Resolve<IPaginated<IMessage>> {
@@ -24,7 +24,7 @@ export default class ThreadMessagesResolver implements Resolve<IPaginated<IMessa
 
 	constructor(private readonly _router: Router,
 		private readonly _userClient: UserClient,
-		private readonly _toastService: ToastService) {
+		private readonly _alertService: AlertService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IPaginated<IMessage>> {
@@ -34,7 +34,7 @@ export default class ThreadMessagesResolver implements Resolve<IPaginated<IMessa
 			.thread(userId, recipientId, this._pagination)
 			.pipe(
 				catchError(error => {
-					this._toastService.error(error.toString());
+					this._alertService.toasts.error(error.toString());
 					this._router.navigate(["/"]);
 					return of({
 						pagination: this._pagination

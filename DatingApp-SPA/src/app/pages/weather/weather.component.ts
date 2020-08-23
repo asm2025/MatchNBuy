@@ -3,9 +3,9 @@ import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 
-import { IAlert, AlertType } from "@common/Alert";
 import { IForecastResult, IForecast } from "@data/model/Forecast";
 import WeatherClient from "@services/web/WeatherClient";
+import AlertService from "@/services/alert.service";
 import DateTimeHelper from "@common/helpers/DateTimeHelper";
 
 @Component({
@@ -14,7 +14,6 @@ import DateTimeHelper from "@common/helpers/DateTimeHelper";
 	styleUrls: ["./weather.component.scss"]
 })
 export default class WeatherComponent implements AfterViewInit, OnDestroy {
-	alerts: IAlert[];
 	forecasts: IForecast[];
 	selectedDate: string;
 	@ViewChild("weatherCarousel") weatherCarousel!: NgbCarousel;
@@ -23,6 +22,7 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _weatherClient: WeatherClient,
+		private readonly _alertService: AlertService,
 		config: NgbCarouselConfig) {
 		config.showNavigationArrows = false;
 		config.showNavigationIndicators = false;
@@ -44,18 +44,15 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 	}
 
 	list(date: Date | string): void {
-		this.clearMessages();
-		this._weatherClient.list(date)
-			.subscribe((res: IForecastResult) => {
+		try {
+			this._weatherClient.list(date)
+				.subscribe((res: IForecastResult) => {
 					this.forecasts = res.forecasts || [];
 					this.select(this.key(res.selectedDate));
-				},
-				(error: any) => {
-					this.alerts.push({
-						type: AlertType.Error,
-						content: error.toString()
-					});
-				});
+				}, error => this._alertService.alerts.error(error.toString()));
+		} catch (e) {
+			this._alertService.alerts.error(e.toString());
+		}
 	}
 
 	select(id: string): void {
@@ -81,13 +78,5 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 
 	image(forecast: IForecast): string {
 		return `assets/images/weather/backdrops/${forecast.keyword}.jpg`;
-	}
-
-	clearMessages(): void {
-		if (!this.alerts) {
-			this.alerts = [];
-		} else {
-			this.alerts.length = 0;
-		}
 	}
 }

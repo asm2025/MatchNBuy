@@ -6,7 +6,7 @@ import { catchError } from "rxjs/operators";
 import { IPaginated } from "@common/pagination/Paginated";
 import { IUserForList, IUserList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import ToastService from "@services/toast.service";
+import AlertService from "@/services/alert.service";
 
 @Injectable()
 export default class ListsResolver implements Resolve<IPaginated<IUserForList>> {
@@ -17,7 +17,7 @@ export default class ListsResolver implements Resolve<IPaginated<IUserForList>> 
 
 	constructor(private readonly _router: Router,
 		private readonly _userClient: UserClient,
-		private readonly _toastService: ToastService) {
+		private readonly _alertService: AlertService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IPaginated<IUserForList>> {
@@ -25,7 +25,7 @@ export default class ListsResolver implements Resolve<IPaginated<IUserForList>> 
 			.list(this._pagination)
 			.pipe(
 				catchError(error => {
-					this._toastService.error(error.toString());
+					this._alertService.toasts.error(error.toString());
 					this._router.navigate(["/"]);
 					return of({
 						pagination: this._pagination

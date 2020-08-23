@@ -8,7 +8,7 @@
 		<span class="navbar-toggler-icon"></span>
 	</button>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<div class="navbar-nav mr-auto">
+		<div class="navbar-nav w-100">
 			<div class="nav-item" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/weather']">Weather</a>
 			</div>
@@ -19,7 +19,7 @@
 				<li class="nav-item" routerLinkActive="active">
 					<a class="nav-link" [routerLink]="['/lists']">Lists</a>
 				</li>
-				<li class="nav-item" routerLinkActive="active">
+				<li class="nav-item ml-auto" routerLinkActive="active">
 					<div class="dropdown" dropdown>
 						<span class="mr-1">
 							<img src="{{ photoUrl || '@images/user.jpg'}}" alt="">
@@ -36,7 +36,7 @@
 				</li>
 			</ul>
 			<ng-template #loginTemplate>
-				<div class="nav-item" routerLinkActive="active">
+				<div class="nav-item ml-auto" routerLinkActive="active">
 					<a [routerLink]="['/login']" class="nav-link">Sign in</a>
 				</div>
 			</ng-template>

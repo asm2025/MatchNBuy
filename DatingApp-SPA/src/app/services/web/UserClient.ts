@@ -14,6 +14,32 @@ import { IMessageThread, IMessage, IMessageToAdd, IMessageToEdit } from "@data/m
 
 import config from "@/config.json";
 
+export function getToken(): string | null {
+	return localStorage.getItem("SESSIONID");
+}
+
+function setToken(value: string | null | undefined) {
+	if (!value)
+		localStorage.removeItem("SESSIONID");
+	else
+		localStorage.setItem("SESSIONID", value);
+}
+
+function getUser(): IUser | null {
+	if (!getToken()) return null;
+	const jsonUser = localStorage.getItem("USER");
+	if (!jsonUser) return null;
+	return JSON.parse(jsonUser) as IUser;
+}
+
+function setUser(value: IUser | null | undefined) {
+
+	if (!value)
+		localStorage.removeItem("USER");
+	else
+		localStorage.setItem("USER", JSON.stringify(value));
+}
+
 @Injectable({
 	providedIn: "root"
 })
@@ -32,12 +58,8 @@ export default class UserClient extends ApiClient<HttpClient> {
 
 	// #region User
 	init() {
-		const jsonToken = localStorage.getItem("token");
-		const jsonUser = jsonToken ? localStorage.getItem("user") : null;
-
-		this.token = jsonToken ? this._jwt.decodeToken(jsonToken) : null;
-		console.log(this.token);
-		this._user = jsonUser ? JSON.parse(jsonUser) as IUser : null;
+		this.token = getToken();
+		this._user = getUser();
 
 		const photoUrl = this._user ? this._user.photoUrl : null;
 		this._photo.next(photoUrl || config.users.defaultImage);
@@ -55,28 +77,28 @@ export default class UserClient extends ApiClient<HttpClient> {
 	login(userName: string, password: string): Observable<boolean> {
 		return this.client.post(`${this.baseUrl}/login`, { userName, password })
 			.pipe(map((res: any) => {
-				this._user = res._user as IUser;
+				this._user = res.user as IUser;
 
 				if (!this._user) {
 					this.logout();
 					return false;
 				}
 
-				localStorage.setItem("token", res._token);
-				localStorage.setItem("user", JSON.stringify(this._user));
+				setToken(res.token);
+				setUser(this._user);
 				this.init();
 				return this._user !== null;
 			}));
 	}
 
 	logout() {
-		localStorage.removeItem("token");
-		localStorage.removeItem("user");
+		setToken(null);
+		setUser(null);
 		this.init();
 	}
 
 	isSignedIn(): boolean {
-		const token = localStorage.getItem("token");
+		const token = getToken();
 		return !!token && !this._jwt.isTokenExpired(token);
 	}
 

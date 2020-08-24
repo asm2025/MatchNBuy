@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using asm.Data.Model;
 using asm.Extensions;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace MatchNBuy.Model
@@ -65,10 +64,9 @@ namespace MatchNBuy.Model
 		public string Token { get; set; }
 
 		[NotMapped]
-		[NotNull]
-		public string PhotoUrl => Photos?.FirstOrDefault(e => e.IsDefault)?.Url ?? string.Empty;
+		public string PhotoUrl => Photos?.FirstOrDefault(e => e.IsDefault)?.Url;
 
-        public virtual City City { get; set; }
+		public virtual City City { get; set; }
 
 		public virtual ICollection<UserRole> UserRoles { get; set; }
 

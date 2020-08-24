@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using asm.Extensions;
 using asm.Helpers;
 using asm.Patterns.Images;
@@ -36,7 +37,8 @@ namespace MatchNBuy.API.ImageBuilders
 		public string BuildRelative(string imageName, ImageSize imageSize)
 		{
 			imageName = UriHelper.Trim(imageName) ?? _default ?? throw new ArgumentNullException(nameof(imageName));
-			return $"/{BaseUri}/{imageName}{FileExtension}";
+			if (string.IsNullOrEmpty(Path.GetExtension(imageName))) imageName += FileExtension;
+			return $"/{BaseUri}/{imageName}";
 		}
 	}
 }

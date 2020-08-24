@@ -16,7 +16,7 @@ export default class SignInComponent {
 		password: ""
 	};
 
-	console = console;
+	rememberMe = false;
 
 	constructor(private readonly _router: Router,
 		private readonly _userClient: UserClient,
@@ -31,13 +31,10 @@ export default class SignInComponent {
 						this._router.navigate(["/members"]);
 					},
 					error => {
-						console.log("in", error);
 						this._alertService.alerts.error(error.toString());
-						this._alertService.toasts.error(error.toString());
 					});
 		} catch (e) {
 			this._alertService.alerts.error(e.toString());
-			this._alertService.toasts.error(e.toString());
 		} 
 	}
 }

@@ -190,8 +190,8 @@ namespace MatchNBuy.API
 				.AddJwtBearerOptions(options =>
 				{
 					SecurityKey signingKey = SecurityKeyHelper.CreateSymmetricKey(_configuration.GetValue<string>("jwt:signingKey"), 256);
-					SecurityKey decryptionKey = SecurityKeyHelper.CreateSymmetricKey(_configuration.GetValue<string>("jwt:encryptionKey"), 256);
-					options.Setup(signingKey, decryptionKey, _configuration, _environment.IsDevelopment());
+					//SecurityKey decryptionKey = SecurityKeyHelper.CreateSymmetricKey(_configuration.GetValue<string>("jwt:encryptionKey"), 256);
+					options.Setup(signingKey, /*decryptionKey, */_configuration, _environment.IsDevelopment());
 				})
 				.Services
 				.AddAuthorization(options =>

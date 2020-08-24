@@ -22,6 +22,7 @@ using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
 using MatchNBuy.Model.TransferObjects;
 using JetBrains.Annotations;
+using MatchNBuy.Data.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,6 +80,18 @@ namespace MatchNBuy.API.Controllers
 			IList<UserForList> users = await queryable.Paginate(pagination)
 													.ProjectTo<UserForList>(_mapper.ConfigurationProvider)
 													.ToListAsync(token);
+
+			if (users.Count > 0)
+			{
+				IUserImageBuilder imageBuilder = _repository.ImageBuilder;
+
+				foreach (UserForList user in users)
+				{
+					if (string.IsNullOrEmpty(user.PhotoUrl)) continue;
+					user.PhotoUrl = imageBuilder.Build(user.PhotoUrl).ToString();
+				}
+			}
+
 			return Ok(new Paginated<UserForList>(users, listSettings));
 
 			static DynamicFilter BuildFilter(ClaimsPrincipal user, UserList pagination)
@@ -173,6 +186,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
 			UserForDetails userForDetails = _mapper.Map<UserForDetails>(user);
+			if (userForDetails != null && !string.IsNullOrEmpty(userForDetails.PhotoUrl)) userForDetails.PhotoUrl = _repository.ImageBuilder.Build(user.PhotoUrl).ToString();
 			return Ok(userForDetails);
 		}
 
@@ -185,10 +199,12 @@ namespace MatchNBuy.API.Controllers
 			User user = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
 			if (user == null || string.IsNullOrEmpty(user.Token)) return Unauthorized(loginParams.UserName);
+			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(user);
+			if (!string.IsNullOrEmpty(userForLoginDisplay.PhotoUrl)) userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(userForLoginDisplay.PhotoUrl).ToString();
 			return Ok(new
 			{
 				token = user.Token,
-				user = _mapper.Map<UserForLoginDisplay>(user)
+				user = userForLoginDisplay
 			});
 		}
 
@@ -202,6 +218,7 @@ namespace MatchNBuy.API.Controllers
 			user = await _repository.AddAsync(user, userParams.Password, token);
 			token.ThrowIfCancellationRequested();
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
+			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
 			return CreatedAtAction(nameof(Get), new { id = user.Id }, userForSerialization);
 		}
 
@@ -239,6 +256,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (user == null) throw new Exception("Updating user failed.");
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
+			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
 			return Ok(userForSerialization);
 		}
 

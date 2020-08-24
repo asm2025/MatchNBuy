@@ -554,7 +554,7 @@ namespace MatchNBuy.Data.Repositories
 				}, JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role),
 				Expires = DateTime.UtcNow.AddMinutes(Configuration.GetValue<int>("jwt:timeout").NotBelow(1)),
 				SigningCredentials = new SigningCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:signingKey"), 256), SecurityAlgorithms.HmacSha256Signature),
-				EncryptingCredentials = new EncryptingCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:encryptionKey"), 256), SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes256CbcHmacSha512)
+				//EncryptingCredentials = new EncryptingCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:encryptionKey"), 256), SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes128CbcHmacSha256)
 			};
 
 			JwtSecurityToken securityToken = SecurityTokenHelper.CreateToken(tokenDescriptor);

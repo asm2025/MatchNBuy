@@ -63,13 +63,9 @@ import WeatherResolver from "@pages/weather/weather.resolver";
 
 import CountriesClient from "@services/web/CountriesClient";
 import WeatherClient from "@services/web/WeatherClient";
-import UserClient from "@services/web/UserClient";
+import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@/services/alert.service";
 import { ErrorInterceptorProvider } from "@services/error.service";
-
-export function tokenGetter() {
-	return localStorage.getItem("token");
-}
 
 @Injectable()
 export class CustomHammerConfig extends HammerGestureConfig {
@@ -92,7 +88,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		MatIconModule,
 		JwtModule.forRoot({
 			config: {
-				tokenGetter,
+				tokenGetter: getToken,
 				allowedDomains: ["localhost:8000"],
 				disallowedRoutes: ["localhost:8000/Users/Login"]
 			}

@@ -1,13 +1,13 @@
-<form class="form-signin text-center" (ngSubmit)="login()" #loginForm="ngForm">
+<form #loginForm="ngForm" (ngSubmit)="login()" class="form-signin text-center">
 	<img class="mb-4" src="assets/images/logo_128x128.png" alt="" width="128" height="128">
 	<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-	<label for="email" class="sr-only">User name or email address</label>
-	<input id="email" type="email" class="form-control my-1" placeholder="User name or email address" required autofocus />
+	<label for="userName" class="sr-only">User name</label>
+	<input type="text" name="userName" [(ngModel)]="loginInfo.userName" class="form-control my-1" placeholder="User name" required autofocus />
 	<label for="password" class="sr-only">Password</label>
-	<input type="password" id="password" class="form-control my-1" placeholder="Password" required>
+	<input type="password" name="password" [(ngModel)]="loginInfo.password" class="form-control my-1" placeholder="Password" required />
 	<div class="checkbox my-1">
-		<label><input type="checkbox" value="remember-me" /> Remember me</label>
+		<label><input type="checkbox" name="rememberMe" [(ngModel)]="rememberMe" value="remember-me" /> Remember me</label>
 	</div>
-	<button class="btn btn-lg btn-primary col-5 mr-2" type="submit">Sign in</button>
+	<button class="btn btn-lg btn-primary col-5 mr-2" type="submit" [disabled]="!loginForm.valid">Sign in</button>
 	<button class="btn btn-lg btn-secondary col-5" type="button" [routerLink]="['/register']">Sign up</button>
 </form>

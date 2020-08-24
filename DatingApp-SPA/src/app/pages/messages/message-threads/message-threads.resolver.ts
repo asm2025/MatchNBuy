@@ -7,6 +7,7 @@ import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { SortType } from "@common/sorting/SortType";
 import { IPaginated } from "@common/pagination/Paginated";
 import { IMessageThread } from "@data/model/Message";
+import { IUser } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@/services/alert.service";
 
@@ -28,7 +29,7 @@ export default class MessageThreadsResolver implements Resolve<IPaginated<IMessa
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IPaginated<IMessageThread>> {
-		const userId = this._userClient.token.nameid;
+		const userId = (<IUser>this._userClient.user).id;
 		return this._userClient
 			.threads(userId, this._pagination)
 			.pipe(

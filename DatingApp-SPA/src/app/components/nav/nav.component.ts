@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
 import { Subscription } from "rxjs";
 
 import UserClient from "@services/web/UserClient";
@@ -16,7 +17,8 @@ export default class NavComponent implements OnInit, OnDestroy {
 
 	private _photoUrlSubscription: Subscription;
 
-	constructor(private readonly _userClient: UserClient) {
+	constructor(private readonly _router: Router,
+		private readonly _userClient: UserClient) {
 	}
 
 	ngOnInit() {
@@ -29,6 +31,7 @@ export default class NavComponent implements OnInit, OnDestroy {
 
 	logout() {
 		this._userClient.logout();
+		this._router.navigate(["/"]);
 	}
 
 	isSignedIn(): boolean {

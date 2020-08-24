@@ -3,7 +3,7 @@ import { Resolve, Router, ActivatedRouteSnapshot } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { IUserToUpdate } from "@data/model/User";
+import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@/services/alert.service";
 
@@ -15,7 +15,7 @@ export default class MemberEditResolver implements Resolve<IUserToUpdate | null 
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IUserToUpdate | null | undefined> {
-		const id = this._userClient.token.nameid;
+		const id = (<IUser>this._userClient.user).id;
 		return this._userClient
 			.edit(id)
 			.pipe(

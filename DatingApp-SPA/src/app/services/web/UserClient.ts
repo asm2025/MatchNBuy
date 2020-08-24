@@ -46,19 +46,30 @@ function setUser(value: IUser | null | undefined) {
 export default class UserClient extends ApiClient<HttpClient> {
 	private readonly _jwt = new JwtHelperService();
 
-	token: any = null;
+	private _token: string | null | undefined = null;
 	private _user: IUser | null | undefined = null;
 	private _photo = new BehaviorSubject<string>(config.users.defaultImage);
-
-	photoUrl = this._photo.asObservable();
+	private _photoUrl = this._photo.asObservable();
 
 	constructor(client: HttpClient) {
 		super(`${config.backend.url}/Users`, client);
 	}
 
+	get token(): string | null | undefined {
+		return this._token;
+	}
+
+	get user(): IUser | null | undefined {
+		return this._user;
+	}
+
+	get photoUrl(): Observable<string> {
+		return this._photoUrl;
+	}
+
 	// #region User
 	init() {
-		this.token = getToken();
+		this._token = getToken();
 		this._user = getUser();
 
 		const photoUrl = this._user ? this._user.photoUrl : null;
@@ -99,7 +110,13 @@ export default class UserClient extends ApiClient<HttpClient> {
 
 	isSignedIn(): boolean {
 		const token = getToken();
-		return !!token && !this._jwt.isTokenExpired(token);
+		if (!token) return false;
+
+		try {
+			return !this._jwt.isTokenExpired(token);
+		} catch (e) {
+			return false;
+		} 
 	}
 
 	register(user: IUserToRegister): Observable<string> {

@@ -9,7 +9,7 @@ import { ActivatedRoute } from "@angular/router";
 import { NgForm } from "@angular/forms";
 import { Subscription } from "rxjs";
 
-import { IUserToUpdate } from "@data/model/User";
+import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@/services/alert.service";
 
@@ -47,9 +47,10 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 	}
 
 	updateUser() {
-		if (!this.user) return;
+		if (!this._userClient.user || !this.user) return;
+		const id = (<IUser>this._userClient.user).id;
 		this._userClient
-			.update(this._userClient.token.nameid, this.user)
+			.update(id, this.user)
 			.subscribe(
 				() => {
 					this._alertService.toasts.success("Profile updated successfully.");

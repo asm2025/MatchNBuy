@@ -29,7 +29,7 @@ import { MatIconModule } from "@angular/material/icon";
 
 import { appRoutes } from "./routes";
 
-import AppComponent from "@/app.component";
+import AppComponent from "./app.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
 import NavComponent from "@components/nav/nav.component";
 
@@ -64,7 +64,7 @@ import WeatherResolver from "@pages/weather/weather.resolver";
 import CountriesClient from "@services/web/CountriesClient";
 import WeatherClient from "@services/web/WeatherClient";
 import UserClient, { getToken } from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 import { ErrorInterceptorProvider } from "@services/error.service";
 
 @Injectable()

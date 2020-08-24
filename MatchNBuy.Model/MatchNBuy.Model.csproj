@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <FileVersion>20.8.24.1</FileVersion>
+    <FileVersion>20.8.24.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

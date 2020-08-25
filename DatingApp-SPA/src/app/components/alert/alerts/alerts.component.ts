@@ -1,5 +1,11 @@
 import { Component, TemplateRef, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
+import {
+	fadeInRightOnEnterAnimation,
+	fadeInUpOnEnterAnimation,
+	fadeOutOnLeaveAnimation,
+	fadeOutDownOnLeaveAnimation
+} from "angular-animations";
 
 import alertUtil, { IAlert, IToast, AlertType, AlertTheme } from "@common/Alert";
 import AlertService from "@services/alert.service";
@@ -8,6 +14,12 @@ import AlertService from "@services/alert.service";
 	selector: "app-alerts",
 	templateUrl: "./alerts.component.html",
 	styleUrls: ["./alerts.component.scss"],
+	animations: [
+		fadeInRightOnEnterAnimation(),
+		fadeInUpOnEnterAnimation(),
+		fadeOutOnLeaveAnimation(),
+		fadeOutDownOnLeaveAnimation()
+	]
 })
 export default class AlertsGlobalComponent implements OnInit, OnDestroy {
 	alerts: IAlert[] = [];

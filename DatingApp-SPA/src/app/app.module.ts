@@ -6,7 +6,6 @@ import {
 	HAMMER_GESTURE_CONFIG
 } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { JwtModule } from "@auth0/angular-jwt";
@@ -26,8 +25,11 @@ import { TimeAgoPipe } from "time-ago-pipe";
  * <mat-icon>location_off</mat-icon>
  */
 import { MatIconModule } from "@angular/material/icon";
+import { FontAwesomeModule, FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons"
+import { fab } from "@fortawesome/free-brands-svg-icons"
 
-import { appRoutes } from "./routes";
+import AppRoutingModule from "./app-routing.module";
 
 import AppComponent from "./app.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
@@ -67,6 +69,7 @@ import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 import { ErrorInterceptorProvider } from "@services/error.service";
 
+
 @Injectable()
 export class CustomHammerConfig extends HammerGestureConfig {
 	overrides = {
@@ -79,7 +82,8 @@ export class CustomHammerConfig extends HammerGestureConfig {
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,
-		RouterModule.forRoot(appRoutes),
+		FontAwesomeModule,
+		AppRoutingModule,
 		HttpClientModule,
 		FormsModule,
 		ReactiveFormsModule,
@@ -141,4 +145,9 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		AppComponent
 	]
 })
-export class AppModule { }
+export class AppModule {
+	constructor(faLibrary: FaIconLibrary) {
+		faLibrary.addIcons();
+		faLibrary.addIconPacks(fas, fab);
+	}
+}

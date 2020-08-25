@@ -1,22 +1,26 @@
-<div class="alerts">
-	<ngb-alert *ngFor="let alert of alerts"
-				[type]="getAlertType(alert)"
-				[dismissible]="isDismissible(alert)"
-				(close)="closeAlert(alert)">
-		<ng-template [ngIf]="isTemplate(alert)" [ngIfElse]="text">
-			<ng-template [ngTemplateOutlet]="alert.content"></ng-template>
-		</ng-template>
-		<ng-template #text>{{ alert.content }}</ng-template>
-	</ngb-alert>
-</div>
-<div class="ngb-toasts toasts-container" aria-live="polite" aria-atomic="true">
-	<div class="toasts d-flex align-items-end">
+<div class="alerts" aria-live="polite" aria-atomic="true">
+	<div class="alerts-container">
+		<ngb-alert *ngFor="let alert of alerts"
+					[@fadeInUpOnEnter]
+					[@fadeOutOnLeave]
+					[type]="getAlertType(alert)"
+					[dismissible]="isDismissible(alert)"
+					(close)="closeAlert(alert)">
+			<ng-template [ngIf]="isTemplate(alert)" [ngIfElse]="text">
+				<ng-template [ngTemplateOutlet]="alert.content"></ng-template>
+			</ng-template>
+			<ng-template #text>{{ alert.content }}</ng-template>
+		</ngb-alert>
+	</div>
+	<div class="ngb-toasts toasts-container">
 		<ngb-toast *ngFor="let toast of toasts"
-					class="p-1 ml-auto {{ getToastCssClass(toast) }}"
-					[header]="toast.title"
-					[autohide]="isDismissible(toast)"
-					[delay]="toast.delay || 5000"
-					(hide)="closeToast(toast)">
+				   class="p-1 animated animate__fadeInRight {{ getToastCssClass(toast) }}"
+				   [@fadeInRightOnEnter]
+				   [@fadeOutDownOnLeave]
+				   [header]="toast.title"
+				   [autohide]="isDismissible(toast)"
+				   [delay]="toast.delay || 5000"
+				   (hide)="closeToast(toast)">
 			<ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">
 				<ng-template [ngTemplateOutlet]="toast.content"></ng-template>
 			</ng-template>

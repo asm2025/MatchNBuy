@@ -1,1 +1,127 @@
-﻿
+.register {
+	> .header {
+		text-align: left;
+
+		img,
+		svg {
+			margin: 0 16px 0 0;
+			width: 30%;
+			-webkit-animation: mover 2s infinite alternate;
+			animation: mover 1s infinite alternate;
+		}
+	}
+
+	> .row {
+		> .left {
+			text-align: left;
+
+			.form-signup {
+				width: 100%;
+			}
+		}
+
+		> .right {
+			text-align: center;
+
+			> .divider-text {
+				margin-top: 8px;
+				margin-bottom: 8px;
+			}
+
+			input {
+				border: none;
+				border-radius: 4px;
+				padding: 0;
+				width: 100%;
+				background: #f8f9fa;
+				font-weight: bold;
+				color: #383d41;
+				margin-top: 0;
+				margin-bottom: 0;
+				cursor: pointer;
+			}
+
+			padding {
+				font-weight: lighter;
+			}
+		}
+	}
+}
+
+@-webkit-keyframes mover {
+	0% {
+		transform: translateY(0);
+	}
+
+	100% {
+		transform: translateY(-10px);
+	}
+}
+
+@keyframes mover {
+	0% {
+		transform: translateY(0);
+	}
+
+	100% {
+		transform: translateY(-10px);
+	}
+}
+
+@media (min-width: 576px) {
+	.register {
+		> .header {
+			img,
+			svg {
+				margin: 0 16px 0 0;
+				width: 30%;
+			}
+		}
+
+		> .row {
+			> .right {
+				> .divider-text {
+					margin-top: 8px;
+					margin-bottom: 8px;
+
+				}
+
+				input {
+					border-radius: 1.25rem;
+					padding: 1%;
+					width: 80%;
+					margin-top: 30%;
+					margin-bottom: 1%;
+				}
+			}
+		}
+	}
+}
+
+@media (min-width: 768px) {
+	.register {
+		> .header {
+			img,
+			svg {
+				margin: 0 16px 4px 0;
+				width: 20%;
+			}
+		}
+
+		> .row {
+			> .right {
+				> .divider-text {
+					margin-top: -24px;
+				}
+
+				input {
+					border-radius: 1.5rem;
+					padding: 2%;
+					width: 60%;
+					margin-top: 30%;
+					margin-bottom: 3%;
+				}
+			}
+		}
+	}
+}

@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 
 import AuthGuard from "@/_guards/auth.guard";
 
@@ -27,7 +27,7 @@ import ThreadMessagesResolver from "@pages/messages/thread-messages/thread-messa
 import WeatherComponent from "@pages/weather/weather.component";
 import WeatherResolver from "@pages/weather/weather.resolver";
 
-export const appRoutes: Routes = [
+export const routes: Routes = [
 	{
 		path: "",
 		component: HomeComponent,
@@ -95,3 +95,6 @@ export const appRoutes: Routes = [
 		pathMatch: "full"
 	}
 ];
+
+const AppRoutingModule = RouterModule.forRoot(routes, { useHash: false });
+export default AppRoutingModule;

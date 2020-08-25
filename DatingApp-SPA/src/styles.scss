@@ -1,13 +1,11 @@
+html * {
+	outline: none !important;
+}
+
 body {
 	width: 100%;
 	height: 100%;
 	background-color: #f9f9fa
-}
-
-.flex {
-	-webkit-box-flex: 1;
-	-ms-flex: 1 1 auto;
-	flex: 1 1 auto
 }
 
 .h3, h3 {
@@ -24,13 +22,15 @@ p {
 	font-size: 13px
 }
 
-.mr-auto,
-.mx-auto {
-	margin-right: auto !important
+.navbar {
+	padding: 0 10px;
+	min-height: 70px;
+	max-height: 70px;
 }
 
-.navbar {
-	padding: 0;
+.alert {
+	border-radius: 0 !important;
+	margin-bottom: 2px !important;
 }
 
 .ngb-toasts {
@@ -42,5 +42,109 @@ p {
 	.toast-header {
 		color: inherit !important;
 		background-color: transparent !important;
+	}
+}
+
+.fa,
+.ng-fa-icon {
+	margin: 0 8px;
+}
+
+.divider-text {
+	position: relative;
+	text-align: center;
+	min-width: 100%;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+@media (min-width: 576px) {
+	.divider-text {
+		margin-top: 15px;
+		margin-bottom: 15px;
+	}
+}
+
+@media (min-width: 768px) {
+	.divider-text {
+		margin-top: -24px;
+	}
+}
+
+.divider-text span {
+	padding: 7px;
+	font-size: 12px;
+	position: relative;
+	z-index: 2;
+	border-radius: 4px;
+}
+
+.divider-text:after {
+	content: "";
+	position: absolute;
+	width: 100%;
+	border-bottom: 1px solid #ddd;
+	top: 55%;
+	left: 0;
+	z-index: 1;
+}
+
+.btn-google {
+	background-color: rgba(234, 67, 53, 0.75) !important;
+	border: 1px solid #EA4335 !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #EA4335 !important;
+	}
+}
+
+.btn-facebook {
+	background-color: rgba(64, 93, 157, 0.75) !important;
+	border: 1px solid #405D9D !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #405D9D !important;
+	}
+}
+
+.btn-twitter {
+	background-color: rgba(66, 174, 236, 0.75) !important;
+	border: 1px solid #42AEEC !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #42AEEC !important;
+	}
+}
+
+.btn-github {
+	background-color: rgba(245, 245, 245, 0.75) !important;
+	border: 1px solid #EBEBEB !important;
+	color: #333 !important;
+
+	&:hover {
+		background-color: #EBEBEB !important;
+	}
+}
+
+.btn-microsoft {
+	background-color: rgba(0, 161, 241, 0.75) !important;
+	border: 1px solid #00A1F1 !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #00A1F1 !important;
+	}
+}
+
+.btn-apple {
+	background-color: rgba(163, 170, 174, 0.75) !important;
+	border: 1px solid #A3A3A3 !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #A3A3A3 !important;
 	}
 }

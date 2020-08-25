@@ -2,9 +2,9 @@
 	<div class="row container d-flex justify-content-center">
 		<div class="grid-margin stretch-card">
 			<div class="form-group form-group-sm row">
-				<label for="selectedDate" class="col-2 col-md-2 col-lg-2 col-xl-1 col-form-label">Date: </label>
-				<div class="col-10 col-md-5 col-lg-4 col-xl-3">
-					<input id="selectedDate" type="date" placeholder="yyyy-MM-dd" class="form-control"
+				<label for="selectedDate" class="col-2 col-md-2 col-lg-1 col-form-label">Date: </label>
+				<div class="col-10 col-md-5 col-lg-3">
+					<input type="date" id="selectedDate" placeholder="yyyy-MM-dd" class="form-control"
 							[ngModel]="selectedDate | date:'yyyy-MM-dd'" (ngModelChange)="onDateChanged($event)" />
 				</div>
 			</div>

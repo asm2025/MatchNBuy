@@ -1,6 +1,8 @@
 <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-primary">
 	<a class="navbar-brand" [routerLink]="['/']">
-		<img class="border-0" src="assets/images/logo_64x64.png" alt="logo" />
+		<svg viewBox="0 0 100 100" width="32">
+			<use xlink:href="assets/images/logo.svg#Layer_1" fill="white" />
+		</svg>
 		<span class="px-2">{{ title }}</span>
 	</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -28,9 +30,9 @@
 					Welcome {{ _userClient.user.knownAs | titlecase }}
 				</a>
 				<div ngbDropdownMenu aria-labelledby="userMenu" class="dropdown-menu">
-					<a ngbDropdownItem [routerLink]="['/member/edit']"><i class="fa fa-user"></i> Edit Profile</a>
+					<a ngbDropdownItem [routerLink]="['/member/edit']"><fa-icon icon="user"></fa-icon>Edit Profile</a>
 					<hr />
-					<a ngbDropdownItem (click)="logout()"><i class="fa fa-sign-out"></i> Logout</a>
+					<a ngbDropdownItem (click)="logout()"><fa-icon icon="sign-out"></fa-icon>Logout</a>
 				</div>
 			</li>
 		</ul>

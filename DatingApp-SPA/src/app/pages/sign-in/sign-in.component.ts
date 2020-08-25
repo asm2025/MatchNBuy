@@ -32,11 +32,9 @@ export default class SignInComponent {
 					},
 					error => {
 						this._alertService.alerts.error(error.toString());
-						this._router.navigate(["/"]);
 					});
 		} catch (e) {
 			this._alertService.alerts.error(e.toString());
-			this._router.navigate(["/"]);
 		} 
 	}
 }

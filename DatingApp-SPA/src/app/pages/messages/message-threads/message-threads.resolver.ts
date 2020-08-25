@@ -9,7 +9,7 @@ import { IPaginated } from "@common/pagination/Paginated";
 import { IMessageThread } from "@data/model/Message";
 import { IUser } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Injectable()
 export default class MessageThreadsResolver implements Resolve<IPaginated<IMessageThread>> {

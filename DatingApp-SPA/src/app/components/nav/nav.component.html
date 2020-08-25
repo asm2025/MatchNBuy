@@ -26,8 +26,8 @@
 		<ul class="navbar-nav ml-auto" *ngIf="isSignedIn(); else loginTemplate">
 			<li class="nav-item" routerLinkActive="active" ngbDropdown>
 				<a id="userMenu" class="nav-link" tabindex="0" ngbDropdownToggle role="button">
-					<img src="{{ photoUrl || '@images/user.jpg'}}" class="rounded-circle border-0 mr-1" alt="">
-					Welcome {{ _userClient.user.knownAs | titlecase }}
+					<img src="{{ photoUrl || 'assets/images/user.jpg'}}" class="rounded-circle border-0 mr-1" alt="">
+					Welcome {{ _userClient.user.knownAs }}
 				</a>
 				<div ngbDropdownMenu aria-labelledby="userMenu" class="dropdown-menu">
 					<a ngbDropdownItem [routerLink]="['/member/edit']"><fa-icon icon="user"></fa-icon>Edit Profile</a>

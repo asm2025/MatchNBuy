@@ -8,6 +8,7 @@ import {
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+
 import { JwtModule } from "@auth0/angular-jwt";
 import {
 	NgbModule,
@@ -18,18 +19,25 @@ import {
 	NgbProgressbarConfig
 } from "@ng-bootstrap/ng-bootstrap";
 import { FileUploadModule } from "ng2-file-upload";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { NgOptionHighlightModule } from "@ng-select/ng-option-highlight";
+
 import { TimeAgoPipe } from "time-ago-pipe";
 
 /*
  * https://material.io/resources/icons/?style=baseline
  * <mat-icon>location_off</mat-icon>
  */
-import { MatIconModule } from "@angular/material/icon";
+//import { MatIconModule } from "@angular/material/icon";
 import { FontAwesomeModule, FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons"
 import { fab } from "@fortawesome/free-brands-svg-icons"
 
 import AppRoutingModule from "./app-routing.module";
+
+import TrimPipe from "@common/pipes/string/trim.pipe";
+import TrimLeftPipe from "@common/pipes/string/trim-left.pipe";
+import TrimRightPipe from "@common/pipes/string/trim-right.pipe";
 
 import AppComponent from "./app.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
@@ -85,11 +93,13 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		FontAwesomeModule,
 		AppRoutingModule,
 		HttpClientModule,
+		NgSelectModule,
+		NgOptionHighlightModule,
 		FormsModule,
 		ReactiveFormsModule,
 		FileUploadModule,
 		NgbModule,
-		MatIconModule,
+		//MatIconModule,
 		JwtModule.forRoot({
 			config: {
 				tokenGetter: getToken,
@@ -100,6 +110,9 @@ export class CustomHammerConfig extends HammerGestureConfig {
 	],
 	declarations: [
 		TimeAgoPipe,
+		TrimPipe,
+		TrimLeftPipe,
+		TrimRightPipe,
 		AppComponent,
 		AlertsComponent,
 		NavComponent,

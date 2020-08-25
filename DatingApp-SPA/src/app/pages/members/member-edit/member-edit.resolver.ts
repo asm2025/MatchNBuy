@@ -5,7 +5,7 @@ import { catchError } from "rxjs/operators";
 
 import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Injectable()
 export default class MemberEditResolver implements Resolve<IUserToUpdate | null | undefined> {

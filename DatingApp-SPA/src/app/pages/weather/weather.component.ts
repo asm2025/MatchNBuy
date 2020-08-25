@@ -5,7 +5,7 @@ import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstr
 
 import { IForecastResult, IForecast } from "@data/model/Forecast";
 import WeatherClient from "@services/web/WeatherClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 import DateTimeHelper from "@common/helpers/DateTimeHelper";
 
 @Component({
@@ -49,9 +49,9 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 				.subscribe((res: IForecastResult) => {
 					this.forecasts = res.forecasts || [];
 					this.select(this.key(res.selectedDate));
-				}, error => this._alertService.alerts.error(error.toString()));
+				}, error => this._alertService.toasts.error(error.toString()));
 		} catch (e) {
-			this._alertService.alerts.error(e.toString());
+			this._alertService.toasts.error(e.toString());
 		}
 	}
 

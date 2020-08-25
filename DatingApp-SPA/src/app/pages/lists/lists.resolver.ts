@@ -6,7 +6,7 @@ import { catchError } from "rxjs/operators";
 import { IPaginated } from "@common/pagination/Paginated";
 import { IUserForList, IUserList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Injectable()
 export default class ListsResolver implements Resolve<IPaginated<IUserForList>> {

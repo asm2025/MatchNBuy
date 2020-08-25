@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 
 import { IUserForLogin } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Component({
     selector: "app-sign-in",
@@ -26,15 +26,19 @@ export default class SignInComponent {
 	login() {
 		try {
 			this._userClient.login(this.loginInfo.userName, this.loginInfo.password)
-				.subscribe(() => {
-						this._alertService.toasts.success("Logged in successfully.");
+				.subscribe((response: boolean) => {
+						if (!response) {
+							this._alertService.toasts.error("Error occured while logging in.");
+							return;
+						}
+
 						this._router.navigate(["/members"]);
 					},
 					error => {
-						this._alertService.alerts.error(error.toString());
+						this._alertService.toasts.error(error.toString());
 					});
 		} catch (e) {
-			this._alertService.alerts.error(e.toString());
+			this._alertService.toasts.error(e.toString());
 		} 
 	}
 }

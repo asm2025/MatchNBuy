@@ -59,9 +59,9 @@ export default class ListsComponent implements OnInit, OnDestroy {
 				.subscribe((res: IPaginated<IUserForList>) => {
 						this.users = res.result || [];
 						this.pagination = res.pagination;
-					}, error => this._alertService.alerts.error(error.toString()));
+					}, error => this._alertService.toasts.error(error.toString()));
 		} catch (e) {
-			this._alertService.alerts.error(e.toString());
+			this._alertService.toasts.error(e.toString());
 		} 
 	}
 

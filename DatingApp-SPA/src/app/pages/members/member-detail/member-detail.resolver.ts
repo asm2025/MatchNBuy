@@ -5,7 +5,7 @@ import { catchError } from "rxjs/operators";
 
 import { IUserForDetails } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Injectable()
 export default class MemberDetailResolver implements Resolve<IUserForDetails | null | undefined> {

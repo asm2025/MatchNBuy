@@ -5,7 +5,7 @@ import { catchError } from "rxjs/operators";
 
 import { IForecastResult } from "@data/model/Forecast";
 import WeatherClient from "@services/web/WeatherClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Injectable()
 export default class ListsResolver implements Resolve<IForecastResult> {

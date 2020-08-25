@@ -11,7 +11,7 @@ import { Subscription } from "rxjs";
 
 import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
-import AlertService from "@/services/alert.service";
+import AlertService from "@services/alert.service";
 
 @Component({
 	selector: "app-member-edit",

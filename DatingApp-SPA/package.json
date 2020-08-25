@@ -28,6 +28,8 @@
 		"@fortawesome/free-brands-svg-icons": "^5.14.0",
 		"@fortawesome/free-solid-svg-icons": "^5.14.0",
 		"@ng-bootstrap/ng-bootstrap": "^7.0.0",
+		"@ng-select/ng-option-highlight": "0.0.5",
+		"@ng-select/ng-select": "^5.0.1",
 		"@types/lodash": "^4.14.159",
 		"@types/moment": "^2.13.0",
 		"angular-animations": "0.0.10",

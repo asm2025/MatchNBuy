@@ -545,12 +545,12 @@ namespace MatchNBuy.Data.Repositories
 				Audience = host,
 				Subject = new ClaimsIdentity(principal.Identity, new []
 				{
-					new Claim(ClaimTypes.GivenName, user.KnownAs),
-					new Claim(ClaimTypes.Surname, user.LastName),
+					new Claim(ClaimTypes.GivenName, user.KnownAs ?? $"{user.FirstName} {user.LastName}".Trim()),
+					new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
 					new Claim(ClaimTypes.Email, user.Email),
 					new Claim(ClaimTypes.Gender, user.Gender.ToString()),
 					new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString(User.DATE_FORMAT)),
-					new Claim(ClaimTypes.Uri, user.PhotoUrl)
+					new Claim(ClaimTypes.Uri, user.PhotoUrl ?? string.Empty)
 				}, JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role),
 				Expires = DateTime.UtcNow.AddMinutes(Configuration.GetValue<int>("jwt:timeout").NotBelow(1)),
 				SigningCredentials = new SigningCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:signingKey"), 256), SecurityAlgorithms.HmacSha256Signature),

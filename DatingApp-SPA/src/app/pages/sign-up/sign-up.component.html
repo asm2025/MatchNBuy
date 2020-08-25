@@ -3,11 +3,12 @@
 		<div class="register">
 			<div class="header">
 				<svg viewBox="0 0 100 100" width="128">
-					<use xlink:href="assets/images/logo.svg#Layer_1"/>
+					<use xlink:href="assets/images/logo.svg#Layer_1" />
 				</svg>
 				<h2 class="card-title d-inline-block">
 					Create Account
-					<p class="text-muted">Get started with your free account</p>
+					<br />
+					<small class="text-muted">Get started with your free account</small>
 				</h2>
 			</div>
 			<div class="row">
@@ -16,16 +17,16 @@
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<input type="text" id="userName" name="userName" #userName="ngModel"
-										[(ngModel)]="registrationInfo.userName" class="form-control my-1"
-										placeholder="User name" required autofocus />
+									   [(ngModel)]="registrationInfo.userName" class="form-control my-1"
+									   placeholder="User name" required autofocus />
 								<div [hidden]="userName.valid || userName.pristine" class="alert alert-danger">
 									User name is required or invalid
 								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="email" id="email" name="email" #email="ngModel"
-										[(ngModel)]="registrationInfo.email" class="form-control my-1"
-										placeholder="E-mail" required />
+									   [(ngModel)]="registrationInfo.email" class="form-control my-1"
+									   placeholder="E-mail" required />
 								<div [hidden]="email.valid || email.pristine" class="alert alert-danger">
 									E-mail is required or invalid
 								</div>
@@ -34,16 +35,16 @@
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<input type="password" id="password" name="password" #password="ngModel"
-										[(ngModel)]="registrationInfo.password" class="form-control my-1"
-										placeholder="Password" required />
+									   [(ngModel)]="registrationInfo.password" class="form-control my-1"
+									   placeholder="Password" required />
 								<div [hidden]="password.valid || password.pristine" class="alert alert-danger">
 									Password is required or invalid
 								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="password" id="confirmPassword" name="confirmPassword" #confirmPassword="ngModel"
-										[ngModel]="confirmPassword" class="form-control my-1"
-										placeholder="Confirm Password" required />
+									   [ngModel]="confirmPassword" class="form-control my-1"
+									   placeholder="Confirm Password" required />
 								<div [hidden]="confirmPassword.valid || confirmPassword.pristine" class="alert alert-danger">
 									Confirm Password is required or invalid
 								</div>
@@ -52,16 +53,18 @@
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<input type="text" id="firstName" name="firstName" #firstName="ngModel"
-										[(ngModel)]="registrationInfo.firstName" class="form-control my-1"
-										placeholder="First name" required (ngModelChange)="(knownAs.pristine || !registrationInfo.knownAs) && onNameChange($event, lastName.value)" />
+									   [(ngModel)]="registrationInfo.firstName" class="form-control my-1"
+									   placeholder="First name" required
+									   (ngModelChange)="(knownAs.pristine || !registrationInfo.knownAs) && setKnownAs((($event || '') + ' ' + (lastName.value || '')).trim())" />
 								<div [hidden]="firstName.valid || firstName.pristine" class="alert alert-danger">
 									First name is required or invalid
 								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="text" id="lastName" name="lastName" #lastName="ngModel"
-										[(ngModel)]="registrationInfo.lastName" class="form-control my-1"
-										placeholder="Last name" (ngModelChange)="(knownAs.pristine || !registrationInfo.knownAs) && onNameChange(firstName.value, $event)" />
+									   [(ngModel)]="registrationInfo.lastName" class="form-control my-1"
+									   placeholder="Last name"
+									   (ngModelChange)="(knownAs.pristine || !registrationInfo.knownAs) && setKnownAs(((firstName.value || '') + ' ' + ($event || '')).trim())" />
 								<div [hidden]="lastName.valid || lastName.pristine" class="alert alert-danger">
 									Last name is required or invalid
 								</div>
@@ -70,16 +73,16 @@
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<input type="text" id="knownAs" name="knownAs" #knownAs="ngModel"
-										[(ngModel)]="registrationInfo.knownAs" class="form-control my-1"
-										placeholder="Known as" />
+									   [(ngModel)]="registrationInfo.knownAs" class="form-control my-1"
+									   placeholder="Known as" />
 								<div [hidden]="knownAs.valid || knownAs.pristine" class="alert alert-danger">
 									Known as is required or invalid
 								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="date" id="dateOfBirth" name="dateOfBirth" #dateOfBirth="ngModel"
-										[ngModel]="registrationInfo.dateOfBirth | date:'yyyy-MM-dd'"
-										class="form-control my-1" placeholder="Date of Birth" required />
+									   [ngModel]="registrationInfo.dateOfBirth | date:'yyyy-MM-dd'"
+									   class="form-control my-1" placeholder="Date of Birth" required />
 								<div [hidden]="dateOfBirth.valid || dateOfBirth.pristine" class="alert alert-danger">
 									Date of birth is required or invalid
 								</div>
@@ -99,8 +102,8 @@
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="tel" id="phoneNumber" name="phoneNumber" #phoneNumber="ngModel"
-										[(ngModel)]="registrationInfo.phoneNumber" class="form-control my-1"
-										placeholder="Phone Number" />
+									   [(ngModel)]="registrationInfo.phoneNumber" class="form-control my-1"
+									   placeholder="Phone Number" />
 								<div [hidden]="phoneNumber.valid || phoneNumber.pristine" class="alert alert-danger">
 									Phone Number is required or invalid
 								</div>
@@ -108,17 +111,18 @@
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<select id="countryId" name="countryId" #countryId="ngModel" [ngModel]="countryId"
-										class="form-control my-1" placeholder="Country" required>
-								</select>
-								<div [hidden]="countryId.valid || countryId.pristine" class="alert alert-danger">
-									Country is required
-								</div>
+								<ng-select id="countryCode" name="countryCode" #countryCode [selectOnTab]="true"
+										   placeholder="Country" required [items]="countries | async"
+										   bindLabel="name" bindValue="code"
+										   [virtualScroll]="true" (change)="selectCountry($event)">
+								</ng-select>
 							</div>
 							<div class="form-group col-lg-6">
-								<select id="cityId" name="cityId" #cityId="ngModel" [(ngModel)]="registrationInfo.cityId"
-										class="form-control my-1" placeholder="City" required>
-								</select>
+								<ng-select id="cityId" name="cityId" #cityId="ngModel"
+										   placeholder="City" required [items]="cities | async"
+										   bindLabel="name" bindValue="id"
+										   [virtualScroll]="true" [(ngModel)]="registrationInfo.cityId">
+								</ng-select>
 								<div [hidden]="cityId.valid || cityId.pristine" class="alert alert-danger">
 									City is required
 								</div>

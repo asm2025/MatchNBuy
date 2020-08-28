@@ -1,2 +1,4 @@
-<div *ngIf="user != null">member-edit Component</div>
-<div *ngIf="user == null">member-edit Component (no user)</div>
+<div *ngIf="user != null; else noUser">member-edit Component</div>
+<ng-template #noUser>
+	<div>member-edit Component (no user)</div>
+</ng-template>

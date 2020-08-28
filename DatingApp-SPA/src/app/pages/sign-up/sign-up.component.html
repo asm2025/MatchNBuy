@@ -13,122 +13,105 @@
 			</div>
 			<div class="row">
 				<div class="col-12 col-md-8 col-lg-9 left">
-					<form #signupForm="ngForm" (ngSubmit)="register()" class="form-signup">
+					<form [formGroup]="form$" (ngSubmit)="register(form$.value)" class="form-signup">
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<input type="text" id="userName" name="userName" #userName="ngModel"
-									   [(ngModel)]="registrationInfo.userName" class="form-control my-1"
-									   placeholder="User name" required autofocus />
-								<div [hidden]="userName.valid || userName.pristine" class="alert alert-danger">
-									User name is required or invalid
-								</div>
+								<input type="text" id="userName" formControlName="userName" required maxlength="128"
+									   class="form-control my-1" placeholder="User name" autofocus />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'userName'))" [innerHTML]="message">
+								</small>
 							</div>
 							<div class="form-group col-lg-6">
-								<input type="email" id="email" name="email" #email="ngModel"
-									   [(ngModel)]="registrationInfo.email" class="form-control my-1"
-									   placeholder="E-mail" required />
-								<div [hidden]="email.valid || email.pristine" class="alert alert-danger">
-									E-mail is required or invalid
-								</div>
+								<input type="email" id="email" formControlName="email" required maxlength="2048"
+									   class="form-control my-1" placeholder="E-mail" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'email'))" [innerHTML]="message">
+								</small>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<input type="password" id="password" name="password" #password="ngModel"
-									   [(ngModel)]="registrationInfo.password" class="form-control my-1"
-									   placeholder="Password" required />
-								<div [hidden]="password.valid || password.pristine" class="alert alert-danger">
-									Password is required or invalid
-								</div>
+								<input type="password" id="password" formControlName="password" required maxlength="128"
+									   class="form-control my-1" placeholder="Password" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'password'))" [innerHTML]="message">
+								</small>
 							</div>
 							<div class="form-group col-lg-6">
-								<input type="password" id="confirmPassword" name="confirmPassword" #confirmPassword="ngModel"
-									   [ngModel]="confirmPassword" class="form-control my-1"
-									   placeholder="Confirm Password" required />
-								<div [hidden]="confirmPassword.valid || confirmPassword.pristine" class="alert alert-danger">
-									Confirm Password is required or invalid
-								</div>
+								<input type="password" id="confirmPassword" formControlName="confirmPassword" required maxlength="128"
+									   class="form-control my-1" placeholder="Confirm Password" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'confirmPassword'))" [innerHTML]="message">
+								</small>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<input type="text" id="firstName" name="firstName" #firstName="ngModel"
-									   [(ngModel)]="registrationInfo.firstName" class="form-control my-1"
-									   placeholder="First name" required
-									   (ngModelChange)="(knownAs.pristine || !registrationInfo.knownAs) && setKnownAs((($event || '') + ' ' + (lastName.value || '')).trim())" />
-								<div [hidden]="firstName.valid || firstName.pristine" class="alert alert-danger">
-									First name is required or invalid
-								</div>
+								<input type="text" id="firstName" formControlName="firstName" required maxlength="128"
+									   class="form-control my-1" placeholder="First name" required
+									   (ngModelChange)="setKnownAs($event, 'firstName')" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'firstName'))" [innerHTML]="message">
+								</small>
 							</div>
 							<div class="form-group col-lg-6">
-								<input type="text" id="lastName" name="lastName" #lastName="ngModel"
-									   [(ngModel)]="registrationInfo.lastName" class="form-control my-1"
-									   placeholder="Last name"
-									   (ngModelChange)="(knownAs.pristine || !registrationInfo.knownAs) && setKnownAs(((firstName.value || '') + ' ' + ($event || '')).trim())" />
-								<div [hidden]="lastName.valid || lastName.pristine" class="alert alert-danger">
-									Last name is required or invalid
-								</div>
+								<input type="text" id="lastName" formControlName="lastName" maxlength="128"
+									   class="form-control my-1" placeholder="Last name"
+									   (ngModelChange)="setKnownAs($event, 'lastName')" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'lastName'))" [innerHTML]="message">
+								</small>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<input type="text" id="knownAs" name="knownAs" #knownAs="ngModel"
-									   [(ngModel)]="registrationInfo.knownAs" class="form-control my-1"
-									   placeholder="Known as" />
-								<div [hidden]="knownAs.valid || knownAs.pristine" class="alert alert-danger">
-									Known as is required or invalid
-								</div>
+								<input type="text" id="knownAs" formControlName="knownAs" maxlength="128"
+									   class="form-control my-1" placeholder="Known as" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'knownAs'))" [innerHTML]="message">
+								</small>
 							</div>
 							<div class="form-group col-lg-6">
-								<input type="date" id="dateOfBirth" name="dateOfBirth" #dateOfBirth="ngModel"
-									   [ngModel]="registrationInfo.dateOfBirth | date:'yyyy-MM-dd'"
-									   class="form-control my-1" placeholder="Date of Birth" required />
-								<div [hidden]="dateOfBirth.valid || dateOfBirth.pristine" class="alert alert-danger">
-									Date of birth is required or invalid
-								</div>
+								<input type="date" id="dateOfBirth" formControlName="dateOfBirth" required
+									   class="form-control my-1" placeholder="Date of Birth" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'dateOfBirth'))" [innerHTML]="message">
+								</small>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<select id="gender" name="gender" #gender="ngModel" [(ngModel)]="registrationInfo.gender"
-										class="form-control my-1" placeholder="Date of Birth" required>
+								<select id="gender" formControlName="gender" required
+										class="form-control my-1" placeholder="Date of Birth">
 									<option value="0">Not specified</option>
 									<option value="1">Male</option>
 									<option value="2">Female</option>
 								</select>
-								<div [hidden]="gender.valid || gender.pristine" class="alert alert-danger">
-									Gender is required
-								</div>
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'gender'))" [innerHTML]="message">
+								</small>
 							</div>
 							<div class="form-group col-lg-6">
-								<input type="tel" id="phoneNumber" name="phoneNumber" #phoneNumber="ngModel"
-									   [(ngModel)]="registrationInfo.phoneNumber" class="form-control my-1"
-									   placeholder="Phone Number" />
-								<div [hidden]="phoneNumber.valid || phoneNumber.pristine" class="alert alert-danger">
-									Phone Number is required or invalid
-								</div>
+								<input type="tel" id="phoneNumber" formControlName="phoneNumber" maxlength="10"
+									   class="form-control my-1" placeholder="Phone Number" />
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'phoneNumber'))" [innerHTML]="message">
+								</small>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
-								<ng-select id="countryCode" name="countryCode" #countryCode [selectOnTab]="true"
-										   placeholder="Country" required [items]="countries | async"
-										   bindLabel="name" bindValue="code"
+								<ng-select id="countryCode" formControlName="countryCode" required
+										   [selectOnTab]="true" placeholder="Country" [items]="countries | async"
+										   bindLabel="name" bindValue="code" [class.ng-valid]="formHelper.isControlValid(form$, 'countryCode')"
+										   [class.ng-invalid]="formHelper.isControlInvalid(form$, 'countryCode')"
 										   [virtualScroll]="true" (change)="selectCountry($event)">
 								</ng-select>
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'countryCode'))" [innerHTML]="message">
+								</small>
 							</div>
 							<div class="form-group col-lg-6">
-								<ng-select id="cityId" name="cityId" #cityId="ngModel"
-										   placeholder="City" required [items]="cities | async"
+								<ng-select id="cityId" formControlName="cityId" required
+										   placeholder="City" [items]="cities | async"
 										   bindLabel="name" bindValue="id"
-										   [virtualScroll]="true" [(ngModel)]="registrationInfo.cityId">
+										   [virtualScroll]="true">
 								</ng-select>
-								<div [hidden]="cityId.valid || cityId.pristine" class="alert alert-danger">
-									City is required
-								</div>
+								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'cityId'))" [innerHTML]="message">
+								</small>
 							</div>
 						</div>
-						<button type="submit" class="btn btn-primary float-right col-12 col-md-6 col-lg-4" [disabled]="!signupForm.valid">Sign up</button>
+						<button type="submit" class="btn btn-primary float-right col-12 col-md-6 col-lg-4" [disabled]="formHelper.isFormInvalid(form$)">Sign up</button>
 					</form>
 				</div>
 				<div class="col-12 col-md-4 col-lg-3 right">

@@ -67,6 +67,10 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this._photoUrl;
 	}
 
+	setPhotoUrl(url: string | null | undefined) {
+		this._photo.next(url || config.users.defaultImage);
+	}
+
 	// #region User
 	init() {
 		this._token = getToken();

@@ -62,43 +62,48 @@ export default class AlertService implements OnDestroy {
 		constructor(public readonly service: AlertService) {
 		}
 
-		success(message: string | TemplateRef<any>) {
+		success(message: string | TemplateRef<any>, delay?: number | null | undefined) {
 			this.service._toasts.next({
 				type: AlertType.Success,
 				title: "Success",
-				content: message
+				content: message,
+				delay: delay
 			});
 		}
 
-		error(message: string | TemplateRef<any>) {
+		error(message: string | TemplateRef<any>, delay?: number | null | undefined) {
 			this.service._toasts.next({
 				type: AlertType.Error,
 				title: "Error",
-				content: message
+				content: message,
+				delay: delay
 			});
 		}
 
-		warning(message: string | TemplateRef<any>) {
+		warning(message: string | TemplateRef<any>, delay?: number | null | undefined) {
 			this.service._toasts.next({
 				type: AlertType.Warning,
 				title: "Warning",
-				content: message
+				content: message,
+				delay: delay
 			});
 		}
 
-		info(message: string | TemplateRef<any>) {
+		info(message: string | TemplateRef<any>, delay?: number | null | undefined) {
 			this.service._toasts.next({
 				type: AlertType.Information,
 				title: "Information",
-				content: message
+				content: message,
+				delay: delay
 			});
 		}
 
-		log(message: string | TemplateRef<any>) {
+		log(message: string | TemplateRef<any>, delay?: number | null | undefined) {
 			this.service._toasts.next({
 				type: AlertType.Debug,
 				title: "Log",
-				content: message
+				content: message,
+				delay: delay
 			});
 		}
 	}(this);

@@ -25,22 +25,33 @@
 		> * {
 			pointer-events: all;
 		}
+
+		.alert-body {
+			max-height: 100px;
+			overflow-y: auto;
+			overflow-x: hidden
+		}
 	}
 
 	.toasts-container {
+		display: flex;
 		position: absolute !important;
-		top: 70px !important;
+		top: 0 !important;
 		right: 0 !important;
 		bottom: 0 !important;
 		left: 0 !important;
 		min-width: 100%;
-		display: flex !important;
-		flex-direction: column !important;
-		align-items: flex-end !important;
 
 		> * {
 			pointer-events: all;
 			margin-top: auto;
+			margin-left: auto;
+		}
+
+		.toast-body {
+			max-height: 100px;
+			overflow-y: auto;
+			overflow-x: hidden
 		}
 	}
 }

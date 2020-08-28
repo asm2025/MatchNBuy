@@ -13,6 +13,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <TypeScriptCompile Remove="src\app\common\helpers\form.helper.ts" />
+	  <TypeScriptCompile Remove="src\app\common\validation\validation-messages.ts" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="src\app\common\globalization\validation-messages.ts" />
+	  <None Include="src\app\common\helpers\form.helper.ts" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.2">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

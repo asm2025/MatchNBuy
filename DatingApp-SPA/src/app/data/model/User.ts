@@ -42,18 +42,18 @@ export interface IUserForSerialization extends IUserForList {
 }
 
 export interface IUserToRegister {
-	userName: string;
-	password: string;
-	email: string;
-	phoneNumber: string;
-	firstName: string;
-	lastName?: string;
-	knownAs: string;
-	gender: Genders;
-	dateOfBirth: Date;
-	cityId: string;
-	introduction?: string;
-	lookingFor?: string;
+	userName: string | null | undefined;
+	password: string | null | undefined;
+	email: string | null | undefined;
+	phoneNumber: string | null | undefined;
+	firstName: string | null | undefined;
+	lastName: string | null | undefined;
+	knownAs: string | null | undefined;
+	gender: Genders | null | undefined;
+	dateOfBirth: Date | null | undefined;
+	cityId: string | null | undefined;
+	introduction: string | null | undefined;
+	lookingFor: string | null | undefined;
 }
 
 export interface IUserToUpdate {

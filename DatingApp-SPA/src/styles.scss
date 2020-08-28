@@ -40,6 +40,14 @@ h1 {
 	font-size: 2.25rem;
 }
 
+.ng-valid[required], .ng-valid.required {
+	border-left: 5px solid var(--success);
+}
+
+.ng-invalid:not(form) {
+	border-left: 5px solid var(--danger);
+}
+
 .navbar {
 	padding: 0 10px;
 	min-height: 70px;
@@ -57,9 +65,17 @@ h1 {
 	margin: 0 !important;
 	padding: 0 !important;
 
-	.toast-header {
-		color: inherit !important;
-		background-color: transparent !important;
+	.toast {
+		max-height: 300px;
+
+		.toast-header {
+			color: inherit !important;
+			background-color: transparent !important;
+		}
+
+		.toast-body {
+			overflow: auto;
+		}
 	}
 }
 

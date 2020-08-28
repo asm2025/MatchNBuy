@@ -1,11 +1,12 @@
 import { Component, TemplateRef, OnInit, OnDestroy } from "@angular/core";
-import { Subscription } from "rxjs";
 import {
 	fadeInRightOnEnterAnimation,
 	fadeInUpOnEnterAnimation,
 	fadeOutOnLeaveAnimation,
 	fadeOutDownOnLeaveAnimation
 } from "angular-animations";
+import { ReplaySubject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 import alertUtil, { IAlert, IToast, AlertType, AlertTheme } from "@common/Alert";
 import AlertService from "@services/alert.service";
@@ -22,27 +23,27 @@ import AlertService from "@services/alert.service";
 	]
 })
 export default class AlertsGlobalComponent implements OnInit, OnDestroy {
+	disposed$ = new ReplaySubject<boolean>();
 	alerts: IAlert[] = [];
 	toasts: IToast[] = [];
-
-	private _alertsSubscription: Subscription;
-	private _toastsSubscription: Subscription;
 
 	constructor(public readonly service: AlertService) {
 	}
 
 	ngOnInit(): void {
-		this._alertsSubscription = this.service
+		this.service
 			.alertsChanges
+			.pipe(takeUntil(this.disposed$))
 			.subscribe(alert => this.alerts.push(alert));
-		this._toastsSubscription = this.service
+		this.service
 			.toastsChanges
+			.pipe(takeUntil(this.disposed$))
 			.subscribe(toast => this.toasts.push(toast));
 	}
 
 	ngOnDestroy(): void {
-		this._alertsSubscription.unsubscribe();
-		this._toastsSubscription.unsubscribe();
+		this.disposed$.next(true);
+		this.disposed$.complete();
 	}
 
 	protected getAlertType(alert: IAlert): string {

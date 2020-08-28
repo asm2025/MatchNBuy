@@ -25,8 +25,8 @@ export enum AlertTheme {
 export interface IAlert {
 	type?: AlertType;
 	content: string | TemplateRef<any>;
-	dismissable?: boolean;
-	delay?: number;
+	dismissable?: boolean | null | undefined;
+	delay?: number | null | undefined;
 }
 
 export interface IToast extends IAlert {

@@ -7,7 +7,8 @@ import {
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { NgForm } from "@angular/forms";
-import { Subscription } from "rxjs";
+import { ReplaySubject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
@@ -19,12 +20,11 @@ import AlertService from "@services/alert.service";
 	styleUrls: ["./member-edit.component.scss"]
 })
 export default class MemberEditComponent implements OnInit, OnDestroy {
-	@ViewChild("editForm") editForm: NgForm;
+	disposed$ = new ReplaySubject<boolean>();
 	user: IUserToUpdate | null | undefined;
 	photoUrl: string;
 
-	private _routeSubscription: Subscription;
-	private _photoSubscription: Subscription;
+	@ViewChild("editForm") editForm: NgForm;
 
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
@@ -37,13 +37,19 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this._routeSubscription = this._route.data.subscribe(data => this.user = data["user"]);
-		this._photoSubscription = this._userClient.photoUrl.subscribe(url => this.photoUrl = url);
+		this._route
+			.data
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(data => this.user = data["user"]);
+		this._userClient
+			.photoUrl
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(url => this.photoUrl = url);
 	}
 
-	ngOnDestroy() {
-		this._routeSubscription.unsubscribe();
-		this._photoSubscription.unsubscribe();
+	ngOnDestroy(): void {
+		this.disposed$.next(true);
+		this.disposed$.complete();
 	}
 
 	updateUser() {
@@ -63,6 +69,6 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 	}
 
 	updateUserPhoto(url: string | null | undefined) {
-		//this.user.photoUrl = photoUrl;
+		this._userClient.setPhotoUrl(url);
 	}
 }

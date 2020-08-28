@@ -6,10 +6,14 @@
 					[type]="getAlertType(alert)"
 					[dismissible]="isDismissible(alert)"
 					(close)="closeAlert(alert)">
-			<ng-template [ngIf]="isTemplate(alert)" [ngIfElse]="text">
-				<ng-template [ngTemplateOutlet]="alert.content"></ng-template>
-			</ng-template>
-			<ng-template #text>{{ alert.content }}</ng-template>
+			<div class="alert-body">
+				<ng-template [ngIf]="isTemplate(alert)" [ngIfElse]="text">
+					<ng-template [ngTemplateOutlet]="alert.content"></ng-template>
+				</ng-template>
+				<ng-template #text>
+					<div [innerHTML]="alert.content"></div>
+				</ng-template>
+			</div>
 		</ngb-alert>
 	</div>
 	<div class="ngb-toasts toasts-container">
@@ -21,12 +25,14 @@
 				   [autohide]="isDismissible(toast)"
 				   [delay]="toast.delay || 5000"
 				   (hide)="closeToast(toast)">
-			<ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">
-				<ng-template [ngTemplateOutlet]="toast.content"></ng-template>
-			</ng-template>
-			<ng-template #text>
-				{{ toast.content }}
-			</ng-template>
+			<div class="toast-body">
+				<ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">
+					<ng-template [ngTemplateOutlet]="toast.content"></ng-template>
+				</ng-template>
+				<ng-template #text>
+					<div [innerHTML]="toast.content"></div>
+				</ng-template>
+			</div>
 		</ngb-toast>
 	</div>
 </div>

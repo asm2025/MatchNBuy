@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
+import { ReplaySubject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
@@ -13,6 +14,7 @@ import { IPaginated } from "@common/pagination/Paginated";
 	styleUrls: ["./lists.component.scss"]
 })
 export default class ListsComponent implements OnInit, OnDestroy {
+	disposed$ = new ReplaySubject<boolean>();
 	users: IUserForList[];
 	pagination: IUserList = {
 		page: 1,
@@ -20,7 +22,6 @@ export default class ListsComponent implements OnInit, OnDestroy {
 	};
 
 	private _likesParam = "";
-	private _routeSubscription: Subscription;
 
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
@@ -28,14 +29,18 @@ export default class ListsComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this._routeSubscription = this._route.data.subscribe(data => {
-			this.users = data["resolved"].result;
-			this.pagination = <IUserList>data["resolved"].pagination;
-		});
+		this._route
+			.data
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(data => {
+				this.users = data["resolved"].result;
+				this.pagination = <IUserList>data["resolved"].pagination;
+			});
 	}
 
-	ngOnDestroy() {
-		this._routeSubscription.unsubscribe();
+	ngOnDestroy(): void {
+		this.disposed$.next(true);
+		this.disposed$.complete();
 	}
 
 	loadUsers() {

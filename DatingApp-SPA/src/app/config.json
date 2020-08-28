@@ -9,5 +9,8 @@
 	},
 	"users": {
 		"defaultImage": "@images/user.jpg"
-	}
+	},
+	"language": {
+		"cookieName": "culture" 
+	} 
 }

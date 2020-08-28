@@ -77,7 +77,6 @@ import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 import { ErrorInterceptorProvider } from "@services/error.service";
 
-
 @Injectable()
 export class CustomHammerConfig extends HammerGestureConfig {
 	overrides = {

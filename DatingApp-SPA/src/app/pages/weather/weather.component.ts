@@ -1,12 +1,13 @@
 import { Component, AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
+import { ReplaySubject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 
 import { IForecastResult, IForecast } from "@data/model/Forecast";
 import WeatherClient from "@services/web/WeatherClient";
 import AlertService from "@services/alert.service";
-import DateTimeHelper from "@common/helpers/DateTimeHelper";
+import DateTimeHelper from "@common/helpers/date-time.helper";
 
 @Component({
 	selector: "app-weather",
@@ -14,11 +15,11 @@ import DateTimeHelper from "@common/helpers/DateTimeHelper";
 	styleUrls: ["./weather.component.scss"]
 })
 export default class WeatherComponent implements AfterViewInit, OnDestroy {
+	disposed$ = new ReplaySubject<boolean>();
 	forecasts: IForecast[];
 	selectedDate: string;
-	@ViewChild("weatherCarousel") weatherCarousel!: NgbCarousel;
 
-	private _forecastsSubscription: Subscription;
+	@ViewChild("weatherCarousel") weatherCarousel!: NgbCarousel;
 
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _weatherClient: WeatherClient,
@@ -29,14 +30,18 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this._forecastsSubscription = this._route.data.subscribe(data => {
-			setTimeout(() => this.forecasts = data["resolved"].forecasts || [], 0);
-			this.select(this.key(data["resolved"].selectedDate));
-		});
+		this._route
+			.data
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(data => {
+				setTimeout(() => this.forecasts = data["resolved"].forecasts || [], 0);
+				this.select(this.key(data["resolved"].selectedDate));
+			});
 	}
 
-	ngOnDestroy() {
-		this._forecastsSubscription.unsubscribe();
+	ngOnDestroy(): void {
+		this.disposed$.next(true);
+		this.disposed$.complete();
 	}
 
 	onDateChanged($event: any): void {

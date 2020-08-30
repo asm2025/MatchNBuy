@@ -5,8 +5,9 @@ import { takeUntil } from "rxjs/operators";
 
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
-import { IUserForList, IUserList } from "@data/model/User";
 import { IPaginated } from "@common/pagination/Paginated";
+import { IUserForList, IUserList } from "@data/model/User";
+import { Genders } from "@data/common/Genders";
 
 @Component({
 	selector: "app-lists",
@@ -18,7 +19,12 @@ export default class ListsComponent implements OnInit, OnDestroy {
 	users: IUserForList[];
 	pagination: IUserList = {
 		page: 1,
-		pageSize: 10
+		pageSize: 10,
+		genders: Genders.NotSpecified,
+		minAge: 16,
+		maxAge: 99,
+		likees: false,
+		likers: false
 	};
 
 	private _likesParam = "";

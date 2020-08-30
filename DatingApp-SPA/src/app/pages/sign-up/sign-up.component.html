@@ -1,15 +1,14 @@
 <div class="card bg-transparent border-0">
 	<article class="card-body">
 		<div class="register">
-			<div class="header">
+			<div class="header card-title">
 				<svg viewBox="0 0 100 100" width="128">
 					<use xlink:href="assets/images/logo.svg#Layer_1" />
 				</svg>
-				<h2 class="card-title d-inline-block">
-					Create Account
-					<br />
-					<small class="text-muted">Get started with your free account</small>
-				</h2>
+				<div>
+					<h2>Create Account</h2>
+					<p class="text-muted">Get started with your free account</p>
+				</div>
 			</div>
 			<div class="row">
 				<div class="col-12 col-md-8 col-lg-9 left">
@@ -18,13 +17,13 @@
 							<div class="form-group col-lg-6">
 								<input type="text" id="userName" formControlName="userName" required maxlength="128"
 									   class="form-control my-1" placeholder="User name" autofocus />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'userName'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('userName'))" [innerHTML]="message">
 								</small>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="email" id="email" formControlName="email" required maxlength="2048"
 									   class="form-control my-1" placeholder="E-mail" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'email'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('email'))" [innerHTML]="message">
 								</small>
 							</div>
 						</div>
@@ -32,13 +31,13 @@
 							<div class="form-group col-lg-6">
 								<input type="password" id="password" formControlName="password" required maxlength="128"
 									   class="form-control my-1" placeholder="Password" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'password'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('password'))" [innerHTML]="message">
 								</small>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="password" id="confirmPassword" formControlName="confirmPassword" required maxlength="128"
 									   class="form-control my-1" placeholder="Confirm Password" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'confirmPassword'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('confirmPassword'))" [innerHTML]="message">
 								</small>
 							</div>
 						</div>
@@ -47,14 +46,14 @@
 								<input type="text" id="firstName" formControlName="firstName" required maxlength="128"
 									   class="form-control my-1" placeholder="First name" required
 									   (ngModelChange)="setKnownAs($event, 'firstName')" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'firstName'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('firstName'))" [innerHTML]="message">
 								</small>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="text" id="lastName" formControlName="lastName" maxlength="128"
 									   class="form-control my-1" placeholder="Last name"
 									   (ngModelChange)="setKnownAs($event, 'lastName')" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'lastName'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('lastName'))" [innerHTML]="message">
 								</small>
 							</div>
 						</div>
@@ -62,13 +61,13 @@
 							<div class="form-group col-lg-6">
 								<input type="text" id="knownAs" formControlName="knownAs" maxlength="128"
 									   class="form-control my-1" placeholder="Known as" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'knownAs'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('knownAs'))" [innerHTML]="message">
 								</small>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="date" id="dateOfBirth" formControlName="dateOfBirth" required
 									   class="form-control my-1" placeholder="Date of Birth" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'dateOfBirth'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('dateOfBirth'))" [innerHTML]="message">
 								</small>
 							</div>
 						</div>
@@ -80,38 +79,39 @@
 									<option value="1">Male</option>
 									<option value="2">Female</option>
 								</select>
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'gender'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('gender'))" [innerHTML]="message">
 								</small>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="tel" id="phoneNumber" formControlName="phoneNumber" maxlength="10"
 									   class="form-control my-1" placeholder="Phone Number" />
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'phoneNumber'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('phoneNumber'))" [innerHTML]="message">
 								</small>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<ng-select id="countryCode" formControlName="countryCode" required
-										   [selectOnTab]="true" placeholder="Country" [items]="countries | async"
-										   bindLabel="name" bindValue="code" [class.ng-valid]="formHelper.isControlValid(form$, 'countryCode')"
-										   [class.ng-invalid]="formHelper.isControlInvalid(form$, 'countryCode')"
-										   [virtualScroll]="true" (change)="selectCountry($event)">
+											[selectOnTab]="true" placeholder="Country" [items]="countries | async"
+											bindLabel="name" bindValue="code" [virtualScroll]="true" (change)="selectCountry($event)">
 								</ng-select>
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'countryCode'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('countryCode'))" [innerHTML]="message">
 								</small>
 							</div>
 							<div class="form-group col-lg-6">
 								<ng-select id="cityId" formControlName="cityId" required
-										   placeholder="City" [items]="cities | async"
-										   bindLabel="name" bindValue="id"
-										   [virtualScroll]="true">
+											placeholder="City" [items]="cities | async"
+											bindLabel="name" bindValue="id"
+											[virtualScroll]="true">
 								</ng-select>
-								<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'cityId'))" [innerHTML]="message">
+								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('cityId'))" [innerHTML]="message">
 								</small>
 							</div>
 						</div>
-						<button type="submit" class="btn btn-primary float-right col-12 col-md-6 col-lg-4" [disabled]="formHelper.isFormInvalid(form$)">Sign up</button>
+						<div class="btn-container">
+							<button type="button" class="btn btn-secondary col-12 col-md-3" [routerLink]="['/login']">Sign in</button>
+							<button type="submit" class="btn btn-primary col-12 col-md-3" [disabled]="formHelper.isFormInvalid(form$)">Sign up</button>
+						</div>
 					</form>
 				</div>
 				<div class="col-12 col-md-4 col-lg-3 right">

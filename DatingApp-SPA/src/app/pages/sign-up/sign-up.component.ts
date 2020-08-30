@@ -27,6 +27,7 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 	private readonly _countrySubject = new BehaviorSubject<string | null | undefined>(null);
 	private readonly _selectedCountry = this._countrySubject.asObservable();
 	private readonly _citiesSubject: ReplaySubject<ICity[]> = new ReplaySubject();
+	private _formHelper: FormHelper;
 
 	disposed$ = new ReplaySubject<boolean>();
 	form$: FormGroup;
@@ -34,7 +35,7 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 	cities = this._citiesSubject.asObservable();
 
 	get formHelper(): FormHelper {
-		return FormHelper;
+		return this._formHelper;
 	}
 
 	constructor(private readonly _router: Router,
@@ -83,6 +84,7 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 			introduction: [null],
 			lookingFor: [null]
 		}, { validators: CustomValidators.compare("password", "confirmPassword") });
+		this._formHelper = new FormHelper(this.form$);
 		this._selectedCountry
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(countryCode => {

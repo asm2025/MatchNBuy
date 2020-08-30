@@ -1,4 +1,4 @@
-<nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-primary">
+<nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
 	<a class="navbar-brand" [routerLink]="['/']">
 		<svg viewBox="0 0 100 100" width="32">
 			<use xlink:href="assets/images/logo.svg#Layer_1" fill="white" />
@@ -32,14 +32,14 @@
 				<div ngbDropdownMenu aria-labelledby="userMenu" class="dropdown-menu">
 					<a ngbDropdownItem [routerLink]="['/member/edit']"><fa-icon icon="user"></fa-icon>Edit Profile</a>
 					<hr />
-					<a ngbDropdownItem (click)="logout()"><fa-icon icon="sign-out"></fa-icon>Logout</a>
+					<a ngbDropdownItem (click)="logout()"><fa-icon icon="sign-out-alt"></fa-icon>Sign out</a>
 				</div>
 			</li>
 		</ul>
 		<ng-template #loginTemplate>
 				<ul class="navbar-nav ml-auto">
 					<li class="nav-item" routerLinkActive="active">
-						<a class="nav-item nav-link" [routerLink]="['/login']" routerLinkActive="active">Sign in</a>
+						<a class="nav-item nav-link" [routerLink]="['/login']" routerLinkActive="active"><fa-icon icon="key" [spin]="true"></fa-icon>Sign in</a>
 					</li>
 				</ul>
 			</ng-template>

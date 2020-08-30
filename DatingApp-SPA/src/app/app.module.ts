@@ -30,14 +30,16 @@ import { TimeAgoPipe } from "time-ago-pipe";
  */
 //import { MatIconModule } from "@angular/material/icon";
 import { FontAwesomeModule, FaIconLibrary } from "@fortawesome/angular-fontawesome";
-import { fas } from "@fortawesome/free-solid-svg-icons"
-import { fab } from "@fortawesome/free-brands-svg-icons"
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
 
 import AppRoutingModule from "./app-routing.module";
 
 import TrimPipe from "@common/pipes/string/trim.pipe";
 import TrimLeftPipe from "@common/pipes/string/trim-left.pipe";
 import TrimRightPipe from "@common/pipes/string/trim-right.pipe";
+
+import { NgControlStatus } from "@common/directives/ng_control_status";
 
 import AppComponent from "./app.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
@@ -107,11 +109,15 @@ export class CustomHammerConfig extends HammerGestureConfig {
 			}
 		})
 	],
+	exports: [
+		NgControlStatus
+	],
 	declarations: [
 		TimeAgoPipe,
 		TrimPipe,
 		TrimLeftPipe,
 		TrimRightPipe,
+		NgControlStatus,
 		AppComponent,
 		AlertsComponent,
 		NavComponent,

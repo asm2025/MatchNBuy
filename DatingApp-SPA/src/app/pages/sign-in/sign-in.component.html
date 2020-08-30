@@ -1,20 +1,20 @@
 <div class="card bg-transparent border-0">
 	<article class="card-body text-center">
-		<img class="mb-4" src="assets/images/logo_128x128.png" alt="" width="128" height="128">
-		<h4 class="card-title mt-3 text-center">Sign in</h4>
+		<img class="mb-1" src="assets/images/logo_128x128.png" alt="" width="128" height="128">
+		<h4 class="card-title mt-1 text-center">Sign in</h4>
 		<p class="text-center">Let the fun begin...</p>
 
 		<form [formGroup]="form$" (ngSubmit)="login(form$.value)" class="form-signin text-center">
 			<div class="form-group">
 				<input type="text" id="userName" formControlName="userName" required maxlength="128"
 					   class="form-control my-1" placeholder="User name" autofocus />
-				<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'userName'))" [innerHTML]="message">
+				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('userName'))" [innerHTML]="message">
 				</small>
 			</div>
 			<div class="form-group">
 				<input type="password" id="password" formControlName="password" required maxlength="128"
 					   class="form-control my-1" placeholder="Password" />
-				<small class="text-muted" *ngFor="let message of (formHelper.getControlErrors(form$, 'password'))" [innerHTML]="message">
+				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('password'))" [innerHTML]="message">
 				</small>
 			</div>
 			<div class="checkbox">
@@ -22,8 +22,10 @@
 					<input type="checkbox" formControlName="rememberMe" value="remember-me"/> Remember me
 				</label>
 			</div>
-			<button class="btn btn-primary col-4 mr-2" type="submit" [disabled]="isFormInvalid()">Sign in</button>
-			<button class="btn btn-secondary col-4" type="button" [routerLink]="['/register']">Sign up</button>
+			<div class="btn-container justify-content-center">
+				<button type="button" class="btn btn-secondary col-12 col-md-5" [routerLink]="['/register']">Sign up</button>
+				<button type="submit" class="btn btn-primary col-12 col-md-5" [disabled]="formHelper.isFormInvalid()">Sign in</button>
+			</div>
 			<div class="mt-3">
 				<a href="#" class="mt-3">Forgot user name / password?</a>
 			</div>

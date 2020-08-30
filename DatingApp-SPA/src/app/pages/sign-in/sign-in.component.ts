@@ -2,17 +2,13 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import {
 	FormBuilder,
-	AbstractControl,
 	FormGroup,
-	FormControl,
-	Validators,
-	ValidationErrors
+	Validators
 } from "@angular/forms";
 
 import { IUserForLogin } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
-import ValidationMessages from "@common/globalization/validation-messages";
 import FormHelper from "@common/helpers/form.helper";
 
 @Component({
@@ -21,6 +17,8 @@ import FormHelper from "@common/helpers/form.helper";
 	styleUrls: ["./sign-in.component.scss"]
 })
 export default class SignInComponent implements OnInit {
+	private _formHelper: FormHelper;
+
 	form$: FormGroup;
 
 	constructor(private readonly _router: Router,
@@ -30,7 +28,7 @@ export default class SignInComponent implements OnInit {
 	}
 
 	get formHelper(): FormHelper {
-		return FormHelper;
+		return this._formHelper;
 	}
 
 	ngOnInit(): void {
@@ -50,6 +48,7 @@ export default class SignInComponent implements OnInit {
 			],
 			rememberMe: [false]
 		});
+		this._formHelper = new FormHelper(this.form$);
 	}
 
 	login(loginInfo: IUserForLogin) {

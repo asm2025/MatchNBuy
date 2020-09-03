@@ -45,10 +45,74 @@
 				cursor: pointer;
 			}
 
+			button {
+				white-space: nowrap;
+			}
+			
 			.padding {
 				font-weight: lighter;
 			}
 		}
+	}
+}
+
+.btn-google {
+	background-color: rgba(234, 67, 53, 0.75) !important;
+	border: 1px solid #EA4335 !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #EA4335 !important;
+	}
+}
+
+.btn-facebook {
+	background-color: rgba(64, 93, 157, 0.75) !important;
+	border: 1px solid #405D9D !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #405D9D !important;
+	}
+}
+
+.btn-twitter {
+	background-color: rgba(66, 174, 236, 0.75) !important;
+	border: 1px solid #42AEEC !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #42AEEC !important;
+	}
+}
+
+.btn-github {
+	background-color: rgba(245, 245, 245, 0.75) !important;
+	border: 1px solid #EBEBEB !important;
+	color: #333 !important;
+
+	&:hover {
+		background-color: #EBEBEB !important;
+	}
+}
+
+.btn-microsoft {
+	background-color: rgba(0, 161, 241, 0.75) !important;
+	border: 1px solid #00A1F1 !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #00A1F1 !important;
+	}
+}
+
+.btn-apple {
+	background-color: rgba(163, 170, 174, 0.75) !important;
+	border: 1px solid #A3A3A3 !important;
+	color: #fff !important;
+
+	&:hover {
+		background-color: #A3A3A3 !important;
 	}
 }
 
@@ -98,6 +162,10 @@
 					margin-top: 30%;
 					margin-bottom: 1%;
 				}
+
+				.btn {
+					padding: 0.75rem 0.5rem;
+				}
 			}
 		}
 	}
@@ -127,6 +195,10 @@
 					width: 60%;
 					margin-top: 30%;
 					margin-bottom: 3%;
+				}
+
+				.btn {
+					padding: 0.75rem 0;
 				}
 			}
 		}

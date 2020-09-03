@@ -75,6 +75,20 @@ h1 {
 	z-index: 1;
 }
 
+.btn-container {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: flex-end;
+	width: 100%;
+	height: 100%;
+
+	> * {
+		flex: 0 0 auto !important;
+		margin-left: 0.5rem;
+		white-space: nowrap;
+	}
+}
+
 @media (min-width: 576px) {
 	.divider-text {
 		margin-top: 15px;

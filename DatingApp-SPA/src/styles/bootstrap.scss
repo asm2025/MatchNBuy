@@ -1,0 +1,32 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+@each $state, $data in $form-validation-states {
+	@include form-validation-state($state, map-get($data, color), map-get($data, icon));
+}
+
+.navbar {
+	padding: 0 10px;
+	min-height: 70px;
+	max-height: 70px;
+}
+
+.form-control.is-valid,
+.was-validated .form-control:valid {
+	background-image: none !important;
+	border-left-color: theme-color("success") !important;
+	border-color: $input-border-color;
+}
+
+.form-control.is-invalid,
+.was-validated
+.form-control:invalid {
+	border-left-color: theme-color("danger") !important;
+	border-color: $input-border-color;
+}
+
+.alert {
+	border-radius: 0 !important;
+	margin-bottom: 2px !important;
+}

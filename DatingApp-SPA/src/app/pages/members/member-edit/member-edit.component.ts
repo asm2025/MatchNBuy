@@ -55,17 +55,17 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 	updateUser() {
 		if (!this._userClient.user || !this.user) return;
 		const id = (<IUser>this._userClient.user).id;
-		this._userClient
-			.update(id, this.user)
-			.subscribe(
-				() => {
-					this._alertService.toasts.success("Profile updated successfully.");
-					this.editForm.reset(this.user);
-				},
-				error => {
-					this._alertService.toasts.error(error.toString());
-				}
-			);
+
+		try {
+			this._userClient
+				.update(id, this.user)
+				.subscribe(() => {
+						this._alertService.toasts.success("Profile updated successfully.");
+						this.editForm.reset(this.user);
+					}, error => this._alertService.alerts.error(error.toString()));
+		} catch (e) {
+			this._alertService.alerts.error(e.toString());
+		} 
 	}
 
 	updateUserPhoto(url: string | null | undefined) {

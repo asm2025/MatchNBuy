@@ -10,6 +10,25 @@
 	padding: 0 10px;
 	min-height: 70px;
 	max-height: 70px;
+
+	.navbar-brand {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.nav-item {
+		margin-right: 0.5rem;
+	}
+}
+
+.pagination {
+	justify-content: flex-end
+}
+
+ol, ul, dl {
+	margin-top: 0.25rem;
+	margin-bottom: 1rem;
 }
 
 .form-control.is-valid,
@@ -24,6 +43,20 @@
 .form-control:invalid {
 	border-left-color: theme-color("danger") !important;
 	border-color: $input-border-color;
+}
+
+.btn-container {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: flex-end;
+	width: 100%;
+	height: 100%;
+
+	> * {
+		flex: 0 0 auto !important;
+		margin-left: 0.5rem;
+		white-space: nowrap;
+	}
 }
 
 .alert {

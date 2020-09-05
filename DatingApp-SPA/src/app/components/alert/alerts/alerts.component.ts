@@ -56,20 +56,29 @@ export default class AlertsGlobalComponent implements OnInit, OnDestroy {
 	}
 
 	protected getToastCssClass(toast: IToast): string {
+		let css = "p-1 bg-white text-dark ";
+
 		switch (toast.type) {
-		case AlertType.Fatal:
-		case AlertType.Error:
-			return "bg-danger text-white";
-		case AlertType.Warning:
-			return "bg-warning text-dark";
-		case AlertType.Success:
-			return "bg-success text-white";
-		case AlertType.Debug:
-		case AlertType.Trace:
-			return "bg-secondary text-white";
-		default:
-			return "bg-info text-white";
+			case AlertType.Fatal:
+			case AlertType.Error:
+				css += "border border-danger";
+				break;
+			case AlertType.Warning:
+				css += "border border-warning";
+				break;
+			case AlertType.Success:
+				css += "border border-success";
+				break;
+			case AlertType.Debug:
+			case AlertType.Trace:
+				css += "border border-secondary";
+				break;
+			default:
+				css += "border border-info";
+				break;
 		}
+
+		return css;
 	}
 
 	protected closeToast(toast: IAlert) {

@@ -1,1 +1,9 @@
-<div>member-list Component</div>
+<div *ngIf="pagination.count">
+	<div class="row">
+		<div *ngFor="let user of users" class="col-6 col-md-4 col-lg-3">
+			<app-member-card [user]="user"></app-member-card>
+		</div>
+	</div>
+	<ngb-pagination *ngIf="pagination.count > pagination.pageSize" [pageSize]="pagination.pageSize" [collectionSize]="pagination.count"
+					[(page)]="pagination.page" (pageChange)="pageChanged($event)"></ngb-pagination>
+</div>

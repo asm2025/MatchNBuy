@@ -18,7 +18,7 @@
 	</div>
 	<div class="ngb-toasts toasts-container">
 		<ngb-toast *ngFor="let toast of toasts"
-				   class="p-1 animated animate__fadeInRight {{ getToastCssClass(toast) }}"
+				   class="{{ getToastCssClass(toast) }}"
 				   [@fadeInRightOnEnter]
 				   [@fadeOutDownOnLeave]
 				   [header]="toast.title"

@@ -10,7 +10,6 @@ import SignUpComponent from "@pages/sign-up/sign-up.component";
 import ListsComponent from "@pages/lists/lists.component";
 import ListsResolver from "@pages/lists/lists.resolver";
 import MemberListComponent from "@pages/members/member-list/member-list.component";
-import MemberListResolver from "@pages/members/member-list/member-list.resolver";
 import MemberDetailComponent from "@pages/members/member-detail/member-detail.component";
 import MemberDetailResolver from "@pages/members/member-detail/member-detail.resolver";
 import MemberEditComponent from "@pages/members/member-edit/member-edit.component";
@@ -59,7 +58,7 @@ export const routes: Routes = [
 			{
 				path: "members",
 				component: MemberListComponent,
-				resolve: { resolved: MemberListResolver },
+				resolve: { resolved: ListsResolver },
 				children: [{
 						path: ":id",
 						component: MemberDetailComponent,

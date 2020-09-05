@@ -20,6 +20,7 @@ using asm.Core.Swagger.Extensions;
 using asm.Data.Patterns.Repository;
 using asm.Extensions;
 using asm.Helpers;
+using asm.Logging.Helpers;
 using asm.Newtonsoft.Serialization;
 using asm.Patterns.Images;
 using AutoMapper;
@@ -114,7 +115,16 @@ namespace MatchNBuy.API
 					// https://docs.microsoft.com/en-us/ef/core/querying/tracking
 					// https://stackoverflow.com/questions/12726878/global-setting-for-asnotracking
 					//builder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-					builder.UseSqlite(_configuration.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
+					IConfigurationSection dataSection = _configuration.GetSection("data");
+					bool enableLogging = dataSection.GetValue<bool>("logging");
+
+					if (enableLogging)
+					{
+						builder.UseLoggerFactory(LogFactoryHelper.ConsoleLoggerFactory)
+							.EnableSensitiveDataLogging();
+					}
+
+					builder.UseSqlite(dataSection.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
 					builder.EnableDetailedErrors(_environment.IsDevelopment());
 				}/*, ServiceLifetime.Singleton*/)
 				// Add CityRepository for a special case: needs to be a Singleton

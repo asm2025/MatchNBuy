@@ -6,10 +6,21 @@
 		<label><input type="checkbox" name="likees" [(ngModel)]="pagination.likees" (ngModelChange)="loadUsers()" /> Whom I like</label>
 	</div>
 </div>
-<hr />
-<div class="row">
-	<div *ngFor="let user of users" class="col-6 col-md-4 col-lg-3">
-		<app-card [user]="user"></app-card>
+<div *ngIf="pagination.count">
+	<hr />
+	<h6>
+		{{ pagination.count }} member(s)
+	</h6>
+	<small *ngIf="pagination.likers || pagination.likees">
+		including
+		<span *ngIf="pagination.likers">members who like me</span>
+		<span *ngIf="pagination.likees">{{ pagination.likers ? " and " : "" }} members who I've liked</span>
+	</small>
+	<div class="row">
+		<div *ngFor="let user of users" class="col-6 col-md-4 col-lg-3">
+			<app-member-card [user]="user"></app-member-card>
+		</div>
 	</div>
+	<ngb-pagination *ngIf="pagination.count > pagination.pageSize" [pageSize]="pagination.pageSize" [collectionSize]="pagination.count"
+					[(page)]="pagination.page" (pageChange)="pageChanged($event)"></ngb-pagination>
 </div>
-<ngb-pagination [collectionSize]="pagination.count" [(page)]="pagination.page"></ngb-pagination>

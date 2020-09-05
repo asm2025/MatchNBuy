@@ -1,46 +1,54 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, AfterViewInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ReplaySubject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { ReplaySubject, of } from "rxjs";
+import { takeUntil, catchError } from "rxjs/operators";
 
+import { SortType } from "@common/sorting/SortType";
+import { IPaginated } from "@common/pagination/Paginated";
+import { Genders } from "@data/common/Genders";
+import { IUserForList, IUserList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
-import { IPaginated } from "@common/pagination/Paginated";
-import { IUserForList, IUserList } from "@data/model/User";
-import { Genders } from "@data/common/Genders";
 
 @Component({
 	selector: "app-lists",
 	templateUrl: "./lists.component.html",
 	styleUrls: ["./lists.component.scss"]
 })
-export default class ListsComponent implements OnInit, OnDestroy {
+export default class ListsComponent implements AfterViewInit, OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();
 	users: IUserForList[];
 	pagination: IUserList = {
 		page: 1,
-		pageSize: 10,
+		pageSize: 12,
 		genders: Genders.NotSpecified,
 		minAge: 16,
 		maxAge: 99,
 		likees: false,
-		likers: false
+		likers: false,
+		orderBy: [
+			{
+				name: "lastActive",
+				type: SortType.Descending
+			}
+		]
 	};
-
-	private _likesParam = "";
 
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService) {
 	}
 
-	ngOnInit() {
+	ngAfterViewInit() {
 		this._route
 			.data
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(data => {
-				this.users = data["resolved"].result;
-				this.pagination = <IUserList>data["resolved"].pagination;
+				setTimeout(() => {
+					const resolved = data["resolved"];
+					this.users = resolved.result || [];
+					this.pagination = <IUserList>resolved.pagination;
+				}, 0);
 			});
 	}
 
@@ -50,34 +58,36 @@ export default class ListsComponent implements OnInit, OnDestroy {
 	}
 
 	loadUsers() {
-		switch (this._likesParam) {
-			case "Likers":
-				this.pagination.likers = true;
-				this.pagination.likees = false;
-				break;
-			case "Likees":
-				this.pagination.likers = false;
-				this.pagination.likees = true;
-				break;
-			default:
-				this.pagination.likers = false;
-				this.pagination.likees = false;
-				break;
-		}
-
 		try {
 			this._userClient.list(this.pagination)
+				.pipe(catchError(error => {
+					this._alertService.toasts.error(error.toString());
+					return of({
+						result: [],
+						pagination: {
+							...this.pagination,
+							page: 1,
+							count: 0
+						}
+					});
+				}))
 				.subscribe((res: IPaginated<IUserForList>) => {
-						this.users = res.result || [];
-						this.pagination = res.pagination;
-					}, error => this._alertService.toasts.error(error.toString()));
+					this.users = res.result || [];
+					this.pagination = res.pagination;
+				});
 		} catch (e) {
 			this._alertService.toasts.error(e.toString());
+			this.users = [];
+			this.pagination = {
+				...this.pagination,
+				page: 1,
+				count: 0
+			};
 		} 
 	}
 
-	pageChanged(event: any): void {
-		this.pagination.page = event.page;
+	pageChanged(page: number): void {
+		this.pagination.page = page;
 		this.loadUsers();
 	}
 }

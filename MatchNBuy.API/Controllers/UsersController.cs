@@ -92,7 +92,8 @@ namespace MatchNBuy.API.Controllers
 				}
 			}
 
-			return Ok(new Paginated<UserForList>(users, listSettings));
+			pagination = _mapper.Map(listSettings, pagination);
+			return Ok(new Paginated<UserForList>(users,  pagination));
 
 			static DynamicFilter BuildFilter(ClaimsPrincipal user, UserList pagination)
 			{

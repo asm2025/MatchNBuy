@@ -53,7 +53,6 @@ import SignUpComponent from "@pages/sign-up/sign-up.component";
 import ListsComponent from "@pages/lists/lists.component";
 import ListsResolver from "@pages/lists/lists.resolver";
 import MemberListComponent from "@pages/members/member-list/member-list.component";
-import MemberListResolver from "@pages/members/member-list/member-list.resolver";
 import PhotoEditorComponent from "@pages/members/photo-editor/photo-editor.component";
 import MemberCardComponent from "@pages/members/member-card/member-card.component";
 import MemberEditComponent from "@pages/members/member-edit/member-edit.component";
@@ -150,7 +149,6 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		UserClient,
 		AlertService,
 		ListsResolver,
-		MemberListResolver,
 		MemberEditResolver,
 		MemberEditUnsavedChanges,
 		MemberDetailResolver,

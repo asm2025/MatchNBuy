@@ -1,0 +1,17 @@
+$input-border-color-valid: theme-color("success") !default;
+$input-border-color-invalid: theme-color("danger") !default;
+
+$select-img-arrow: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' viewBox='0 0 320 512'><path fill='#{$input-color}' d='M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z'/></svg>");
+
+// for details about the values, refer to https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
+$select-background-img: escape-svg($select-img-arrow);
+$select-background-size: $input-height-inner-half $input-height-inner-half;
+$select-background-position: right $input-height-inner-quarter center;
+
+$select-background-img-valid: $select-background-img;
+$select-background-size-valid: $select-background-size;
+$select-background-position-valid: $select-background-position;
+
+$select-background-img-invalid: $select-background-img, escape-svg($form-feedback-icon-invalid);
+$select-background-size-invalid: $input-height-inner-half $input-height-inner-half, $input-height-inner-half $input-height-inner-half;
+$select-background-position-invalid: right add($input-height-inner-half, add($input-height-inner-quarter, 0.5rem)) center, $select-background-position;

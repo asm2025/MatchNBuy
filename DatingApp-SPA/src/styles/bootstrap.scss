@@ -1,6 +1,25 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/_functions";
+@import "~bootstrap/scss/_variables";
+@import "~bootstrap/scss/_mixins";
+@import "_variables.scss";
+
+ol, ul, dl {
+	margin-top: 0.25rem;
+	margin-bottom: 1rem;
+}
+
+select {
+	background-image: $select-background-img;
+	background-size: $select-background-size;
+	background-position: $select-background-position;
+	background-repeat: no-repeat !important;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
 
 @each $state, $data in $form-validation-states {
 	@include form-validation-state($state, map-get($data, color), map-get($data, icon));
@@ -10,6 +29,7 @@
 	padding: 0 10px;
 	min-height: 70px;
 	max-height: 70px;
+	text-transform: none !important;
 
 	.navbar-brand {
 		display: flex;
@@ -22,27 +42,64 @@
 	}
 }
 
+.alert {
+	border-radius: 0 !important;
+	margin-bottom: 2px !important;
+}
+
 .pagination {
 	justify-content: flex-end
 }
 
-ol, ul, dl {
-	margin-top: 0.25rem;
-	margin-bottom: 1rem;
+.was-validated select.form-control,
+select.form-control {
+	&:valid,
+	&.is-valid {
+		padding-right: $input-height-inner-half !important;
+		background-image: $select-background-img-valid;
+		background-position: $select-background-position-valid;
+		background-size: $select-background-size-valid;
+	}
+
+	&:invalid,
+	&.is-invalid {
+		padding-right: $input-height-inner !important;
+		background-image: $select-background-img-invalid;
+		background-position: $select-background-position-invalid;
+		background-size: $select-background-size-invalid;
+	}
 }
 
-.form-control.is-valid,
-.was-validated .form-control:valid {
-	background-image: none !important;
-	border-left-color: theme-color("success") !important;
-	border-color: $input-border-color;
+.was-validated .form-control,
+.form-control {
+	&:hover {
+		box-shadow: 0 1px 0 lighten($input-border-color, 5);
+	}
+
+	&:valid,
+	&.is-valid {
+		&:not(select) {
+			padding-right: $input-padding-x !important;
+			background-image: none;
+		}
+
+		border-color: $input-border-color !important;
+		border-left-color: $input-border-color-valid !important;
+	}
+
+	&:invalid,
+	&.is-invalid {
+		&:not(select) {
+			padding-right: $input-height-inner !important;
+		}
+
+		border-color: $input-border-color !important;
+		border-left-color: $input-border-color-invalid !important;
+	}
 }
 
-.form-control.is-invalid,
-.was-validated
-.form-control:invalid {
-	border-left-color: theme-color("danger") !important;
-	border-color: $input-border-color;
+.btn {
+	text-transform: none !important;
 }
 
 .btn-container {
@@ -57,9 +114,4 @@ ol, ul, dl {
 		margin-left: 0.5rem;
 		white-space: nowrap;
 	}
-}
-
-.alert {
-	border-radius: 0 !important;
-	margin-bottom: 2px !important;
 }

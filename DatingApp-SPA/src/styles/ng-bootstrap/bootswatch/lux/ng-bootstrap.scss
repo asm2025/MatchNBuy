@@ -1,122 +1,13 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/_functions";
+@import "~bootstrap/scss/_variables";
+@import "~bootstrap/scss/_mixins";
 @import "~bootswatch/dist/lux/_variables";
 @import "~bootswatch/dist/lux/_bootswatch";
 
-$input-bg: #f7f7f9;
-$input-border-width: 0;
-$input-border-color: #ced4da;
-$form-feedback-icon-valid-color: $form-feedback-valid-color !default;
-$form-feedback-icon-valid: none !default;
-$form-feedback-icon-invalid-color: $form-feedback-invalid-color !default;
-$form-feedback-icon-invalid: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='#{$form-feedback-icon-invalid-color}' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4.5'/><path stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/><circle cx='6' cy='8.2' r='.6' fill='#{$form-feedback-icon-invalid-color}' stroke='none'/></svg>") !default;
+$ng-select-padding-right: add(add($input-line-height * .5em, $input-padding-y), 0.25rem) !default;
 
-.form-control {
+.ng-select {
 	&:hover {
-		box-shadow: 0 1px 0 rgba(0,0,0,0.06)
-	}
-}
-
-ng-select {
-	font-family: $input-font-family;
-	@include font-size($input-font-size);
-	font-weight: $input-font-weight;
-	line-height: $input-line-height;
-	color: $input-color;
-	background-color: $input-bg;
-	background-clip: padding-box;
-	border: $input-border-width solid $input-border-color;
-	border-radius: 0;
-
-	@if $enable-validation-icons {
-		background-image: $form-feedback-icon-valid;
-		background-repeat: no-repeat;
-		background-position: right $input-height-inner-quarter center;
-		background-size: $input-height-inner-half $input-height-inner-half;
-	}
-	// Note: This has no effect on <select>s in some browsers, due to the limited stylability of `<select>`s in CSS.
-	@include border-radius($input-border-radius, 0);
-	@include box-shadow($input-box-shadow);
-	@include transition($input-transition);
-
-	&:focus,
-	&.ng-select-focused {
-		color: $input-focus-color;
-		background-color: $input-focus-bg;
-		border-color: $input-focus-border-color;
-		outline: 0;
-
-		@if $enable-shadows {
-			@include box-shadow($input-box-shadow, $input-focus-box-shadow);
-		}
-		@else {
-			// Avoid using mixin so we can pass custom focus shadow properly
-			box-shadow: $input-focus-box-shadow;
-		}
-	}
-
-	.ng-select-container {
-		display: block;
-		width: 100%;
-		height: $input-height;
-		padding: $input-padding-y;
-		padding-right: $input-height-inner-half;
-		background: none !important;
-		border: none !important;
-		// Unstyle the caret on `<select>`s in IE10+.
-		&::-ms-expand {
-			background-color: transparent;
-			border: 0;
-		}
-
-		&:-moz-focusring {
-			color: transparent;
-			text-shadow: 0 0 0 $input-color;
-		}
-
-		.ng-value-container {
-			::placeholder, .ng-placeholder {
-				color: $input-placeholder-color !important;
-				// Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526.
-				opacity: 1;
-			}
-
-			.ng-input {
-				padding-right: 10px !important;
-			}
-		}
-	}
-
-	&.is-valid {
-		color: $form-feedback-icon-valid-color;
-		border-left-color: theme-color("success") !important;
-		border-color: $input-border-color;
-
-		@if $enable-validation-icons {
-			background-image: $form-feedback-icon-valid;
-		}
-
-		&:focus,
-		&.ng-select-focused {
-			border-color: $form-feedback-icon-valid-color;
-			box-shadow: 0 0 0 $input-focus-width rgba($form-feedback-icon-valid-color, .25);
-		}
-	}
-
-	&.is-invalid {
-		color: $form-feedback-icon-invalid-color;
-		border-left-color: theme-color("danger") !important;
-		border-color: $input-border-color;
-
-		@if $enable-validation-icons {
-			background-image: escape-svg($form-feedback-icon-invalid);
-		}
-
-		&:focus,
-		&.ng-select-focused {
-			border-color: $form-feedback-icon-invalid-color;
-			box-shadow: 0 0 0 $input-focus-width rgba($form-feedback-icon-invalid-color, .25);
-		}
+		box-shadow: 0 1px 0 lighten($input-border-color, 5);
 	}
 }

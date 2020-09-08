@@ -6,14 +6,26 @@
 
 		<form [formGroup]="form$" (ngSubmit)="login(form$.value)" class="form-signin text-center">
 			<div class="form-group">
-				<input type="text" id="userName" formControlName="userName" required maxlength="128"
-					   class="form-control my-1" placeholder="User name" autofocus />
+				<label class="sr-only" for="userName">User Name</label>
+				<div class="input-group mb-2">
+					<div class="input-group-prepend">
+						<div class="input-group-text"><fa-icon icon="user"></fa-icon></div>
+					</div>
+					<input type="text" id="userName" formControlName="userName" required maxlength="128"
+						   class="form-control" placeholder="User name" autofocus />
+				</div>
 				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('userName'))" [innerHTML]="message">
 				</small>
 			</div>
 			<div class="form-group">
-				<input type="password" id="password" formControlName="password" required maxlength="128"
-					   class="form-control my-1" placeholder="Password" />
+				<label class="sr-only" for="password">Password</label>
+				<div class="input-group mb-2">
+					<div class="input-group-prepend">
+						<div class="input-group-text"><fa-icon icon="lock-open"></fa-icon></div>
+					</div>
+					<input type="password" id="password" formControlName="password" required maxlength="128"
+						   class="form-control" placeholder="Password" />
+				</div>
 				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('password'))" [innerHTML]="message">
 				</small>
 			</div>

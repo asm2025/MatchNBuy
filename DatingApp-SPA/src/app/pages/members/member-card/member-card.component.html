@@ -1,24 +1,12 @@
 <div class="card mb-4">
 	<div class="card-img-wrapper">
-		<img class="card-img-top"
-			src="{{ getUserImage(user) }}"
-			alt="{{ user.knownAs }}" />
-		<ul class="list-inline member-icons animate text-center">
-			<li class="list-inline-item">
-				<button class="btn btn-primary" [routerLink]="['/members/', user.id]">
-					<i class="fa fa-user"></i>
-				</button>
-			</li>
-			<li class="list-inline-item">
-				<button class="btn btn-primary" (click)="like(user.id)"><i class="fa fa-heart"></i></button>
-			</li>
-			<li class="list-inline-item">
-				<button class="btn btn-primary" (click)="unlike(user.id)"><i class="fa fa-heart"></i></button>
-			</li>
-			<li class="list-inline-item">
-				<button class="btn btn-primary" [routerLink]="['/members/', user.id]" [queryParams]="{tab: 3}"><i class="fa fa-envelope"></i></button>
-			</li>
-		</ul>
+		<img class="card-img-top" src="{{ getUserImage(user) }}" alt="{{ user.knownAs }}" />
+		<div class="btn-group member-icons animate text-center" role="group" aria-label="Member actions">
+			<button type="button" class="btn btn-primary" [routerLink]="['/members/', user.id]"><fa-icon icon="user"></fa-icon></button>
+			<button type="button" class="btn btn-primary" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
+			<button type="button" class="btn btn-primary" (click)="unlike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
+			<button type="button" class="btn btn-primary" [routerLink]="['/members/', user.id]" [queryParams]="{tab: 3}"><fa-icon icon="envelope"></fa-icon></button>
+		</div>
 	</div>
 	<div class="card-body p-1">
 		<h6 class="card-title text-center mb1">

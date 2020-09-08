@@ -13,5 +13,5 @@ $select-background-size-valid: $select-background-size;
 $select-background-position-valid: $select-background-position;
 
 $select-background-img-invalid: $select-background-img, escape-svg($form-feedback-icon-invalid);
-$select-background-size-invalid: $input-height-inner-half $input-height-inner-half, $input-height-inner-half $input-height-inner-half;
-$select-background-position-invalid: right add($input-height-inner-half, add($input-height-inner-quarter, 0.5rem)) center, $select-background-position;
+$select-background-size-invalid: $select-background-size, $input-height-inner-half $input-height-inner-half;
+$select-background-position-invalid: right add($input-height-inner-quarter, add($input-height-inner-half, 0.5rem)) center, $select-background-position;

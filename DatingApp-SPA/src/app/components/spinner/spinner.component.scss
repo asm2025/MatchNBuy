@@ -9,23 +9,29 @@ $spinner_animation_start: -1.1;
 $spinner_animation_dec: 0.1;
 
 .spinner-container {
-	width: 60px;
-	height: 60px;
-	position: absolute;
-	top: 70px;
-	left: 0;
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	top: 0;
 	bottom: 0;
+	left: 0;
 	right: 0;
 	margin: auto;
+	background: rgba(0,0,0, 0.5);
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	z-index: 1000000;
 
 	> .spinner {
+		position: relative;
 		width: 40px;
 		height: 40px;
-		position: relative;
+		margin: auto;
 		animation: sk-chase 2.5s infinite linear both;
 
 		.dot {

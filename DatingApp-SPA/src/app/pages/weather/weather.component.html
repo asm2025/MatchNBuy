@@ -16,13 +16,13 @@
 							<div class="picsum-img-wrapper">
 								<img [src]="image(forecast)" alt="" />
 							</div>
-							<div class="carousel-caption">
+							<div class="carousel-caption text-white">
 								<div class="weather-date-location">
 									<h3>{{ forecast.date | date:'EEEE' }}</h3>
 									<p>{{ forecast.date | date:'d MMMM, yyyy' }}</p>
 								</div>
 								<div class="weather-data">
-									<h4 class="display-3">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
+									<h4 class="display-3 text-white">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
 									<p>{{ forecast.keyword }}</p>
 									<p>{{ forecast.summary }}</p>
 								</div>

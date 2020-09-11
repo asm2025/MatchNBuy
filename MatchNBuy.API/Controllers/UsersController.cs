@@ -53,6 +53,10 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> List([FromQuery] UserList pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
+
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
 			pagination ??= new UserList();
 
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
@@ -61,7 +65,7 @@ namespace MatchNBuy.API.Controllers
 				"Photos"
 			};
 
-			listSettings.Filter = BuildFilter(User, pagination);
+			listSettings.Filter = BuildFilter(userId, User, pagination);
 
 			if (listSettings.OrderBy == null || listSettings.OrderBy.Count == 0)
 			{
@@ -84,22 +88,27 @@ namespace MatchNBuy.API.Controllers
 			if (users.Count > 0)
 			{
 				IUserImageBuilder imageBuilder = _repository.ImageBuilder;
+				ISet<string> likees = await _repository.LikeesFromListAsync(userId, users.Select(e => e.Id), token);
+				token.ThrowIfCancellationRequested();
 
 				foreach (UserForList user in users)
 				{
-					if (string.IsNullOrEmpty(user.PhotoUrl)) continue;
-					user.PhotoUrl = imageBuilder.Build(user.PhotoUrl).ToString();
+					if (!string.IsNullOrEmpty(user.PhotoUrl)) user.PhotoUrl = imageBuilder.Build(user.PhotoUrl).ToString();
+					bool isLikee = likees.Contains(user.Id);
+					user.CanBeLiked = !isLikee;
+					user.CanBeDisliked = isLikee;
+					user.Likes = await _repository.LikesAsync(user.Id, token);
+					token.ThrowIfCancellationRequested();
 				}
 			}
 
 			pagination = _mapper.Map(listSettings, pagination);
 			return Ok(new Paginated<UserForList>(users,  pagination));
 
-			static DynamicFilter BuildFilter(ClaimsPrincipal user, UserList pagination)
+			static DynamicFilter BuildFilter(string userId, ClaimsPrincipal user, UserList pagination)
 			{
 				const int AGE_RANGE = 10;
 
-				string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 				StringBuilder filter = new StringBuilder();
 				IList<object> args = new List<object>();
 				filter.Append($"{nameof(Model.User.Id)} != @{args.Count}");
@@ -629,20 +638,20 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
-			if (!await _repository.LikeAsync(userId, recipientId, token)) return BadRequest(recipientId);
-			return NoContent();
+			int likes = await _repository.LikeAsync(userId, recipientId, token);
+			return Ok(likes);
 		}
 
 		[HttpDelete("{userId}/[action]/{recipientId}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Unlike([FromRoute] string userId, [FromRoute] string recipientId, CancellationToken token)
+		public async Task<IActionResult> Dislike([FromRoute] string userId, [FromRoute] string recipientId, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
-			if (!await _repository.UnlikeAsync(userId, recipientId, token)) return BadRequest(recipientId);
-			return NoContent();
+			int likes = await _repository.DislikeAsync(userId, recipientId, token);
+			return Ok(likes);
 		}
 
 		[HttpGet("{userId}/[action]")]

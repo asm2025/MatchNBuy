@@ -77,13 +77,19 @@ namespace MatchNBuy.Data.Repositories
 		Task RefreshSignInAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
 		ValueTask<User> ValidateSecurityStampAsync([NotNull] ClaimsPrincipal principal, CancellationToken token = default(CancellationToken));
 		ValueTask<bool> ValidateSecurityStampAsync(User user, string securityStamp, CancellationToken token = default(CancellationToken));
-		bool Like([NotNull] string userId, [NotNull] string recipientId);
-		ValueTask<bool> LikeAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
-		bool Unlike([NotNull] string userId, [NotNull] string recipientId);
-		ValueTask<bool> UnlikeAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
+		int Like([NotNull] string userId, [NotNull] string recipientId);
+		ValueTask<int> LikeAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
+		int Dislike([NotNull] string userId, [NotNull] string recipientId);
+		ValueTask<int> DislikeAsync([NotNull] string userId, [NotNull] string recipientId, CancellationToken token = default(CancellationToken));
 		int Likes([NotNull] string userId);
 		ValueTask<int> LikesAsync([NotNull] string userId, CancellationToken token = default(CancellationToken));
 		int Likees([NotNull] string userId);
 		ValueTask<int> LikeesAsync([NotNull] string userId, CancellationToken token = default(CancellationToken));
+		[NotNull]
+		ISet<string> LikeesFromList([NotNull] string userId, [NotNull] params string[] idList);
+		[NotNull]
+		ISet<string> LikeesFromList([NotNull] string userId, [NotNull] IEnumerable<string> idList);
+		[ItemNotNull]
+		ValueTask<ISet<string>> LikeesFromListAsync([NotNull] string userId, [NotNull] IEnumerable<string> idList, CancellationToken token = default(CancellationToken));
 	}
 }

@@ -21,9 +21,6 @@ import {
 import { FileUploadModule } from "ng2-file-upload";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { NgOptionHighlightModule } from "@ng-select/ng-option-highlight";
-
-import { TimeAgoPipe } from "time-ago-pipe";
-
 /*
  * https://material.io/resources/icons/?style=baseline
  * <mat-icon>location_off</mat-icon>
@@ -32,6 +29,8 @@ import { TimeAgoPipe } from "time-ago-pipe";
 import { FontAwesomeModule, FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+
+import { TimeAgoPipe } from "time-ago-pipe";
 
 import AppRoutingModule from "./app-routing.module";
 
@@ -42,6 +41,7 @@ import TrimRightPipe from "@common/pipes/string/trim-right.pipe";
 import { NgControlStatus } from "@common/directives/ng_control_status";
 
 import AppComponent from "./app.component";
+import SpinnerComponent from "@components/spinner/spinner.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
 import NavComponent from "@components/nav/nav.component";
 
@@ -90,13 +90,13 @@ export class CustomHammerConfig extends HammerGestureConfig {
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,
-		FontAwesomeModule,
-		AppRoutingModule,
-		HttpClientModule,
-		NgSelectModule,
-		NgOptionHighlightModule,
 		FormsModule,
 		ReactiveFormsModule,
+		HttpClientModule,
+		AppRoutingModule,
+		FontAwesomeModule,
+		NgSelectModule,
+		NgOptionHighlightModule,
 		FileUploadModule,
 		NgbModule,
 		//MatIconModule,
@@ -118,6 +118,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		TrimRightPipe,
 		NgControlStatus,
 		AppComponent,
+		SpinnerComponent,
 		AlertsComponent,
 		NavComponent,
 		HomeComponent,

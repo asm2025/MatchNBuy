@@ -46,7 +46,7 @@ export default class MemberCardComponent {
 		if (!user) return;
 
 		try {
-			this._userClient.unlike(user.id, id)
+			this._userClient.dislike(user.id, id)
 				.pipe(catchError(error => {
 					this._alertService.toasts.error(error.toString());
 					return of(null);

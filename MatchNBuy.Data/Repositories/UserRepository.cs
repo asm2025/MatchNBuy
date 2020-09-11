@@ -24,7 +24,7 @@ namespace MatchNBuy.Data.Repositories
 {
 	public class UserRepository : Repository<DataContext, User>, IUserRepository
 	{
-		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(User).GetProperty(nameof(User.Id))}, LazyThreadSafetyMode.PublicationOnly);
+		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(User).GetProperty(nameof(User.Id)) }, LazyThreadSafetyMode.PublicationOnly);
 
 		/// <inheritdoc />
 		public UserRepository([NotNull] DataContext context, [NotNull] SignInManager<User> signInManager, [NotNull] IPhotoRepository photosRepository, [NotNull] IMessageRepository messageRepository, [NotNull] IUserImageBuilder userImageBuilder, [NotNull] IConfiguration configuration, ILogger<UserRepository> logger)
@@ -39,11 +39,11 @@ namespace MatchNBuy.Data.Repositories
 
 		/// <inheritdoc />
 		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
-		
+
 		public IPhotoRepository Photos { get; }
-		
+
 		public IMessageRepository Messages { get; }
-		
+
 		public IUserImageBuilder ImageBuilder { get; }
 
 		[NotNull]
@@ -156,7 +156,7 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 
 			bool changed = false;
-			
+
 			if (entity.UserRoles?.Count > 0)
 			{
 				Context.UserRoles.RemoveRange(entity.UserRoles);
@@ -204,7 +204,7 @@ namespace MatchNBuy.Data.Repositories
 
 			IList<Claim> claims = await GetClaimsAsync(entity, token);
 			token.ThrowIfCancellationRequested();
-			
+
 			IdentityResult result;
 
 			if (claims != null && claims.Count > 0)
@@ -213,7 +213,7 @@ namespace MatchNBuy.Data.Repositories
 				token.ThrowIfCancellationRequested();
 				if (!result.Succeeded) throw new Exception(result.Errors.CollectMessages($"Unable to delete user '{entity.UserName}'."));
 			}
-			
+
 			result = await UserManager.DeleteAsync(entity);
 			token.ThrowIfCancellationRequested();
 			if (result.Succeeded) return entity;
@@ -226,13 +226,13 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			return new ValueTask<bool>(UserManager.CheckPasswordAsync(entity, password));
 		}
-		
+
 		public string NormalizeName(string name) { return UserManager.NormalizeName(name); }
-		
+
 		public string NormalizeEmail(string email) { return UserManager.NormalizeEmail(email); }
 
 		public string GetUserId(ClaimsPrincipal principal) { return UserManager.GetUserId(principal); }
-		
+
 		public string GetUserName(ClaimsPrincipal principal) { return UserManager.GetUserName(principal); }
 
 		public User FindByName(string userName)
@@ -543,7 +543,7 @@ namespace MatchNBuy.Data.Repositories
 			{
 				Issuer = host,
 				Audience = host,
-				Subject = new ClaimsIdentity(principal.Identity, new []
+				Subject = new ClaimsIdentity(principal.Identity, new[]
 				{
 					new Claim(ClaimTypes.GivenName, user.KnownAs ?? $"{user.FirstName} {user.LastName}".Trim()),
 					new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
@@ -599,89 +599,75 @@ namespace MatchNBuy.Data.Repositories
 		}
 
 		/// <inheritdoc />
-		public bool Like(string userId, string recipientId)
+		public int Like(string userId, string recipientId)
 		{
 			ThrowIfDisposed();
-			Context.Likes.Add(new Like
-			{
-				LikerId = userId,
-				LikeeId = recipientId
-			});
 
-			try
+			if (Context.Likes.FirstOrDefault(e => e.LikerId == userId && e.LikeeId == recipientId) == null)
 			{
+				Context.Likes.Add(new Like
+				{
+					LikerId = userId,
+					LikeeId = recipientId
+				});
+
 				Context.SaveChanges();
-				return true;
 			}
-			catch (DbUpdateException)
-			{
-				return false;
-			}
+
+			return Likes(userId);
 		}
 
 		/// <inheritdoc />
-		public async ValueTask<bool> LikeAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
+		public async ValueTask<int> LikeAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			if (await Context.Likes.FirstOrDefaultAsync(e => e.LikerId == userId && e.LikeeId == recipientId, token) != null) return false;
-			token.ThrowIfCancellationRequested();
-			await Context.Likes.AddAsync(new Like
+
+			if (await Context.Likes.FirstOrDefaultAsync(e => e.LikerId == userId && e.LikeeId == recipientId, token) == null)
 			{
-				LikerId = userId,
-				LikeeId = recipientId
-			}, token);
-			token.ThrowIfCancellationRequested();
-	
-			try
-			{
+				await Context.Likes.AddAsync(new Like
+				{
+					LikerId = userId,
+					LikeeId = recipientId
+				}, token);
+
+				token.ThrowIfCancellationRequested();
 				await Context.SaveChangesAsync(token);
-				return true;
 			}
-			catch (DbUpdateException)
-			{
-				return false;
-			}
+
+			return await LikesAsync(userId, token);
 		}
 
 		/// <inheritdoc />
-		public bool Unlike(string userId, string recipientId)
+		public int Dislike(string userId, string recipientId)
 		{
 			ThrowIfDisposed();
 			Like like = Context.Likes.FirstOrDefault(e => e.LikerId == userId && e.LikeeId == recipientId);
-			if (like == null) return false;
-			Context.Likes.Remove(like);
-	
-			try
+
+			if (like != null)
 			{
+				Context.Likes.Remove(like);
 				Context.SaveChanges();
-				return true;
 			}
-			catch (DbUpdateException)
-			{
-				return false;
-			}
+
+			return Likes(userId);
 		}
 
 		/// <inheritdoc />
-		public async ValueTask<bool> UnlikeAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
+		public async ValueTask<int> DislikeAsync(string userId, string recipientId, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 			Like like = await Context.Likes.FirstOrDefaultAsync(e => e.LikerId == userId && e.LikeeId == recipientId, token);
 			token.ThrowIfCancellationRequested();
-			if (like == null) return false;
-			Context.Likes.Remove(like);
-	
-			try
+
+			if (like != null)
 			{
+				Context.Likes.Remove(like);
 				await Context.SaveChangesAsync(token);
-				return true;
 			}
-			catch (DbUpdateException)
-			{
-				return false;
-			}
+
+			return await LikesAsync(userId, token);
 		}
 
 		/// <inheritdoc />
@@ -712,6 +698,39 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 			return await Context.Likes.CountAsync(e => e.LikeeId == userId, token);
+		}
+
+		/// <inheritdoc />
+		public ISet<string> LikeesFromList(string userId, params string[] idList) { return LikeesFromList(userId, (IEnumerable<string>)idList); }
+		/// <inheritdoc />
+		public ISet<string> LikeesFromList(string userId, IEnumerable<string> idList)
+		{
+			ThrowIfDisposed();
+			IList<string> ids = idList as IList<string> ?? idList.ToList();
+			return Context.Likes
+						.Where(e => e.LikerId == userId && ids.Contains(e.LikeeId))
+						.Select(e => e.LikeeId)
+						.ToHashSet(StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <inheritdoc />
+		public async ValueTask<ISet<string>> LikeesFromListAsync(string userId, IEnumerable<string> idList, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+
+			IList<string> ids = idList as IList<string> ?? idList.ToList();
+			IAsyncEnumerable<string> enumerable = Context.Likes
+														.Where(e => e.LikerId == userId && ids.Contains(e.LikeeId))
+														.Select(e => e.LikeeId)
+														.AsAsyncEnumerable();
+			HashSet<string> set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			await foreach (string id in enumerable.WithCancellation(token))
+			{
+				set.Add(id);
+			}
+
+			return set;
 		}
 	}
 }

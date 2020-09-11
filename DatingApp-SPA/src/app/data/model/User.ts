@@ -24,10 +24,13 @@ export interface IUser {
 }
 
 export interface IUserForList extends IUser {
-	firstName?: string;
+	firstName: string;
 	lastName?: string;
 	introduction?: string;
 	lookingFor?: string;
+	canBeLiked: boolean;
+	canBeDisliked: boolean;
+	likes: number;
 }
 
 export interface IUserForDetails extends IUserForList {

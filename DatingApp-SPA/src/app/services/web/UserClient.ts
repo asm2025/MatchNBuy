@@ -213,8 +213,8 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this.client.post(`${this.baseUrl}/${encodeURIComponent(userId)}/Like/${encodeURIComponent(recipientId)}`, null);
 	}
 
-	unlike(userId: string, recipientId: string): Observable<any> {
-		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(userId)}/Unlike/${encodeURIComponent(recipientId)}`);
+	dislike(userId: string, recipientId: string): Observable<any> {
+		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(userId)}/Dislike/${encodeURIComponent(recipientId)}`);
 	}
 
 	likes(userId: string): Observable<number> {

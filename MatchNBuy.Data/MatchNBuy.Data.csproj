@@ -2,16 +2,16 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.9.11.1</FileVersion>
+		<FileVersion>20.9.12.1</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="30.0.4" />
 		<PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.8" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
 		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.2" />
@@ -39,6 +39,9 @@
 		</Reference>
 		<Reference Include="asm.Newtonsoft">
 		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Newtonsoft.dll</HintPath>
+		</Reference>
+		<Reference Include="asm.Threading">
+		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Threading.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 </Project>

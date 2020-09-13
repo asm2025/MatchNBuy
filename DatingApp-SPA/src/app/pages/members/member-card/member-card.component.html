@@ -1,6 +1,6 @@
 <div class="card mb-4">
 	<div class="card-img-wrapper">
-		<img class="card-img-top" [src]="getUserImage(user)" alt="{{ user.knownAs }}" />
+		<app-lazy-image [src]="getUserImage(user)" [cssClass]="'card-img-top'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="btn-group member-icons animate text-center" role="group" aria-label="Member actions">
 			<button type="button" class="btn btn-primary" [routerLink]="['/members/', user.id]"><fa-icon icon="user"></fa-icon></button>
 			<button *ngIf="user.canBeLiked" type="button" class="btn btn-primary" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>

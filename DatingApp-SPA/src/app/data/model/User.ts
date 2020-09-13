@@ -74,7 +74,7 @@ export interface IUserToUpdate {
 }
 
 export interface IUserList extends ISortablePagination {
-	genders?: Genders;
+	gender?: Genders;
 	minAge?: number;
 	maxAge?: number;
 	likees?: boolean;

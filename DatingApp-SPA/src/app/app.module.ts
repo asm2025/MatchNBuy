@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
 import { JwtModule } from "@auth0/angular-jwt";
+import { LazyLoadImageModule } from "ng-lazyload-image";
 import {
 	NgbModule,
 	NgbAlertConfig,
@@ -44,6 +45,7 @@ import AppComponent from "./app.component";
 import SpinnerComponent from "@components/spinner/spinner.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
 import NavComponent from "@components/nav/nav.component";
+import LazyImageComponent from "@components/lazy-image/lazy-image.component";
 
 import HomeComponent from "@pages/home/home.component";
 
@@ -93,7 +95,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		FormsModule,
 		ReactiveFormsModule,
 		HttpClientModule,
-		AppRoutingModule,
+		LazyLoadImageModule,
 		FontAwesomeModule,
 		NgSelectModule,
 		NgOptionHighlightModule,
@@ -106,7 +108,8 @@ export class CustomHammerConfig extends HammerGestureConfig {
 				allowedDomains: ["localhost:8000"],
 				disallowedRoutes: ["localhost:8000/Users/Login"]
 			}
-		})
+		}),
+		AppRoutingModule
 	],
 	exports: [
 		NgControlStatus
@@ -121,6 +124,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		SpinnerComponent,
 		AlertsComponent,
 		NavComponent,
+		LazyImageComponent,
 		HomeComponent,
 		SignInComponent,
 		SignUpComponent,

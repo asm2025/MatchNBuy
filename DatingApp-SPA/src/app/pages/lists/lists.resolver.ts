@@ -5,6 +5,7 @@ import { catchError } from "rxjs/operators";
 
 import { SortType } from "@common/sorting/SortType";
 import { IPaginated } from "@common/pagination/Paginated";
+import { Genders } from "@data/common/Genders";
 import { IUserForList, IUserList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
@@ -14,8 +15,11 @@ export default class ListsResolver implements Resolve<IPaginated<IUserForList>> 
 	private _pagination: IUserList = {
 		page: 1,
 		pageSize: 12,
+		gender: Genders.NotSpecified,
 		minAge: 16,
 		maxAge: 99,
+		likees: false,
+		likers: false,
 		orderBy: [
 			{
 				name: "lastActive",
@@ -37,7 +41,12 @@ export default class ListsResolver implements Resolve<IPaginated<IUserForList>> 
 				this._router.navigate(["/"]);
 				return of({
 					result: [],
-					pagination: this._pagination
+					pagination: {
+						...this._pagination,
+						page: 1,
+						count: 0,
+						gender: Genders.NotSpecified
+					}
 				});
 			}));
 	}

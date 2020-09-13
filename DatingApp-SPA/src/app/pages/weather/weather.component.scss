@@ -28,10 +28,6 @@
 		padding: 0 0 10px;
 	}
 
-	.display-3 {
-		font-size: 2.5rem
-	}
-
 	.picsum-img-wrapper {
 		img {
 			position: relative;
@@ -60,6 +56,10 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+
+		* {
+			color: white;
+		}
 	}
 }
 

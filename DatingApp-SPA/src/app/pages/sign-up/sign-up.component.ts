@@ -6,8 +6,8 @@ import {
 	FormControl,
 	Validators
 } from "@angular/forms";
-import { Observable, BehaviorSubject, ReplaySubject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { Observable, BehaviorSubject, ReplaySubject, of } from "rxjs";
+import { takeUntil, catchError } from "rxjs/operators";
 
 import { Genders } from "@data/common/Genders";
 import { ICountry, ICity } from "@data/model/Country";
@@ -95,17 +95,12 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 					return;
 				}
 
-				try {
-					this._countriesClient.cities(countryCode)
-						.subscribe((response: ICity[]) => this._citiesSubject.next(response),
-							error => {
-								this._citiesSubject.next([]);
-								this._alertService.toasts.error(error.toString());
-							});
-				} catch (e) {
-					this._citiesSubject.next([]);
-					this._alertService.toasts.error(e.toString());
-				}
+				this._countriesClient.cities(countryCode)
+					.pipe(catchError(error => {
+						this._alertService.toasts.error(error.toString());
+						return of([]);
+					}))
+					.subscribe((response: ICity[]) => this._citiesSubject.next(response));
 			});
 
 		this.countries = this._countriesClient.list();
@@ -148,13 +143,14 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 
 	register(registrationInfo: IUserToRegister) {
 		if (FormHelper.isFormInvalid(this.form$)) return;
-
-		try {
-			this._userClient.register(registrationInfo)
-				.subscribe(() => this._router.navigate(["/members"])
-					, error => this._alertService.alerts.error(error.toString()));
-		} catch (e) {
-			this._alertService.alerts.error(e.toString());
-		}
+		this._userClient.register(registrationInfo)
+			.pipe(catchError(error => {
+				this._alertService.alerts.error(error.toString());
+				return of(null);
+			}))
+			.subscribe((res: any) => {
+				if (!res) return;
+				this._router.navigate(["/members"]);
+			});
 	}
 }

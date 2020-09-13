@@ -29,14 +29,14 @@
 				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('password'))" [innerHTML]="message">
 				</small>
 			</div>
-			<div class="checkbox">
+			<div class="checkbox text-left">
 				<label>
 					<input type="checkbox" formControlName="rememberMe" value="remember-me"/> Remember me
 				</label>
 			</div>
-			<div class="btn-container justify-content-center">
-				<button type="button" class="btn btn-secondary col-12 col-md-5" [routerLink]="['/register']">Sign up</button>
-				<button type="submit" class="btn btn-primary col-12 col-md-5" [disabled]="formHelper.isFormInvalid()">Sign in</button>
+			<div class="btn-container row flex-row justify-content-around">
+				<button type="button" class="btn btn-secondary col-12 col-sm-5" [routerLink]="['/register']">Sign up</button>
+				<button type="submit" class="btn btn-primary col-12 col-sm-5 ml-sm-1" [disabled]="formHelper.isFormInvalid()">Sign in</button>
 			</div>
 			<div class="mt-3">
 				<a href="#" class="mt-3">Forgot user name / password?</a>

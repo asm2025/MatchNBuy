@@ -1,10 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-	FormBuilder,
-	FormGroup,
-	Validators
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { of } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 import { IUserForLogin } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
@@ -53,19 +51,14 @@ export default class SignInComponent implements OnInit {
 
 	login(loginInfo: IUserForLogin) {
 		if (FormHelper.isFormInvalid(this.form$)) return;
-
-		try {
-			this._userClient.login(loginInfo.userName, loginInfo.password)
-				.subscribe((response: boolean) => {
-					if (!response) {
-						this._alertService.toasts.error("Error occured while logging in.");
-						return;
-					}
-
-					this._router.navigate(["/members"]);
-				}, error => this._alertService.toasts.error(error.toString()));
-		} catch (e) {
-			this._alertService.toasts.error(e.toString());
-		}
+		this._userClient.login(loginInfo.userName, loginInfo.password)
+			.pipe(catchError(error => {
+				this._alertService.toasts.error(error.toString());
+				return of(false);
+			}))
+			.subscribe((response: boolean) => {
+				if (!response) return;
+				this._router.navigate(["/members"]);
+			});
 	}
 }

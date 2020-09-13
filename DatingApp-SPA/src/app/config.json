@@ -8,7 +8,10 @@
 		"url": "http://localhost:8000"
 	},
 	"users": {
-		"defaultImage": "@images/user.jpg"
+		"defaultImage": "assets/images/user.jpg"
+	},
+	"images": {
+		"spinner": "assets/images/loading_eclipse.gif"
 	},
 	"language": {
 		"cookieName": "culture" 

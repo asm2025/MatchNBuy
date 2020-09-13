@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ReplaySubject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { ReplaySubject, of } from "rxjs";
+import { takeUntil, catchError } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 
 import { IForecastResult, IForecast } from "@data/model/Forecast";
@@ -49,15 +49,18 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 	}
 
 	list(date: Date | string): void {
-		try {
-			this._weatherClient.list(date)
-				.subscribe((res: IForecastResult) => {
-					this.forecasts = res.forecasts || [];
-					this.select(this.key(res.selectedDate));
-				}, error => this._alertService.toasts.error(error.toString()));
-		} catch (e) {
-			this._alertService.toasts.error(e.toString());
-		}
+		this._weatherClient.list(date)
+			.pipe(catchError(error => {
+				this._alertService.toasts.error(error.toString());
+				return of({
+					forecasts: [],
+					selectedDate: new Date()
+				});
+			}))
+			.subscribe((res: IForecastResult) => {
+				this.forecasts = res.forecasts || [];
+				this.select(this.key(res.selectedDate));
+			});
 	}
 
 	select(id: string): void {

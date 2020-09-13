@@ -21,7 +21,7 @@ export default class ListsComponent implements AfterViewInit, OnDestroy {
 	pagination: IUserList = {
 		page: 1,
 		pageSize: 12,
-		genders: Genders.NotSpecified,
+		gender: Genders.NotSpecified,
 		minAge: 16,
 		maxAge: 99,
 		likees: false,
@@ -58,32 +58,23 @@ export default class ListsComponent implements AfterViewInit, OnDestroy {
 	}
 
 	loadUsers() {
-		try {
-			this._userClient.list(this.pagination)
-				.pipe(catchError(error => {
-					this._alertService.toasts.error(error.toString());
-					return of({
-						result: [],
-						pagination: {
-							...this.pagination,
-							page: 1,
-							count: 0
-						}
-					});
-				}))
-				.subscribe((res: IPaginated<IUserForList>) => {
-					this.users = res.result || [];
-					this.pagination = res.pagination;
+		this._userClient.list(this.pagination)
+			.pipe(catchError(error => {
+				this._alertService.toasts.error(error.toString());
+				return of({
+					result: [],
+					pagination: {
+						...this.pagination,
+						page: 1,
+						count: 0,
+						gender: Genders.NotSpecified
+					}
 				});
-		} catch (e) {
-			this._alertService.toasts.error(e.toString());
-			this.users = [];
-			this.pagination = {
-				...this.pagination,
-				page: 1,
-				count: 0
-			};
-		} 
+			}))
+			.subscribe((res: IPaginated<IUserForList>) => {
+				this.users = res.result || [];
+				this.pagination = res.pagination;
+			});
 	}
 
 	pageChanged(page: number): void {

@@ -28,32 +28,22 @@ export default class MemberCardComponent {
 	like(id: string) {
 		const user = this._userClient.user as IUser;
 		if (!user) return;
-
-		try {
-			this._userClient.like(user.id, id)
-				.pipe(catchError(error => {
-					this._alertService.toasts.error(error.toString());
-					return of(null);
-				}))
-				.subscribe(() => {}, error => this._alertService.alerts.error(error.toString()));
-		} catch (e) {
-			this._alertService.alerts.error(e.toString());
-		} 
+		this._userClient.like(user.id, id)
+			.pipe(catchError(error => {
+				this._alertService.toasts.error(error.toString());
+				return of(null);
+			}))
+			.subscribe();
 	}
 
 	unlike(id: string) {
 		const user = this._userClient.user as IUser;
 		if (!user) return;
-
-		try {
-			this._userClient.dislike(user.id, id)
-				.pipe(catchError(error => {
-					this._alertService.toasts.error(error.toString());
-					return of(null);
-				}))
-				.subscribe(() => {}, error => this._alertService.alerts.error(error.toString()));
-		} catch (e) {
-			this._alertService.alerts.error(e.toString());
-		} 
+		this._userClient.dislike(user.id, id)
+			.pipe(catchError(error => {
+				this._alertService.toasts.error(error.toString());
+				return of(null);
+			}))
+			.subscribe(() => {}, error => this._alertService.alerts.error(error.toString()));
 	}
 }

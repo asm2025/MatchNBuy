@@ -108,9 +108,9 @@
 								</small>
 							</div>
 						</div>
-						<div class="btn-container">
-							<button type="button" class="btn btn-secondary col-12 col-md-3" [routerLink]="['/login']">Sign in</button>
-							<button type="submit" class="btn btn-primary col-12 col-md-3" [disabled]="formHelper.isFormInvalid(form$)">Sign up</button>
+						<div class="btn-container row flex-row justify-content-around">
+							<button type="button" class="btn btn-secondary col-12 col-sm-5" [routerLink]="['/login']">Sign in</button>
+							<button type="submit" class="btn btn-primary col-12 col-sm-5 ml-sm-1" [disabled]="formHelper.isFormInvalid(form$)">Sign up</button>
 						</div>
 					</form>
 				</div>

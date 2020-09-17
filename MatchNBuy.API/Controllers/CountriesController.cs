@@ -81,11 +81,7 @@ namespace MatchNBuy.API.Controllers
 			{
 				PageSize = int.MaxValue,
 				OrderBy = new[] { new SortField(nameof(City.Name)) },
-				Filter = new DynamicFilter
-				{
-					Expression = $"{nameof(City.CountryCode)} == @0",
-					Arguments = new object[] { code }
-				}
+				FilterExpression = $"{nameof(City.CountryCode)} == '{code}'"
 			};
 
 			IQueryable<City> queryable = _cityRepository.List(listSettings);

@@ -14,7 +14,6 @@ namespace MatchNBuy.API.Swagger.Examples
 		private readonly UserFaker _faker;
 		private readonly IMapper _mapper;
 
-		/// <inheritdoc />
 		public UserToRegisterExample([NotNull] ICityRepositoryBase repository, [NotNull] IMapper mapper)
 		{
 			_faker = new UserFaker(repository.List().ToList());

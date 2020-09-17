@@ -65,7 +65,7 @@ namespace MatchNBuy.API.Controllers
 				"Photos"
 			};
 
-			listSettings.Filter = BuildFilter(userId, User, pagination);
+			listSettings.FilterExpression = BuildFilter(userId, User, pagination);
 
 			if (listSettings.OrderBy == null || listSettings.OrderBy.Count == 0)
 			{
@@ -105,20 +105,13 @@ namespace MatchNBuy.API.Controllers
 			pagination = _mapper.Map(listSettings, pagination);
 			return Ok(new Paginated<UserForList>(users,  pagination));
 
-			static DynamicFilter BuildFilter(string userId, ClaimsPrincipal user, UserList pagination)
+			static string BuildFilter(string userId, ClaimsPrincipal user, UserList pagination)
 			{
 				const int AGE_RANGE = 10;
 
 				StringBuilder filter = new StringBuilder();
-				IList<object> args = new List<object>();
-				filter.Append($"{nameof(Model.User.Id)} != @{args.Count}");
-				args.Add(userId);
-				
-				if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified)
-				{
-					filter.Append($" and {nameof(Model.User.Gender)} == @{args.Count}");
-					args.Add((int)pagination.Gender.Value);
-				}
+				filter.Append($"{nameof(Model.User.Id)} != '{userId}'");
+				if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified) filter.Append($" and {nameof(Model.User.Gender)} == {(int)pagination.Gender.Value}");
 
 				DateTime today = DateTime.Today;
 				bool hasMinAge = pagination.MinAge.HasValue && pagination.MinAge > 0;
@@ -167,23 +160,9 @@ namespace MatchNBuy.API.Controllers
 					filter.Append($" and {nameof(Model.User.DateOfBirth)} >= DateTime({maxDate.Year}, {maxDate.Month}, {maxDate.Day})");
 				}
 
-				if (pagination.Likers)
-				{
-					filter.Append($" and {nameof(Model.User.Likers)}.Contains(@{args.Count})");
-					args.Add(userId);
-				}
-
-				if (pagination.Likees)
-				{
-					filter.Append($" and {nameof(Model.User.Likees)}.Contains(@{args.Count})");
-					args.Add(userId);
-				}
-
-				return new DynamicFilter
-				{
-					Expression = filter.ToString(),
-					Arguments = args.ToArray()
-				};
+				if (pagination.Likers) filter.Append($" and {nameof(Model.User.Likers)}.Contains('{userId}')");
+				if (pagination.Likees) filter.Append($" and {nameof(Model.User.Likees)}.Contains('{userId}')");
+				return filter.ToString();
 			}
 		}
 
@@ -297,15 +276,8 @@ namespace MatchNBuy.API.Controllers
 			
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			StringBuilder filter = new StringBuilder();
-			IList<object> args = new List<object>();
-			filter.Append($"{nameof(Photo.UserId)} == @{args.Count}");
-			args.Add(userId);
-
-			listSettings.Filter = new DynamicFilter
-			{
-				Expression = filter.ToString(),
-				Arguments = args.ToArray()
-			};
+			filter.Append($"{nameof(Photo.UserId)} == '{userId}'");
+			listSettings.FilterExpression = filter.ToString();
 
 			IQueryable<Photo> queryable = _repository.Photos.List(listSettings);
 			pagination.Count = await queryable.LongCountAsync(token);

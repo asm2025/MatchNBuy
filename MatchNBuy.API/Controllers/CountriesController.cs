@@ -63,7 +63,7 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrWhiteSpace(code)) return BadRequest(code);
-			Country country = await _countryRepository.GetAsync(token, code);
+			Country country = await _countryRepository.GetAsync(token, code.ToUpperInvariant());
 			token.ThrowIfCancellationRequested();
 			if (country == null) return NotFound(code);
 			CountryForList countryForList = _mapper.Map<CountryForList>(country);
@@ -81,7 +81,7 @@ namespace MatchNBuy.API.Controllers
 			{
 				PageSize = int.MaxValue,
 				OrderBy = new[] { new SortField(nameof(City.Name)) },
-				FilterExpression = $"{nameof(City.CountryCode)} == '{code}'"
+				FilterExpression = $"{nameof(City.CountryCode)} == \"{code.ToUpperInvariant()}\""
 			};
 
 			IQueryable<City> queryable = _cityRepository.List(listSettings);

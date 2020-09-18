@@ -110,7 +110,7 @@ namespace MatchNBuy.API.Controllers
 				const int AGE_RANGE = 10;
 
 				StringBuilder filter = new StringBuilder();
-				filter.Append($"{nameof(Model.User.Id)} != '{userId}'");
+				filter.Append($"{nameof(Model.User.Id)} != \"{userId}\"");
 				if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified) filter.Append($" and {nameof(Model.User.Gender)} == {(int)pagination.Gender.Value}");
 
 				DateTime today = DateTime.Today;
@@ -151,17 +151,17 @@ namespace MatchNBuy.API.Controllers
 				if (pagination.MinAge > 0)
 				{
 					DateTime minDate = today.AddYears(-pagination.MinAge.Value);
-					filter.Append($" and {nameof(Model.User.DateOfBirth)} <= DateTime({minDate.Year}, {minDate.Month}, {minDate.Day})");
+					filter.Append($" and {nameof(Model.User.DateOfBirth)} <= \"{minDate:O}\"");
 				}
 
 				if (pagination.MaxAge > 0)
 				{
 					DateTime maxDate = today.AddYears(-pagination.MaxAge.Value);
-					filter.Append($" and {nameof(Model.User.DateOfBirth)} >= DateTime({maxDate.Year}, {maxDate.Month}, {maxDate.Day})");
+					filter.Append($" and {nameof(Model.User.DateOfBirth)} >= \"{maxDate:O}\"");
 				}
 
-				if (pagination.Likers) filter.Append($" and {nameof(Model.User.Likers)}.Contains('{userId}')");
-				if (pagination.Likees) filter.Append($" and {nameof(Model.User.Likees)}.Contains('{userId}')");
+				if (pagination.Likers) filter.Append($" and {nameof(Model.User.Likers)}.Contains(\"{userId}\")");
+				if (pagination.Likees) filter.Append($" and {nameof(Model.User.Likees)}.Contains(\"{userId}\")");
 				return filter.ToString();
 			}
 		}

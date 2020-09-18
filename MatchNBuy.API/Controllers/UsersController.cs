@@ -60,11 +60,13 @@ namespace MatchNBuy.API.Controllers
 			pagination ??= new UserList();
 
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
-			listSettings.Include = new[]
+			listSettings.Include = new List<string>
 			{
-				"Photos"
+				nameof(Model.User.Photos)
 			};
 
+			if (pagination.Likers) listSettings.Include.Add(nameof(Model.User.Likers));
+			if (pagination.Likees) listSettings.Include.Add(nameof(Model.User.Likees));
 			listSettings.FilterExpression = BuildFilter(userId, User, pagination);
 
 			if (listSettings.OrderBy == null || listSettings.OrderBy.Count == 0)
@@ -111,7 +113,7 @@ namespace MatchNBuy.API.Controllers
 
 				StringBuilder filter = new StringBuilder();
 				filter.Append($"{nameof(Model.User.Id)} != \"{userId}\"");
-				if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified) filter.Append($" and {nameof(Model.User.Gender)} == {(int)pagination.Gender.Value}");
+				if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified) filter.Append($" && {nameof(Model.User.Gender)} == {(int)pagination.Gender.Value}");
 
 				DateTime today = DateTime.Today;
 				bool hasMinAge = pagination.MinAge.HasValue && pagination.MinAge > 0;
@@ -151,17 +153,17 @@ namespace MatchNBuy.API.Controllers
 				if (pagination.MinAge > 0)
 				{
 					DateTime minDate = today.AddYears(-pagination.MinAge.Value);
-					filter.Append($" and {nameof(Model.User.DateOfBirth)} <= \"{minDate:O}\"");
+					filter.Append($" && {nameof(Model.User.DateOfBirth)} <= \"{minDate:O}\"");
 				}
 
 				if (pagination.MaxAge > 0)
 				{
 					DateTime maxDate = today.AddYears(-pagination.MaxAge.Value);
-					filter.Append($" and {nameof(Model.User.DateOfBirth)} >= \"{maxDate:O}\"");
+					filter.Append($" && {nameof(Model.User.DateOfBirth)} >= \"{maxDate:O}\"");
 				}
 
-				if (pagination.Likers) filter.Append($" and {nameof(Model.User.Likers)}.Contains(\"{userId}\")");
-				if (pagination.Likees) filter.Append($" and {nameof(Model.User.Likees)}.Contains(\"{userId}\")");
+				if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likers)}.Any(LikeeId == \"{userId}\")");
+				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any(LikerId == \"{userId}\")");
 				return filter.ToString();
 			}
 		}

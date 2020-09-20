@@ -1,4 +1,4 @@
 $ng-select-padding-right: add(add($input-line-height * .5em, $input-padding-y), 1rem);
 $ng-select-value-font-size: 0.9em;
-$ng-select-selected: lighten(theme-color("primary"), 46);
-$ng-select-marked: lighten(theme-color("primary"), 48);
+$ng-select-selected: lighten($primary, 46);
+$ng-select-marked: lighten($primary, 48);

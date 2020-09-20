@@ -13,6 +13,7 @@ import { takeUntil } from "rxjs/operators";
 import {
 	NgbAlertConfig,
 	NgbToastConfig,
+	NgbTooltipConfig,
 	NgbPaginationConfig,
 	NgbModalConfig,
 	NgbProgressbarConfig
@@ -37,6 +38,7 @@ export default class AppComponent implements OnInit, OnDestroy {
 
 	constructor(alertConfig: NgbAlertConfig,
 		toastConfig: NgbToastConfig,
+		tooltipConfig: NgbTooltipConfig,
 		paginationConfig: NgbPaginationConfig,
 		modalConfig: NgbModalConfig,
 		progressBarConfig: NgbProgressbarConfig,
@@ -50,6 +52,8 @@ export default class AppComponent implements OnInit, OnDestroy {
 		toastConfig.autohide = true;
 		toastConfig.delay = 1000;
 		toastConfig.ariaLive = "polite";
+
+		tooltipConfig.placement = "top-left";
 
 		paginationConfig.boundaryLinks = true;
 		paginationConfig.rotate = true;

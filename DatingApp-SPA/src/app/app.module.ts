@@ -15,6 +15,7 @@ import {
 	NgbModule,
 	NgbAlertConfig,
 	NgbToastConfig,
+	NgbTooltipConfig,
 	NgbPaginationConfig,
 	NgbModalConfig,
 	NgbProgressbarConfig
@@ -146,6 +147,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		ErrorInterceptorProvider,
 		NgbAlertConfig,
 		NgbToastConfig,
+		NgbTooltipConfig,
 		NgbPaginationConfig,
 		NgbModalConfig,
 		NgbProgressbarConfig,

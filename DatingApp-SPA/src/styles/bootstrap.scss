@@ -120,3 +120,62 @@ select.form-control {
 	align-items: center;
 	justify-content: center;
 }
+
+p {
+	margin: 2px 4px;
+}
+
+.card {
+	.h1, .h2, .h3, .h4, .h5, .h6,
+	h1, h2, h3, h4, h5, h6 {
+		margin: 2px 4px;
+	}
+}
+
+.tooltip {
+	.h1, .h2, .h3, .h4, .h5, .h6,
+	h1, h2, h3, h4, h5, h6 {
+		color: $light;
+	}
+
+	&.show {
+		opacity: $tooltip-opacity;
+	}
+}
+
+.bs-tooltip-top {
+	.arrow {
+		&::before {
+			border-top-color: $tooltip-arrow-color;
+		}
+	}
+}
+
+.bs-tooltip-right {
+	.arrow {
+		&::before {
+			border-right-color: $tooltip-arrow-color;
+		}
+	}
+}
+
+.bs-tooltip-bottom {
+	.arrow {
+		&::before {
+			border-bottom-color: $tooltip-arrow-color;
+		}
+	}
+}
+
+.bs-tooltip-left {
+	.arrow {
+		&::before {
+			border-left-color: $tooltip-arrow-color;
+		}
+	}
+}
+
+.tooltip-inner {
+	color: $tooltip-color;
+	background-color: $tooltip-bg;
+}

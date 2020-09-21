@@ -11,9 +11,9 @@ import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
 @Component({
-    selector: "app-member-list",
-    templateUrl: "./member-list.component.html",
-    styleUrls: ["./member-list.component.scss"]
+	selector: "app-member-list",
+	templateUrl: "./member-list.component.html",
+	styleUrls: ["./member-list.component.scss"]
 })
 export default class MemberListComponent implements AfterViewInit, OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();

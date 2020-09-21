@@ -160,8 +160,10 @@ namespace MatchNBuy.API.Controllers
 					filter.Append($" && {nameof(Model.User.DateOfBirth)} >= \"{maxDate:O}\"");
 				}
 
-				if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likers)}.Any(LikeeId == \"{userId}\")");
-				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any(LikeeId == \"{userId}\")");
+				//if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likers)}.Any(LikeeId == \"{userId}\")");
+				//if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any(LikeeId == \"{userId}\")");
+				if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likers)}.Any()");
+				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any()");
 				return filter.ToString();
 			}
 		}

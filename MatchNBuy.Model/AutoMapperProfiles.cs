@@ -28,7 +28,8 @@ namespace MatchNBuy.Model
 				.ForMember(e => e.Country, opt => opt.MapFrom(e => e.City != null && e.City.Country != null ? e.City.Country.Name : string.Empty))
 				.ForMember(e => e.City, opt => opt.MapFrom(e => e.City != null ? e.City.Name : string.Empty));
 			CreateMap<User, UserForList>()
-				.IncludeBase<User, UserForLoginDisplay>();
+				.IncludeBase<User, UserForLoginDisplay>()
+				.ForMember(e => e.Likes, opt => opt.MapFrom(e => e.Likers.Count));
 			CreateMap<User, UserForDetails>()
 				.IncludeBase<User, UserForList>()
 				.ForMember(e => e.Interests, opt => opt.MapFrom(e => e.UserInterests.Select(x => x.Interest.Name).ToArray()))

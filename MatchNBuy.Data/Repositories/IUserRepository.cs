@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using asm.Core.Data.Entity.Patterns.Repository;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
-using MatchNBuy.Data.ImageBuilders;
+using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Identity;
 
 namespace MatchNBuy.Data.Repositories

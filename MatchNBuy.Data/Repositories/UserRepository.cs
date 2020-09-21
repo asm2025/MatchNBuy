@@ -12,7 +12,7 @@ using asm.Extensions;
 using asm.Identity.Extensions;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
-using MatchNBuy.Data.ImageBuilders;
+using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -614,7 +614,7 @@ namespace MatchNBuy.Data.Repositories
 				Context.SaveChanges();
 			}
 
-			return Likes(userId);
+			return Likes(recipientId);
 		}
 
 		/// <inheritdoc />
@@ -635,7 +635,7 @@ namespace MatchNBuy.Data.Repositories
 				await Context.SaveChangesAsync(token);
 			}
 
-			return await LikesAsync(userId, token);
+			return await LikesAsync(recipientId, token);
 		}
 
 		/// <inheritdoc />
@@ -650,7 +650,7 @@ namespace MatchNBuy.Data.Repositories
 				Context.SaveChanges();
 			}
 
-			return Likes(userId);
+			return Likes(recipientId);
 		}
 
 		/// <inheritdoc />
@@ -667,7 +667,7 @@ namespace MatchNBuy.Data.Repositories
 				await Context.SaveChangesAsync(token);
 			}
 
-			return await LikesAsync(userId, token);
+			return await LikesAsync(recipientId, token);
 		}
 
 		/// <inheritdoc />
@@ -682,7 +682,7 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			return await Context.Likes.CountAsync(e => e.LikerId == userId, token);
+			return await Context.Likes.CountAsync(e => e.LikeeId == userId, token);
 		}
 
 		/// <inheritdoc />

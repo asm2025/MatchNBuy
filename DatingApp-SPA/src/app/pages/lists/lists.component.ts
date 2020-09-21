@@ -77,6 +77,28 @@ export default class ListsComponent implements AfterViewInit, OnDestroy {
 			});
 	}
 
+	liked(id: string, value: number): void {
+		const index = this.users.findIndex(e => e.id === id);
+		if (index < 0) return;
+		this.users[index] = {
+			...this.users[index],
+			likes: value,
+			canBeDisliked: true,
+			canBeLiked: false
+		};
+	}
+
+	disliked(id: string, value: number): void {
+		const index = this.users.findIndex(e => e.id === id);
+		if (index < 0) return;
+		this.users[index] = {
+			...this.users[index],
+			likes: value,
+			canBeDisliked: false,
+			canBeLiked: true
+		};
+	}
+
 	pageChanged(page: number): void {
 		this.pagination.page = page;
 		this.loadUsers();

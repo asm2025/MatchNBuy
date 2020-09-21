@@ -22,7 +22,7 @@ using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
 using MatchNBuy.Model.TransferObjects;
 using JetBrains.Annotations;
-using MatchNBuy.Data.ImageBuilders;
+using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -62,11 +62,11 @@ namespace MatchNBuy.API.Controllers
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			listSettings.Include = new List<string>
 			{
-				nameof(Model.User.Photos)
+				nameof(Model.User.Photos),
+				nameof(Model.User.Likers),
+				nameof(Model.User.Likees)
 			};
 
-			if (pagination.Likers) listSettings.Include.Add(nameof(Model.User.Likers));
-			if (pagination.Likees) listSettings.Include.Add(nameof(Model.User.Likees));
 			listSettings.FilterExpression = BuildFilter(userId, User, pagination);
 
 			if (listSettings.OrderBy == null || listSettings.OrderBy.Count == 0)
@@ -89,18 +89,16 @@ namespace MatchNBuy.API.Controllers
 
 			if (users.Count > 0)
 			{
-				IUserImageBuilder imageBuilder = _repository.ImageBuilder;
+				IUserImageBuilder userImageBuilder = _repository.ImageBuilder;
 				ISet<string> likees = await _repository.LikeesFromListAsync(userId, users.Select(e => e.Id), token);
 				token.ThrowIfCancellationRequested();
 
 				foreach (UserForList user in users)
 				{
-					if (!string.IsNullOrEmpty(user.PhotoUrl)) user.PhotoUrl = imageBuilder.Build(user.PhotoUrl).ToString();
 					bool isLikee = likees.Contains(user.Id);
 					user.CanBeLiked = !isLikee;
 					user.CanBeDisliked = isLikee;
-					user.Likes = await _repository.LikesAsync(user.Id, token);
-					token.ThrowIfCancellationRequested();
+					if (!string.IsNullOrEmpty(user.PhotoUrl)) user.PhotoUrl = Convert.ToString(userImageBuilder.Build(user.PhotoUrl));
 				}
 			}
 
@@ -163,7 +161,7 @@ namespace MatchNBuy.API.Controllers
 				}
 
 				if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likers)}.Any(LikeeId == \"{userId}\")");
-				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any(LikerId == \"{userId}\")");
+				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any(LikeeId == \"{userId}\")");
 				return filter.ToString();
 			}
 		}

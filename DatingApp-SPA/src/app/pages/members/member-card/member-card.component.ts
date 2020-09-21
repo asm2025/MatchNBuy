@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -14,8 +14,9 @@ import config from "@/config.json";
 	styleUrls: ["./member-card.component.scss"]
 })
 export default class MemberCardComponent {
-	@Input()
-	user: IUserForList;
+	@Input() user: IUserForList;
+	@Output() liked = new EventEmitter<number>();
+	@Output() disliked = new EventEmitter<number>();
 
 	constructor(private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService) {
@@ -31,19 +32,25 @@ export default class MemberCardComponent {
 		this._userClient.like(user.id, id)
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
-				return of(null);
+				return of(-1);
 			}))
-			.subscribe();
+			.subscribe((response: number) => {
+				if (response < 0) return;
+				this.liked.emit(response);
+			});
 	}
 
-	unlike(id: string) {
+	dislike(id: string) {
 		const user = this._userClient.user as IUser;
 		if (!user) return;
 		this._userClient.dislike(user.id, id)
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
-				return of(null);
+				return of(-1);
 			}))
-			.subscribe(() => {}, error => this._alertService.alerts.error(error.toString()));
+			.subscribe((response: number) => {
+				if (response < 0) return;
+				this.disliked.emit(response);
+			});
 	}
 }

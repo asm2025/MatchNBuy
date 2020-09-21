@@ -2,17 +2,21 @@
 	<div class="card-img-wrapper">
 		<app-lazy-image [src]="getUserImage(user)" [cssClass]="'card-img-top'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="summery text-white">
-			<h6 class="card-title mb1">{{ user.knownAs }}</h6>
+			<h6 class="card-title mb1">{{ user.knownAs }} <span *ngIf="user.likes" class="badge badge-light">{{ user.likes }}</span></h6>
 			<p>{{ user.city }}</p>
-			<p>active: {{ user.lastActive | timeAgo }}</p>
+			<p>Active: {{ user.lastActive | timeAgo }}</p>
 		</div>
 		<div class="overlay">
 			<div>
-				<h6>{{ user.firstName }} {{ user.lastName }}</h6>
+				<h6>
+					{{ user.knownAs }} <span *ngIf="user.likes" class="badge badge-dark">{{ user.likes }}</span>
+					<br />
+					{{ user.firstName }} {{ user.lastName }}
+				</h6>
 				<p>{{ user.city }}, {{ user.country }}</p>
 				<p>{{ user.dateOfBirth | date:'shortDate' }} ({{ user.age | number:'1.0-0' }} years)</p>
-				<p>Member since: {{ user.created | date:'shortDate' }}</p>
-				<p>Last active: {{ user.lastActive | timeAgo }}</p>
+				<p>Since: {{ user.created | date:'shortDate' }}</p>
+				<p>Active: {{ user.lastActive | timeAgo }}</p>
 			</div>
 			<div class="btn-group text-center" role="group" aria-label="Member actions">
 				<button type="button" class="btn" [routerLink]="['/members/', user.id]"><fa-icon icon="user"></fa-icon></button>

@@ -1,7 +1,7 @@
 ﻿using asm.Patterns.Images;
 using JetBrains.Annotations;
 
-namespace MatchNBuy.Data.ImageBuilders
+namespace MatchNBuy.Model.ImageBuilders
 {
 	public interface IUserImageBuilder : IImageBuilder
 	{

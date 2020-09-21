@@ -25,9 +25,9 @@ using asm.Newtonsoft.Serialization;
 using asm.Patterns.Images;
 using AutoMapper;
 using MatchNBuy.API.ImageBuilders;
-using MatchNBuy.Data.ImageBuilders;
 using MatchNBuy.Data.Repositories;
 using MatchNBuy.Model;
+using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -105,11 +105,11 @@ namespace MatchNBuy.API
 
 				.AddSingleton<IUserImageBuilder, UserImageBuilder>()
 				// Mapper
-				.AddAutoMapper(options => options.AddProfile(new AutoMapperProfiles()),
-								new []{typeof(AutoMapperProfiles).Assembly}, 
+				.AddAutoMapper((provider, builder) => builder.AddProfile(new AutoMapperProfiles()),
+								new [] { typeof(AutoMapperProfiles).Assembly },
 								ServiceLifetime.Singleton)
 				// Database
-				.AddDbContext<DataContext>((provider, builder) =>
+				.AddDbContext<DataContext>(builder =>
 				{
 					builder.UseLazyLoadingProxies();
 					// https://docs.microsoft.com/en-us/ef/core/querying/tracking

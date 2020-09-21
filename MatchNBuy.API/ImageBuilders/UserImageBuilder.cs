@@ -3,8 +3,8 @@ using System.IO;
 using asm.Extensions;
 using asm.Helpers;
 using asm.Patterns.Images;
-using MatchNBuy.Data.ImageBuilders;
 using JetBrains.Annotations;
+using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace MatchNBuy.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+	internal partial class DataContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

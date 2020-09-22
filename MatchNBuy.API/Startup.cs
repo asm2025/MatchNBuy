@@ -1,8 +1,5 @@
 using System;
 using System.Security.Claims;
-using asm.Core.Authentication.JwtBearer.Extensions;
-using asm.Core.Authentication.JwtBearer.Helpers;
-using asm.Core.Web.Extensions;
 using MatchNBuy.Data;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
@@ -14,9 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using asm.Core.Web.Middleware;
 using Serilog;
-using asm.Newtonsoft.Extensions;
 using asm.Newtonsoft.Helpers;
-using asm.Core.Swagger.Extensions;
 using asm.Data.Patterns.Repository;
 using asm.Extensions;
 using asm.Helpers;
@@ -111,7 +106,6 @@ namespace MatchNBuy.API
 				// Database
 				.AddDbContext<DataContext>(builder =>
 				{
-					builder.UseLazyLoadingProxies();
 					// https://docs.microsoft.com/en-us/ef/core/querying/tracking
 					// https://stackoverflow.com/questions/12726878/global-setting-for-asnotracking
 					//builder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -124,6 +118,7 @@ namespace MatchNBuy.API
 							.EnableSensitiveDataLogging();
 					}
 
+					builder.UseLazyLoadingProxies();
 					builder.UseSqlite(dataSection.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
 					builder.EnableDetailedErrors(_environment.IsDevelopment());
 				}/*, ServiceLifetime.Singleton*/)

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.9.21.0</FileVersion>
+		<FileVersion>20.9.22.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,7 +11,11 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.8" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="3.1.8" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
 		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.2" />
@@ -34,8 +38,14 @@
 		<Reference Include="asm.Data">
 			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Data.dll</HintPath>
 		</Reference>
+		<Reference Include="asm.Extensions.Configuration">
+		  <HintPath>..\..\..\..\..\Libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Extensions.Configuration.dll</HintPath>
+		</Reference>
 		<Reference Include="asm.Identity">
 		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Identity.dll</HintPath>
+		</Reference>
+		<Reference Include="asm.Logging">
+		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Logging.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Newtonsoft">
 		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Newtonsoft.dll</HintPath>

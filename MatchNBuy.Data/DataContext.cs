@@ -23,9 +23,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using asm.Logging.Helpers;
 
 namespace MatchNBuy.Data
 {
@@ -51,6 +54,48 @@ namespace MatchNBuy.Data
 		public DbSet<UserInterest> UserInterests { get; set; }
 		public DbSet<Like> Likes { get; set; }
 		public DbSet<Message> Messages { get; set; }
+
+		/// <inheritdoc />
+		protected override void OnConfiguring([NotNull] DbContextOptionsBuilder optionsBuilder)
+		{
+			if (optionsBuilder.IsConfigured)
+			{
+				base.OnConfiguring(optionsBuilder);
+				return;
+			}
+
+			IHostEnvironment environment = new HostingEnvironment
+			{
+				EnvironmentName = EnvironmentHelper.GetEnvironmentName(),
+				ApplicationName = AppDomain.CurrentDomain.FriendlyName,
+				ContentRootPath = AppDomain.CurrentDomain.BaseDirectory,
+				ContentRootFileProvider = new PhysicalFileProvider(GetType().Assembly.GetPath())
+			};
+
+			string contentRoot = PathHelper.Trim(environment.ContentRootPath);
+			if (string.IsNullOrEmpty(contentRoot) || !Directory.Exists(contentRoot)) contentRoot = Directory.GetCurrentDirectory();
+
+			IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+			configurationBuilder.SetBasePath(contentRoot);
+
+			IConfiguration configuration = IConfigurationBuilderHelper.CreateConfiguration()
+																	.AddConfigurationFiles(EnvironmentHelper.GetEnvironmentName())
+																	.AddEnvironmentVariables()
+																	.AddUserSecrets()
+																	.Build();
+			IConfigurationSection dataSection = configuration.GetSection("data");
+			bool enableLogging = dataSection.GetValue<bool>("logging");
+
+			if (enableLogging)
+			{
+				optionsBuilder.UseLoggerFactory(LogFactoryHelper.ConsoleLoggerFactory)
+							.EnableSensitiveDataLogging();
+			}
+
+			optionsBuilder.UseLazyLoadingProxies();
+			optionsBuilder.UseSqlite(dataSection.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
+			optionsBuilder.EnableDetailedErrors(environment.IsDevelopment());
+		}
 
 		/// <inheritdoc />
 		protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)

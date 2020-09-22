@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using asm.Core.Data.Entity.Patterns.Repository;
-using asm.Threading.Extensions;
+using asm.Extensions;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;

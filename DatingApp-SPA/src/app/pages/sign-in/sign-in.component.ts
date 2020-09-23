@@ -58,7 +58,7 @@ export default class SignInComponent implements OnInit {
 			}))
 			.subscribe((response: boolean) => {
 				if (!response) return;
-				this._router.navigate(["/members"]);
+				this._router.navigate(["/lists"]);
 			});
 	}
 }

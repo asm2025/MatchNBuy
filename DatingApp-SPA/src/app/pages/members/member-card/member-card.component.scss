@@ -18,6 +18,12 @@
 			-moz-transition: opacity 0.5s ease;
 			-o-transition: opacity 0.5s ease;
 			transition: opacity 0.5s ease;
+
+			> div {
+				width: 100%;
+				padding: 4px 8px;
+				background-color: rgba(0, 0, 0, 0.2);
+			}
 		}
 
 		.overlay {

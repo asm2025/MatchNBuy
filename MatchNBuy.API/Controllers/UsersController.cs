@@ -54,9 +54,8 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 
-			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value?.ToUpperInvariant();
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
 			pagination ??= new UserList();
 
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
@@ -118,6 +117,7 @@ namespace MatchNBuy.API.Controllers
 				bool hasMinAge = pagination.MinAge.HasValue && pagination.MinAge > 0;
 				bool hasMaxAge = pagination.MaxAge.HasValue && pagination.MaxAge > 0;
 
+				// Set the default age if Likers and Likees are not specified
 				if (!pagination.Likers && !pagination.Likees && (!hasMinAge || !hasMaxAge))
 				{
 					Claim dobClaim = user.FindFirst(ClaimTypes.DateOfBirth);
@@ -137,6 +137,7 @@ namespace MatchNBuy.API.Controllers
 					if (pagination.MaxAge < pagination.MinAge) pagination.MaxAge = pagination.MinAge.Value + AGE_RANGE;
 				}
 
+				// Set the default gender if Likers and Likees are not specified
 				if (!pagination.Likers && !pagination.Likees && !pagination.Gender.HasValue)
 				{
 					Claim genderClaim = user.FindFirst(ClaimTypes.Gender);
@@ -149,22 +150,24 @@ namespace MatchNBuy.API.Controllers
 					}
 				}
 
-				if (pagination.MinAge > 0)
+				// Set the min age if it was explicitly set or Likers and Likees are not specified
+				if (hasMinAge || !pagination.Likers && !pagination.Likees && pagination.MinAge > 0)
 				{
 					DateTime minDate = today.AddYears(-pagination.MinAge.Value);
 					filter.Append($" && {nameof(Model.User.DateOfBirth)} <= DateTime({minDate.Year}, {minDate.Month}, {minDate.Day})");
 				}
 
-				if (pagination.MaxAge > 0)
+				// Set the max age if it was explicitly set or Likers and Likees are not specified
+				if (hasMaxAge || !pagination.Likers && !pagination.Likees && pagination.MaxAge > 0)
 				{
 					DateTime maxDate = today.AddYears(-pagination.MaxAge.Value);
 					filter.Append($" && {nameof(Model.User.DateOfBirth)} >= DateTime({maxDate.Year}, {maxDate.Month}, {maxDate.Day})");
 				}
 
-				// People who like me: LikeeId = userId
-				if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likers)}.Any({nameof(Model.Like.LikeeId)} == \"{userId}\")");
-				// People whom I like: LikerId = userId
-				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likees)}.Any({nameof(Model.Like.LikerId)} == \"{userId}\")");
+				// People who like me [RELEVANT TO THE USER IN THE LIST, working backwards]: LikerId = userId
+				if (pagination.Likers) filter.Append($" && {nameof(Model.User.Likees)}.Any({nameof(Model.Like.LikeeId)} == \"{userId}\")");
+				// People whom I like [RELEVANT TO THE USER IN THE LIST, working backwards]: LikeeId = userId
+				if (pagination.Likees) filter.Append($" && {nameof(Model.User.Likers)}.Any({nameof(Model.Like.LikerId)} == \"{userId}\")");
 				return filter.ToString();
 			}
 		}
@@ -175,11 +178,11 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest(id);
-			id = id.ToUpperInvariant();
 
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
+			
 			UserForDetails userForDetails = _mapper.Map<UserForDetails>(user);
 			if (userForDetails != null && !string.IsNullOrEmpty(userForDetails.PhotoUrl)) userForDetails.PhotoUrl = _repository.ImageBuilder.Build(user.PhotoUrl).ToString();
 			return Ok(userForDetails);
@@ -191,9 +194,11 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Login([FromBody][NotNull] UserForLogin loginParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
+			
 			User user = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
 			if (user == null || string.IsNullOrEmpty(user.Token)) return Unauthorized(loginParams.UserName);
+			
 			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(user);
 			if (!string.IsNullOrEmpty(userForLoginDisplay.PhotoUrl)) userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(userForLoginDisplay.PhotoUrl).ToString();
 			return Ok(new
@@ -209,9 +214,11 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Register([FromBody][NotNull] UserToRegister userParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
+			
 			User user = _mapper.Map<User>(userParams);
 			user = await _repository.AddAsync(user, userParams.Password, token);
 			token.ThrowIfCancellationRequested();
+			
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
 			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
 			return CreatedAtAction(nameof(Get), new { id = user.Id }, userForSerialization);
@@ -226,11 +233,11 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
 			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
-			id = id.ToUpperInvariant();
-
+			
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
+			
 			UserToUpdate userToUpdate = _mapper.Map<UserToUpdate>(user);
 			return Ok(userToUpdate);
 		}
@@ -244,7 +251,6 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
 			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
-			id = id.ToUpperInvariant();
 			
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
@@ -254,6 +260,7 @@ namespace MatchNBuy.API.Controllers
 			user = await _repository.UpdateAsync(user, token);
 			token.ThrowIfCancellationRequested();
 			if (user == null) throw new Exception("Updating user failed.");
+			
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
 			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
 			return Ok(userForSerialization);
@@ -268,8 +275,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest();
 			if (!id.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(id);
-			id = id.ToUpperInvariant();
-
+			
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
@@ -285,7 +291,6 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
 			
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			StringBuilder filter = new StringBuilder();
@@ -295,6 +300,7 @@ namespace MatchNBuy.API.Controllers
 			IQueryable<Photo> queryable = _repository.Photos.List(listSettings);
 			pagination.Count = await queryable.LongCountAsync(token);
 			token.ThrowIfCancellationRequested();
+			
 			IList<PhotoForList> photos = await queryable.Paginate(pagination)
 														.ProjectTo<PhotoForList>(_mapper.ConfigurationProvider)
 														.ToListAsync(token);
@@ -311,12 +317,12 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return BadRequest();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
 			
 			Photo photo = await _repository.Photos.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) return NotFound(id);
 			if (!userId.IsSame(photo.UserId)) return Unauthorized(userId);
+			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
 			return Ok(photoForList);
 		}
@@ -329,7 +335,6 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
-			userId = userId.ToUpperInvariant();
 
 			Stream stream = null;
 			Image image = null;
@@ -460,7 +465,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			pagination ??= new MessageList();
-			userId = userId.ToUpperInvariant();
+
 			Paginated<MessageThread> threads = await _repository.Messages.ThreadsAsync(userId, pagination, token);
 			token.ThrowIfCancellationRequested();
 			return Ok(threads);
@@ -476,7 +481,6 @@ namespace MatchNBuy.API.Controllers
 			
 			string claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (!userId.IsSame(claimId) && !recipientId.IsSame(claimId)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
 			
 			IQueryable<Message> queryable = _repository.Messages.Thread(userId, recipientId, pagination);
 			pagination.Count = await queryable.CountAsync(token);
@@ -495,7 +499,6 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
 			pagination ??= new MessageList();
 			
 			IQueryable<Message> queryable = _repository.Messages.List(userId, pagination);
@@ -533,7 +536,6 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
 			
 			Message message = _mapper.Map<Message>(messageParams);
 			message.SenderId = userId;
@@ -629,8 +631,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
-			userId = userId.ToUpperInvariant();
-			recipientId = recipientId.ToUpperInvariant();
+
 			int likes = await _repository.LikeAsync(userId, recipientId, token);
 			return Ok(likes);
 		}
@@ -643,8 +644,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
-			userId = userId.ToUpperInvariant();
-			recipientId = recipientId.ToUpperInvariant();
+
 			int likes = await _repository.DislikeAsync(userId, recipientId, token);
 			return Ok(likes);
 		}
@@ -655,7 +655,7 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
+
 			int count = await _repository.LikesAsync(userId, token);
 			return Ok(count);
 		}
@@ -666,7 +666,7 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
-			userId = userId.ToUpperInvariant();
+
 			int count = await _repository.LikeesAsync(userId, token);
 			return Ok(count);
 		}

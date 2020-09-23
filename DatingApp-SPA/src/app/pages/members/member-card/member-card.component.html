@@ -2,9 +2,11 @@
 	<div class="card-img-wrapper">
 		<app-lazy-image [src]="getUserImage(user)" [cssClass]="'card-img-top'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="summery text-white">
-			<h6 class="card-title mb1">{{ user.knownAs }} <span *ngIf="user.likes" class="badge badge-light">{{ user.likes }}</span></h6>
-			<p>{{ user.city }}</p>
-			<p>Active: {{ user.lastActive | timeAgo }}</p>
+			<div>
+				<h6 class="card-title mb1">{{ user.knownAs }} <span *ngIf="user.likes" class="badge badge-light">{{ user.likes }}</span></h6>
+				<p>{{ user.city }}</p>
+				<p>Active: {{ user.lastActive | timeAgo }}</p>
+			</div>
 		</div>
 		<div class="overlay">
 			<div>

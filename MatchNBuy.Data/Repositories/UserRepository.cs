@@ -673,7 +673,7 @@ namespace MatchNBuy.Data.Repositories
 		public int Likes(string userId)
 		{
 			ThrowIfDisposed();
-			return Context.Likes.Count(e => e.LikerId == userId);
+			return Context.Likes.Count(e => e.LikeeId == userId);
 		}
 
 		/// <inheritdoc />
@@ -688,7 +688,7 @@ namespace MatchNBuy.Data.Repositories
 		public int Likees(string userId)
 		{
 			ThrowIfDisposed();
-			return Context.Likes.Count(e => e.LikeeId == userId);
+			return Context.Likes.Count(e => e.LikerId == userId);
 		}
 
 		/// <inheritdoc />
@@ -696,7 +696,7 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			return await Context.Likes.CountAsync(e => e.LikeeId == userId, token);
+			return await Context.Likes.CountAsync(e => e.LikerId == userId, token);
 		}
 
 		/// <inheritdoc />

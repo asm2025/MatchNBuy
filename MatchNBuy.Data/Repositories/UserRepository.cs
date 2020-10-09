@@ -558,6 +558,7 @@ namespace MatchNBuy.Data.Repositories
 
 			JwtSecurityToken securityToken = SecurityTokenHelper.CreateToken(tokenDescriptor);
 			user.Token = SecurityTokenHelper.Value(securityToken);
+			user.LastActive = DateTime.Now;
 			Context.Entry(user).State = EntityState.Modified;
 			await Context.SaveChangesAsync(token);
 			return user;

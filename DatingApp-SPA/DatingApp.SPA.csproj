@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<FileVersion>20.9.23.0</FileVersion>
+		<FileVersion>20.10.9.0</FileVersion>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 		<OutputType>Library</OutputType>
 		<AssemblyName>DatingApp.SPA</AssemblyName>

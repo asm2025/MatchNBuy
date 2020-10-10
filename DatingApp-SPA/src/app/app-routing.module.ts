@@ -2,29 +2,29 @@ import { RouterModule, Routes } from "@angular/router";
 
 import AuthGuard from "@/_guards/auth.guard";
 
-import HomeComponent from "@pages/home/home.component";
+import HomeComponent from "@components/pages/home/home.component";
 
-import SignInComponent from "@pages/sign-in/sign-in.component";
-import SignUpComponent from "@pages/sign-up/sign-up.component";
+import SignInComponent from "@components/pages/sign-in/sign-in.component";
+import SignUpComponent from "@components/pages/sign-up/sign-up.component";
 
-import ListsComponent from "@pages/lists/lists.component";
-import ListsResolver from "@pages/lists/lists.resolver";
-import MemberListComponent from "@pages/members/member-list/member-list.component";
-import MemberDetailComponent from "@pages/members/member-detail/member-detail.component";
-import MemberDetailResolver from "@pages/members/member-detail/member-detail.resolver";
-import MemberEditComponent from "@pages/members/member-edit/member-edit.component";
-import MemberEditResolver from "@pages/members/member-edit/member-edit.resolver";
-import MemberEditUnsavedChanges from "@pages/members/member-edit/member-edit-unsaved-changes.guard";
+import ListsComponent from "@components/pages/lists/lists.component";
+import ListsResolver from "@components/pages/lists/lists.resolver";
+import MemberListComponent from "@components/pages/members/member-list/member-list.component";
+import MemberDetailComponent from "@components/pages/members/member-detail/member-detail.component";
+import MemberDetailResolver from "@components/pages/members/member-detail/member-detail.resolver";
+import MemberEditComponent from "@components/pages/members/member-edit/member-edit.component";
+import MemberEditResolver from "@components/pages/members/member-edit/member-edit.resolver";
+import MemberEditUnsavedChanges from "@components/pages/members/member-edit/member-edit-unsaved-changes.guard";
 
-import MessagesComponent from "@pages/messages/messages.component";
-import MessagesResolver from "@pages/messages/messages.resolver";
-import MessageThreadsComponent from "@pages/messages/message-threads/message-threads.component";
-import MessageThreadsResolver from "@pages/messages/message-threads/message-threads.resolver";
-import ThreadMessagesComponent from "@pages/messages/thread-messages/thread-messages.component";
-import ThreadMessagesResolver from "@pages/messages/thread-messages/thread-messages.resolver";
+import MessagesComponent from "@components/pages/messages/messages.component";
+import MessagesResolver from "@components/pages/messages/messages.resolver";
+import MessageThreadsComponent from "@components/pages/messages/message-threads/message-threads.component";
+import MessageThreadsResolver from "@components/pages/messages/message-threads/message-threads.resolver";
+import ThreadMessagesComponent from "@components/pages/messages/thread-messages/thread-messages.component";
+import ThreadMessagesResolver from "@components/pages/messages/thread-messages/thread-messages.resolver";
 
-import WeatherComponent from "@pages/weather/weather.component";
-import WeatherResolver from "@pages/weather/weather.resolver";
+import WeatherComponent from "@components/pages/weather/weather.component";
+import WeatherResolver from "@components/pages/weather/weather.resolver";
 
 export const routes: Routes = [
 	{

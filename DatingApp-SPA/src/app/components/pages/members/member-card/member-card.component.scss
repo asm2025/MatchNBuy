@@ -26,10 +26,16 @@
 			transition: opacity 0.5s ease, opacity 0.5s ease;
 
 			> div:first-child {
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 6;
+				width: 100%;
 				word-break: break-all !important;
 				overflow-wrap: break-word !important;
+				white-space: initial;
 				overflow: hidden !important;
 				text-overflow: ellipsis !important;
+				cursor: pointer;
 
 				.h1, .h2, .h3, .h4, .h5, .h6,
 				h1, h2, h3, h4, h5, h6 {
@@ -37,6 +43,15 @@
 					overflow-wrap: normal !important;
 					overflow: hidden !important;
 					text-overflow: ellipsis !important;
+				}
+
+				> p {
+					display: contents !important;
+
+					&:after {
+						content: "\A";
+						white-space: pre;
+					}
 				}
 			}
 		}

@@ -49,9 +49,6 @@
 			"@common/*": [
 				"src/app/common/*"
 			],
-			"@pages/*": [
-				"src/app/pages/*"
-			],
 			"@components/*": [
 				"src/app/components/*"
 			],

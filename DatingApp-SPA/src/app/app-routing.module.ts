@@ -57,9 +57,13 @@ export const routes: Routes = [
 			},
 			{
 				path: "members",
-				component: MemberListComponent,
-				resolve: { resolved: ListsResolver },
 				children: [{
+						path: "",
+						pathMatch: "full",
+						component: MemberListComponent,
+						resolve: { resolved: ListsResolver }
+					},
+					{
 						path: ":id",
 						component: MemberDetailComponent,
 						resolve: { resolved: MemberDetailResolver }
@@ -73,9 +77,13 @@ export const routes: Routes = [
 			},
 			{
 				path: "messages",
-				component: MessagesComponent,
-				resolve: { resolved: MessagesResolver },
 				children: [{
+						path: "",
+						pathMatch: "full",
+						component: MessagesComponent,
+						resolve: { resolved: MessagesResolver }
+					},
+					{
 						path: "threads",
 						component: MessageThreadsComponent,
 						resolve: { resolved: MessageThreadsResolver }

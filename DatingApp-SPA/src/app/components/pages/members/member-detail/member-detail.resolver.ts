@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Resolve, Router, ActivatedRouteSnapshot } from "@angular/router";
+import { Resolve, ActivatedRouteSnapshot } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
@@ -9,8 +9,7 @@ import AlertService from "@services/alert.service";
 
 @Injectable()
 export default class MemberDetailResolver implements Resolve<IUserForDetails | null | undefined> {
-	constructor(private readonly _router: Router,
-		private readonly _userClient: UserClient,
+	constructor(private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService) {
 	}
 
@@ -20,8 +19,7 @@ export default class MemberDetailResolver implements Resolve<IUserForDetails | n
 			.get(id)
 			.pipe(
 				catchError(error => {
-					this._alertService.toasts.error(error.toString());
-					this._router.navigate(["/members"]);
+					this._alertService.alerts.error(error.toString());
 					return of(null);
 				})
 			);

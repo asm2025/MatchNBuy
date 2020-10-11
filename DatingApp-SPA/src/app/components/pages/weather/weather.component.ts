@@ -34,8 +34,9 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 			.data
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(data => {
-				setTimeout(() => this.forecasts = data["resolved"].forecasts || [], 0);
-				this.select(this.key(data["resolved"].selectedDate));
+				const result = data["resolved"];
+				setTimeout(() => this.forecasts = result.forecasts || [], 0);
+				this.select(this.key(result.selectedDate));
 			});
 	}
 
@@ -49,7 +50,8 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 	}
 
 	list(date: Date | string): void {
-		this._weatherClient.list(date)
+		this._weatherClient
+			.list(date)
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
 				return of({

@@ -1,1 +1,87 @@
-﻿
+@import "~bootstrap/scss/_functions";
+@import "~bootstrap/scss/_variables";
+@import "~bootstrap/scss/_mixins";
+
+$input-btn-padding-y-sm: .25rem !default;
+$input-btn-padding-x-sm: .5rem !default;
+
+$input-btn-padding-y: $input-btn-padding-y-sm;
+$input-btn-padding-x: $input-btn-padding-x-sm;
+
+$input-btn-padding-y-lg: $input-btn-padding-y-sm;
+$input-btn-padding-x-lg: $input-btn-padding-x-sm;
+
+$btn-padding-y-sm: $input-btn-padding-y-sm;
+$btn-padding-x-sm: $input-btn-padding-x-sm;
+
+$btn-padding-y: $input-btn-padding-y;
+$btn-padding-x: $input-btn-padding-x;
+
+$btn-padding-y-lg: $input-btn-padding-y-lg;
+$btn-padding-x-lg: $input-btn-padding-x-lg;
+
+.btn {
+	@include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
+}
+
+.row {
+	margin: 0;
+}
+
+@mixin main-box {
+	margin-bottom: 0.5rem;
+
+	ul, dl {
+		list-style-type: none !important;
+	}
+
+	ol, ul, dl {
+		margin-top: 0;
+	}
+}
+
+.summary {
+	@include main-box;
+
+	.name {
+		padding: 8px;
+		border-left: 8px solid #c2c2c2; /*7e8c8d*/
+	}
+
+	.status {
+		color: #8dc859;
+
+		.offline {
+			color: #fe635f;
+		}
+
+		.fa,
+		.ng-fa-icon {
+			margin: 0;
+		}
+	}
+
+	.stars {
+		color: #FABA03;
+	}
+
+	.info {
+	}
+}
+
+.details {
+	@include main-box;
+
+	.header {
+		position: relative;
+
+		> .title {
+			padding: 8px 4px;
+			border-bottom: 2px solid #C2C2C2;
+		}
+	}
+
+	.tabs {
+		margin-top: 32px;
+	}
+}

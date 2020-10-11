@@ -27,7 +27,6 @@ export interface IUserForList extends IUser {
 	firstName: string;
 	lastName?: string;
 	introduction?: string;
-	lookingFor?: string;
 	canBeLiked: boolean;
 	canBeDisliked: boolean;
 	likes: number;
@@ -35,6 +34,7 @@ export interface IUserForList extends IUser {
 
 export interface IUserForDetails extends IUserForList {
 	phoneNumber: string;
+	lookingFor?: string;
 	interests?: Array<string>;
 	roles: Array<string>;
 }

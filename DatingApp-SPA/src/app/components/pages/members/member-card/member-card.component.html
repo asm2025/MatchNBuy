@@ -2,12 +2,12 @@
 	<div class="card-img-wrapper">
 		<app-lazy-image [src]="getUserImage(user)" [cssClass]="'card-img-top'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="overlay">
-			<div>
+			<div class="info">
 				<h6>{{ user.firstName }} {{ user.lastName }}</h6>
 				<p>{{ user.dateOfBirth | date:'shortDate' }} ({{ user.age | number:'1.0-0' }} years)</p>
 				<p>Since: {{ user.created | date:'shortDate' }}</p>
 				<p>Active: {{ user.lastActive | timeAgo }}</p>
-				<p *ngIf="user.lookingFor" [innerHtml]="user.lookingFor"></p>
+				<p *ngIf="user.introduction" [innerHtml]="user.introduction"></p>
 			</div>
 			<div class="btn-group text-center" role="group" aria-label="Member actions">
 				<button type="button" class="btn" [routerLink]="['/members/', user.id]"><fa-icon icon="user"></fa-icon></button>

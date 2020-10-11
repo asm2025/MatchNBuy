@@ -1,1 +1,75 @@
-<div>member-details Component</div>
+<div *ngIf="hasUser; else notFound" class="row">
+	<div class="col-md-4 col-sm-12 border-right">
+		<div class="summary">
+			<h2 class="name">{{user.knownAs}}</h2>
+			<app-lazy-image [src]="getUserImage()" [cssClass]="'img-fluid w-100 mx-auto d-block'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
+			<small class="status"><fa-icon icon="check-circle"></fa-icon> <!--{{user.status}}--></small>
+			<div class="info">
+				<ul>
+					<li><span *ngFor="let role of user.roles" class="badge badge-dark">{{role}}</span></li>
+					<li><!--<fa-icon *ngFor="let i of range(0, 5)" icon="{{ i <= user.rating ? 'fa-star' : 'fa-star-o' }}"></fa-icon>--></li>
+					<li>Location: {{user.city}}, {{user.country}}</li>
+					<li>Date of birth: {{user.dateOfBirth}}, {{user.age}} years old</li>
+					<li>Member since: {{user.created | date: 'shortDate'}}</li>
+					<li>Last active: {{user.lastActive | timeAgo}}</li>
+				</ul>
+			</div>
+			<div class="btn-group d-flex mt-2">
+				<button class="btn btn-primary">Like</button>
+				<button class="btn btn-success" (click)="activeTab = 3">Message</button>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8 col-sm-12">
+		<div class="details">
+			<div class="header">
+				<h3 class="title">User information</h3>
+				<a [routerLink]="['/members/edit/', user.id]" class="btn btn-primary float-right">
+					<fa-icon icon="edit"></fa-icon> Edit profile
+				</a>
+			</div>
+			<div class="info">
+				<ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+					<li [ngbNavItem]="1">
+						<a ngbNavLink>About {{user.knownAs}}</a>
+						<ng-template ngbNavContent>
+							<div *ngIf="user.introduction" class="row mt-2">
+								<h5>Description</h5>
+								<div>{{user.introduction}}</div>
+							</div>
+							<div *ngIf="user.lookingFor" class="row mt-2">
+								<h5>Looking for</h5>
+								<div>{{user.lookingFor}}</div>
+							</div>
+							<div *ngIf="user.interests && user.interests.length > 0" class="row mt-2">
+								<h5>Interests</h5>
+								<div>
+									<span *ngFor="let interest of user.interests" class="badge badge-dark">{{interest}}</span>
+								</div>
+							</div>
+						</ng-template>
+					</li>
+					<li [ngbNavItem]="2">
+						<a ngbNavLink>Photos</a>
+						<ng-template ngbNavContent>
+							<ngx-gallery [options]="galleryOptions" [images]="images"></ngx-gallery>
+							<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
+											[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+
+						</ng-template>
+					</li>
+					<li [ngbNavItem]="3">
+						<a ngbNavLink>Messages</a>
+						<ng-template ngbNavContent>
+							<app-member-messages [recipientId]="user.id"></app-member-messages>
+						</ng-template>
+					</li>
+				</ul>
+				<div [ngbNavOutlet]="nav" class="mt-2 px-2"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<ng-template #notFound>
+	<h2 class="mx-auto">User not found.</h2>
+</ng-template>

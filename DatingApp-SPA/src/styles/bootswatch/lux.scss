@@ -2,27 +2,27 @@
 @import "~bootstrap/scss/_variables";
 @import "~bootstrap/scss/_mixins";
 
-$input-btn-padding-y: .375rem !default;
-$input-btn-padding-x: .75rem !default;
-
 $input-btn-padding-y-sm: .25rem !default;
 $input-btn-padding-x-sm: .5rem !default;
+
+$input-btn-padding-y: .375rem !default;
+$input-btn-padding-x: .75rem !default;
 
 $input-btn-padding-y-lg: .5rem !default;
 $input-btn-padding-x-lg: 1rem !default;
 
-$btn-padding-y: $input-btn-padding-y !default;
-$btn-padding-x: $input-btn-padding-x !default;
-
 $btn-padding-y-sm: $input-btn-padding-y-sm !default;
 $btn-padding-x-sm: $input-btn-padding-x-sm !default;
+
+$btn-padding-y: $input-btn-padding-y !default;
+$btn-padding-x: $input-btn-padding-x !default;
 
 $btn-padding-y-lg: $input-btn-padding-y-lg !default;
 $btn-padding-x-lg: $input-btn-padding-x-lg !default;
 
 .btn-group,
 .btn-group-vertical {
-	> .btn {
+	.btn {
 		@include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
 	}
 }
@@ -30,7 +30,7 @@ $btn-padding-x-lg: $input-btn-padding-x-lg !default;
 .input-group {
 	&-prepend,
 	&-append {
-		> .btn {
+		.btn {
 			@include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
 		}
 	}

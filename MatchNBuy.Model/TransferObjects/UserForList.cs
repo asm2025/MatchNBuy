@@ -10,7 +10,6 @@ namespace MatchNBuy.Model.TransferObjects
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Introduction { get; set; }
-		public string LookingFor { get; set; }
 		public bool CanBeLiked { get; set; } = true;
 		public bool CanBeDisliked { get; set; } = true;
 		public int Likes { get; set; }

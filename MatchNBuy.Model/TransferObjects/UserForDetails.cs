@@ -7,6 +7,7 @@ namespace MatchNBuy.Model.TransferObjects
 	public class UserForDetails : UserForList
 	{
 		public string PhoneNumber { get; set; }
+		public string LookingFor { get; set; }
 		public IList<string> Interests { get; set; }
 		public IList<string> Roles { get; set; }
 	}

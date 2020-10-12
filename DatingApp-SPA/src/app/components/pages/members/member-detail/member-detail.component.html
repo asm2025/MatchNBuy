@@ -9,7 +9,7 @@
 					<li><span *ngFor="let role of user.roles" class="badge badge-dark">{{role}}</span></li>
 					<li><!--<fa-icon *ngFor="let i of range(0, 5)" icon="{{ i <= user.rating ? 'fa-star' : 'fa-star-o' }}"></fa-icon>--></li>
 					<li>Location: {{user.city}}, {{user.country}}</li>
-					<li>Date of birth: {{user.dateOfBirth | date:'shortDate'}}, {{user.age | number:'1.0-0'}} years old</li>
+					<li>Date of birth: {{user.dateOfBirth | date}}, {{user.age | number:'1.0-0'}} years old</li>
 					<li>Member since: {{user.created | date: 'shortDate'}}</li>
 					<li>Last active: {{user.lastActive | timeAgo}}</li>
 				</ul>

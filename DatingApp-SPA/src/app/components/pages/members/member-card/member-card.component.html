@@ -4,8 +4,8 @@
 		<div class="overlay">
 			<div class="info">
 				<h6>{{ user.firstName }} {{ user.lastName }}</h6>
-				<p>{{ user.dateOfBirth | date:'shortDate' }} ({{ user.age | number:'1.0-0' }} years)</p>
-				<p>Since: {{ user.created | date:'shortDate' }}</p>
+				<p>{{ user.dateOfBirth | date }} ({{ user.age | number:'1.0-0' }} years)</p>
+				<p>Since: {{ user.created | date }}</p>
 				<p>Active: {{ user.lastActive | timeAgo }}</p>
 				<p *ngIf="user.introduction" [innerHtml]="user.introduction"></p>
 			</div>

@@ -37,6 +37,10 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 	ol, ul, dl {
 		margin-top: 0;
+
+		li {
+			line-height: 1.75rem;
+		}
 	}
 }
 

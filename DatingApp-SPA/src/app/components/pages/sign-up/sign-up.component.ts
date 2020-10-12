@@ -12,11 +12,11 @@ import { takeUntil, catchError } from "rxjs/operators";
 import { Genders } from "@data/common/Genders";
 import { ICountry, ICity } from "@data/model/Country";
 import { IUserToRegister } from "@data/model/User";
+import CustomValidators from "@common/validation/custom-validators";
+import FormHelper from "@common/helpers/form.helper";
 import UserClient from "@services/web/UserClient";
 import CountriesClient from "@services/web/CountriesClient";
 import AlertService from "@services/alert.service";
-import CustomValidators from "@common/validation/custom-validators";
-import FormHelper from "@common/helpers/form.helper";
 
 @Component({
 	selector: "app-sign-up",
@@ -95,7 +95,8 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 					return;
 				}
 
-				this._countriesClient.cities(countryCode)
+				this._countriesClient
+					.cities(countryCode)
 					.pipe(catchError(error => {
 						this._alertService.toasts.error(error.toString());
 						return of([]);

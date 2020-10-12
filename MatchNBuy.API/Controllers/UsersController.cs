@@ -290,11 +290,11 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Photos([FromRoute] string userId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value) && !User.IsInRole(Role.Administrators)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(userId)) return BadRequest(userId);
 			
 			ListSettings listSettings = _mapper.Map<ListSettings>(pagination);
 			StringBuilder filter = new StringBuilder();
-			filter.Append($"{nameof(Photo.UserId)} == '{userId}'");
+			filter.Append($"{nameof(Photo.UserId)} == \"{userId}\"");
 			listSettings.FilterExpression = filter.ToString();
 
 			IQueryable<Photo> queryable = _repository.Photos.List(listSettings);
@@ -305,6 +305,14 @@ namespace MatchNBuy.API.Controllers
 														.ProjectTo<PhotoForList>(_mapper.ConfigurationProvider)
 														.ToListAsync(token);
 			token.ThrowIfCancellationRequested();
+			IUserImageBuilder userImageBuilder = _repository.ImageBuilder;
+
+			foreach (PhotoForList photo in photos)
+			{
+				if (string.IsNullOrEmpty(photo.Url)) continue;
+				photo.Url = Convert.ToString(userImageBuilder.Build(photo.Url));
+			}
+
 			return Ok(new Paginated<PhotoForList>(photos, pagination));
 		}
 
@@ -324,6 +332,7 @@ namespace MatchNBuy.API.Controllers
 			if (!userId.IsSame(photo.UserId)) return Unauthorized(userId);
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
+			photoForList.Url = Convert.ToString(_repository.ImageBuilder.Build(photo.Url));
 			return Ok(photoForList);
 		}
 
@@ -359,11 +368,10 @@ namespace MatchNBuy.API.Controllers
 			}
 
 			if (string.IsNullOrEmpty(fileName)) throw new Exception($"Could not upload image for user '{userId}'.");
-			fileName = $"{userId}/{Path.GetFileNameWithoutExtension(fileName)}";
 
 			Photo photo = _mapper.Map<Photo>(photoParams);
 			photo.UserId = userId;
-			photo.Url = _repository.ImageBuilder.Build(fileName).ToString();
+			photo.Url = Path.GetFileName(fileName);
 			photo = await _repository.Photos.AddAsync(photo, token);
 			token.ThrowIfCancellationRequested();
 			if (photo == null) throw new Exception($"Add photo '{fileName}' for the user '{userId}' failed.");
@@ -371,6 +379,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
+			photoForList.Url = _repository.ImageBuilder.Build(photoForList.Url).ToString();
 			return CreatedAtAction(nameof(Get), new { id = photo.Id }, photoForList);
 		}
 
@@ -395,6 +404,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
+			photoForList.Url = _repository.ImageBuilder.Build(photoForList.Url).ToString();
 			return Ok(photoForList);
 		}
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ReplaySubject, of } from "rxjs";
+import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 import "hammerjs";
 import {
@@ -29,11 +29,13 @@ const TABS_MAX = 3;
 	styleUrls: ["./member-detail.component.scss"]
 })
 export default class MemberDetailComponent implements OnInit, AfterViewInit, OnDestroy {
+	private readonly _tabSubject = new BehaviorSubject<number>(TABS_MIN);
+
 	disposed$ = new ReplaySubject<boolean>();
 	user: IUserForDetails | null | undefined;
-	activeTab = TABS_MIN;
+	activeTab = this._tabSubject.asObservable();
+	images: NgxGalleryImage[] = [];
 	galleryOptions: NgxGalleryOptions[];
-	images: NgxGalleryImage[];
 	imagesPagination: ISortablePagination = {
 		page: 1,
 		pageSize: 12,
@@ -52,10 +54,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		private readonly _alertService: AlertService) {
 	}
 
-	get hasUser(): boolean {
-		return this.user !== null && this.user !== undefined;
-	}
-
 	ngOnInit() {
 		this.galleryOptions = [
 			{
@@ -67,6 +65,31 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				preview: false
 			}
 		];
+		this._tabSubject
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(tab => {
+				if (!this.user) return;
+
+				switch (tab) {
+				case 1:
+					// about user
+					break;
+				case 2:
+					// photos
+					if (this.imagesPagination.page !== 1) {
+						this.imagesPagination = {
+							...this.imagesPagination,
+							page: 1
+						}
+					} else {
+						this.loadUserImages();
+					}
+					break;
+				case 3:
+					// messages
+					break;
+				}
+			});
 	}
 
 	ngAfterViewInit() {
@@ -87,9 +110,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 						tab = TABS_MIN;
 					}
 
-					if (tab < TABS_MIN) tab = TABS_MIN;
-					if (tab > TABS_MAX) tab = TABS_MAX;
-					this.activeTab = tab;
+					this.selectTab(tab);
 				}, 0);
 			});
 		this._route
@@ -100,7 +121,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 					this.user = data["resolved"];
 				}, 0);
 			});
-		this.loadUserImages();
 	}
 
 	ngOnDestroy(): void {
@@ -111,6 +131,17 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	getUserImage(): string {
 		if (!this.user) return config.users.defaultImage;
 		return this.user.photoUrl || config.users.defaultImage;
+	}
+
+	selectTab(tab: number) {
+		if (tab < TABS_MIN) tab = TABS_MIN;
+		if (tab > TABS_MAX) tab = TABS_MAX;
+		this._tabSubject.next(tab);
+	}
+
+	imagesPageChanged(page: number): void {
+		this.imagesPagination.page = page;
+		this.loadUserImages();
 	}
 
 	loadUserImages() {
@@ -145,9 +176,13 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			});
 	}
 
-	imagesPageChanged(page: number): void {
+	messagesPageChanged(page: number): void {
 		this.imagesPagination.page = page;
-		this.loadUserImages();
+		this.loadUserMessages();
+	}
+
+	loadUserMessages() {
+
 	}
 
 	range(start: number, count: number, step = 1): Range {

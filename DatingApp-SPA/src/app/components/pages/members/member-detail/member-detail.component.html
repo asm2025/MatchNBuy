@@ -1,4 +1,4 @@
-<div *ngIf="hasUser; else notFound" class="row">
+<div *ngIf="user; else notFound" class="row">
 	<div class="col-md-4 col-sm-12 border-right">
 		<div class="summary">
 			<h2 class="name">{{user.knownAs}}</h2>
@@ -9,7 +9,7 @@
 					<li><span *ngFor="let role of user.roles" class="badge badge-dark">{{role}}</span></li>
 					<li><!--<fa-icon *ngFor="let i of range(0, 5)" icon="{{ i <= user.rating ? 'fa-star' : 'fa-star-o' }}"></fa-icon>--></li>
 					<li>Location: {{user.city}}, {{user.country}}</li>
-					<li>Date of birth: {{user.dateOfBirth}}, {{user.age}} years old</li>
+					<li>Date of birth: {{user.dateOfBirth | date:'shortDate'}}, {{user.age | number:'1.0-0'}} years old</li>
 					<li>Member since: {{user.created | date: 'shortDate'}}</li>
 					<li>Last active: {{user.lastActive | timeAgo}}</li>
 				</ul>
@@ -29,7 +29,8 @@
 				</a>
 			</div>
 			<div class="info">
-				<ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+				<ul ngbNav #nav="ngbNav" [activeId]="activeTab | async" destroyOnHide="true"
+					class="nav-tabs" (activeIdChange)="selectTab($event)">
 					<li [ngbNavItem]="1">
 						<a ngbNavLink>About {{user.knownAs}}</a>
 						<ng-template ngbNavContent>

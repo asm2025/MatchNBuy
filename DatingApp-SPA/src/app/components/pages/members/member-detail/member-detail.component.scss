@@ -30,6 +30,8 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 @mixin main-box {
 	margin-bottom: 0.5rem;
+	display: flex;
+	flex-flow: column;
 
 	ul, dl {
 		list-style-type: none !important;
@@ -52,24 +54,11 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 		border-left: 8px solid #c2c2c2; /*7e8c8d*/
 	}
 
-	.status {
-		color: #8dc859;
-
-		.offline {
-			color: #fe635f;
-		}
-
+	.info {
 		.fa,
 		.ng-fa-icon {
-			margin: 0;
+			margin: 0 2px !important;
 		}
-	}
-
-	.stars {
-		color: #FABA03;
-	}
-
-	.info {
 	}
 }
 
@@ -81,11 +70,15 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 		> .title {
 			padding: 8px 4px;
-			border-bottom: 2px solid #C2C2C2;
 		}
 	}
 
-	.tabs {
-		margin-top: 32px;
+	.info {
+		flex-grow: 1;
+
+		.fa,
+		.ng-fa-icon {
+			margin: 0 2px !important;
+		}
 	}
 }

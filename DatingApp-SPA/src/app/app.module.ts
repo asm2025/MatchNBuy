@@ -40,6 +40,7 @@ import AppRoutingModule from "./app-routing.module";
 import TrimPipe from "@common/pipes/string/trim.pipe";
 import TrimLeftPipe from "@common/pipes/string/trim-left.pipe";
 import TrimRightPipe from "@common/pipes/string/trim-right.pipe";
+import CustomDatePipe from "@common/pipes/date-time/custom-date.pipe";
 
 import { NgControlStatus } from "@common/directives/ng_control_status";
 
@@ -54,9 +55,8 @@ import HomeComponent from "@components/pages/home/home.component";
 import SignInComponent from "@components/pages/sign-in/sign-in.component";
 import SignUpComponent from "@components/pages/sign-up/sign-up.component";
 
-import ListsComponent from "@components/pages/lists/lists.component";
-import ListsResolver from "@components/pages/lists/lists.resolver";
 import MemberListComponent from "@components/pages/members/member-list/member-list.component";
+import MemberListResolver from "@components/pages/members/member-list/member-list.resolver";
 import PhotoEditorComponent from "@components/pages/members/photo-editor/photo-editor.component";
 import MemberCardComponent from "@components/pages/members/member-card/member-card.component";
 import MemberEditComponent from "@components/pages/members/member-edit/member-edit.component";
@@ -122,6 +122,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		TrimPipe,
 		TrimLeftPipe,
 		TrimRightPipe,
+		CustomDatePipe,
 		NgControlStatus,
 		AppComponent,
 		SpinnerComponent,
@@ -131,7 +132,6 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		HomeComponent,
 		SignInComponent,
 		SignUpComponent,
-		ListsComponent,
 		MemberListComponent,
 		PhotoEditorComponent,
 		MemberCardComponent,
@@ -157,7 +157,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		WeatherClient,
 		UserClient,
 		AlertService,
-		ListsResolver,
+		MemberListResolver,
 		MemberEditResolver,
 		MemberEditUnsavedChanges,
 		MemberDetailResolver,

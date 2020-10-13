@@ -1,6 +1,8 @@
 <app-nav></app-nav>
-<app-alerts></app-alerts>
-<div class="container mt-3">
-	<app-spinner [loading]="loading"></app-spinner>
-	<router-outlet></router-outlet>
+<div class="container-fluid flex-grow-1">
+	<app-alerts></app-alerts>
+	<div class="pt-3 justify-content-center h-100">
+		<app-spinner [loading]="loading"></app-spinner>
+		<router-outlet></router-outlet>
+	</div>
 </div>

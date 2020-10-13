@@ -19,18 +19,15 @@
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/members']">Matches</a>
 			</li>
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/lists']">Lists</a>
-			</li>
 		</ul>
 		<ul class="navbar-nav ml-auto" *ngIf="isSignedIn(); else loginTemplate">
 			<li class="nav-item" routerLinkActive="active" ngbDropdown>
 				<a id="userMenu" class="nav-link" tabindex="0" ngbDropdownToggle role="button">
 					<img src="{{ photoUrl || 'assets/images/user.jpg'}}" class="rounded-circle border-0 mr-1" alt="">
-					Welcome {{ _userClient.user.knownAs }}
+					{{ _userClient.user.knownAs }}
 				</a>
 				<div ngbDropdownMenu aria-labelledby="userMenu" class="dropdown-menu">
-					<a ngbDropdownItem [routerLink]="['/member/edit']"><fa-icon icon="user"></fa-icon>Edit Profile</a>
+					<a ngbDropdownItem [routerLink]="['/members/', _userClient.user.id]"><fa-icon icon="user"></fa-icon>Profile</a>
 					<hr />
 					<a ngbDropdownItem (click)="logout()"><fa-icon icon="sign-out-alt"></fa-icon>Sign out</a>
 				</div>

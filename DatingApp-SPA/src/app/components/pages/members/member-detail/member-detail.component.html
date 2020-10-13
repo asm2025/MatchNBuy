@@ -1,73 +1,79 @@
-<div *ngIf="user; else notFound" class="row">
-	<div class="col-md-4 col-sm-12 border-right">
-		<div class="summary">
-			<h2 class="name">{{user.knownAs}}</h2>
-			<app-lazy-image [src]="getUserImage()" [cssClass]="'img-fluid w-100 mx-auto d-block'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
+<div *ngIf="user; else notFound" class="row h-100">
+	<div class="summary col-md-4 col-sm-12 border-sm-right-none border-right">
+		<h2 class="name">{{user.knownAs}}</h2>
+		<app-lazy-image [src]="getUserImage()" [cssClass]="'img-fluid w-100 mx-auto d-block'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
+		<div class="info">
+			<small *ngIf="user.likes">{{ user.likes }}<fa-icon icon="heart"></fa-icon></small>
 			<small class="status"><fa-icon icon="check-circle"></fa-icon> <!--{{user.status}}--></small>
-			<div class="info">
-				<ul>
-					<li><span *ngFor="let role of user.roles" class="badge badge-dark">{{role}}</span></li>
-					<li><!--<fa-icon *ngFor="let i of range(0, 5)" icon="{{ i <= user.rating ? 'fa-star' : 'fa-star-o' }}"></fa-icon>--></li>
-					<li>Location: {{user.city}}, {{user.country}}</li>
-					<li>Date of birth: {{user.dateOfBirth | date}}, {{user.age | number:'1.0-0'}} years old</li>
-					<li>Member since: {{user.created | date: 'shortDate'}}</li>
-					<li>Last active: {{user.lastActive | timeAgo}}</li>
-				</ul>
-			</div>
-			<div class="btn-group d-flex mt-2">
-				<button class="btn btn-primary">Like</button>
-				<button class="btn btn-success" (click)="activeTab = 3">Message</button>
-			</div>
+			<div><span *ngFor="let role of user.roles" class="badge badge-dark">{{role}}</span></div>
+			<div><!--<fa-icon *ngFor="let i of range(0, 5)" icon="{{ i <= user.rating ? 'fa-star' : 'fa-star-o' }}"></fa-icon>--></div>
+			<dl>
+				<dt>First name</dt>
+				<dd>{{user.firstName}}</dd>
+				<dt>Last name</dt>
+				<dd>{{user.lastName}}</dd>
+			</dl>
+		</div>
+		<div class="btn-group d-flex mt-2">
+			<button class="btn btn-primary">Like</button>
+			<button class="btn btn-success" (click)="activeTab = 3">Message</button>
 		</div>
 	</div>
-	<div class="col-md-8 col-sm-12">
-		<div class="details">
-			<div class="header">
-				<h3 class="title">User information</h3>
-				<a [routerLink]="['/members/edit/', user.id]" class="btn btn-primary float-right">
-					<fa-icon icon="edit"></fa-icon> Edit profile
-				</a>
-			</div>
-			<div class="info">
-				<ul ngbNav #nav="ngbNav" [activeId]="activeTab | async" destroyOnHide="true"
-					class="nav-tabs" (activeIdChange)="selectTab($event)">
-					<li [ngbNavItem]="1">
-						<a ngbNavLink>About {{user.knownAs}}</a>
-						<ng-template ngbNavContent>
-							<div *ngIf="user.introduction" class="row mt-2">
-								<h5>Description</h5>
-								<div>{{user.introduction}}</div>
-							</div>
-							<div *ngIf="user.lookingFor" class="row mt-2">
-								<h5>Looking for</h5>
-								<div>{{user.lookingFor}}</div>
-							</div>
-							<div *ngIf="user.interests && user.interests.length > 0" class="row mt-2">
-								<h5>Interests</h5>
-								<div>
-									<span *ngFor="let interest of user.interests" class="badge badge-dark">{{interest}}</span>
-								</div>
-							</div>
-						</ng-template>
-					</li>
-					<li [ngbNavItem]="2">
-						<a ngbNavLink>Photos</a>
-						<ng-template ngbNavContent>
-							<ngx-gallery [options]="galleryOptions" [images]="images"></ngx-gallery>
-							<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
-											[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+	<div class="details col-md-8 col-sm-12">
+		<div class="header">
+			<h3 class="title">User information</h3>
+		</div>
+		<div class="info">
+			<ul ngbNav #nav="ngbNav" [activeId]="activeTab | async" destroyOnHide="true"
+				class="nav-tabs" (activeIdChange)="selectTab($event)">
+				<li [ngbNavItem]="1">
+					<a ngbNavLink>About {{user.knownAs}}</a>
+					<ng-template ngbNavContent>
+						<dl>
+							<dt>Date of birth</dt>
+							<dd>{{user.dateOfBirth | customDate:'shortDate'}}, {{user.age | number:'1.0-0'}} years old</dd>
+							<dt>Member since</dt>
+							<dd>{{user.created | customDate:'shortDate'}}</dd>
+							<dt>Location</dt>
+							<dd>{{user.city}}, {{user.country}}</dd>
+							<dt>Member since</dt>
+							<dd>{{user.created | customDate:'shortDate'}}</dd>
+							<dt>Last active</dt>
+							<dd>{{user.lastActive | timeAgo}}</dd>
+							<dt *ngIf="user.introduction">Description</dt>
+							<dd *ngIf="user.introduction">{{user.introduction}}</dd>
+							<dt *ngIf="user.lookingFor">Looking for</dt>
+							<dd *ngIf="user.lookingFor" [innerHtml]="user.introduction"></dd>
+							<dt *ngIf="user.interests && user.interests.length > 0">Interests</dt>
+							<dd *ngIf="user.interests && user.interests.length > 0">
+								<span *ngFor="let interest of user.interests"><fa-icon icon="badge"></fa-icon>{{interest}}</span>
+							</dd>
+						</dl>
+					</ng-template>
+				</li>
+				<li [ngbNavItem]="2">
+					<a ngbNavLink>Photos</a>
+					<ng-template ngbNavContent>
+						<ngx-gallery [options]="galleryOptions" [images]="images">
+						</ngx-gallery>
+						<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
+										[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
 
-						</ng-template>
-					</li>
-					<li [ngbNavItem]="3">
-						<a ngbNavLink>Messages</a>
-						<ng-template ngbNavContent>
-							<app-member-messages [recipientId]="user.id"></app-member-messages>
-						</ng-template>
-					</li>
-				</ul>
-				<div [ngbNavOutlet]="nav" class="mt-2 px-2"></div>
-			</div>
+					</ng-template>
+				</li>
+				<li [ngbNavItem]="3">
+					<a ngbNavLink>Messages</a>
+					<ng-template ngbNavContent>
+						<app-member-messages [recipientId]="user.id"></app-member-messages>
+					</ng-template>
+				</li>
+			</ul>
+			<div [ngbNavOutlet]="nav" class="mt-2 px-2"></div>
+		</div>
+		<div class="btn-container row flex-row justify-content-end">
+			<button type="button" class="btn btn-primary col-12 col-sm-5" routerLink="/members/{{user.id}}/edit">
+				<fa-icon icon="edit"></fa-icon> Edit profile
+			</button>
 		</div>
 	</div>
 </div>

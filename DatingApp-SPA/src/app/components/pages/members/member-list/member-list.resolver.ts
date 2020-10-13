@@ -11,7 +11,7 @@ import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
 @Injectable()
-export default class ListsResolver implements Resolve<IPaginated<IUserForList>> {
+export default class MemberListResolver implements Resolve<IPaginated<IUserForList>> {
 	private _pagination: IUserList = {
 		page: 1,
 		pageSize: 12,
@@ -43,9 +43,11 @@ export default class ListsResolver implements Resolve<IPaginated<IUserForList>> 
 					result: [],
 					pagination: {
 						...this._pagination,
+						gender: Genders.NotSpecified,
+						likees: false,
+						likers: false,
 						page: 1,
-						count: 0,
-						gender: Genders.NotSpecified
+						count: 0
 					}
 				});
 			}));

@@ -30,6 +30,30 @@ select {
 	@include form-validation-state($state, map-get($data, color), map-get($data, icon));
 }
 
+@each $breakpoint in map-keys($grid-breakpoints) {
+	@include media-breakpoint-down($breakpoint) {
+		.border-#{$breakpoint}-left-none {
+			border-left: none !important;
+		}
+
+		.border-#{$breakpoint}-right-none {
+			border-right: none !important;
+		}
+
+		.border-#{$breakpoint}-top-none {
+			border-top: none !important;
+		}
+
+		.border-#{$breakpoint}-bottom-none {
+			border-bottom: none !important;
+		}
+
+		.border-#{$breakpoint}-none {
+			border-bottom: none !important;
+		}
+	}
+}
+
 .navbar {
 	padding: 0 10px;
 	min-height: 70px;
@@ -114,10 +138,8 @@ select.form-control {
 
 .btn-container {
 	width: 100%;
-	height: 100%;
 	margin: 1rem 0 0 !important;
 	padding-top: 1rem !important;
-	border-top: 1px solid rgba(0,0,0,0.1);
 
 	> .btn {
 		flex: 0 0 auto !important;

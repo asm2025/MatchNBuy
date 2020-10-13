@@ -1,12 +1,24 @@
-html * {
-	outline: none !important;
+html {
+	width: 100%;
+	height: 100%;
+
+	* {
+		outline: none !important;
+	}
 }
 
 body {
 	font-size: 13px;
 	width: 100%;
 	height: 100%;
-	background-color: #f9f9fa
+	/*background-color: #f9f9fa*/
+}
+
+app-root {
+	display: flex;
+	flex-flow: column;
+	width: 100%;
+	height: 100%;
 }
 
 a {
@@ -16,8 +28,8 @@ a {
 .h1, .h2, .h3, .h4, .h5, .h6,
 h1, h2, h3, h4, h5, h6 {
 	display: block;
-	font-family: "Poppins", sans-serif;
 	font-weight: bold;
+	line-height: 1;
 	text-transform: none !important;
 }
 
@@ -48,6 +60,23 @@ h1 {
 .fa,
 .ng-fa-icon {
 	margin: 0 8px;
+}
+
+.status {
+	color: #8dc859;
+
+	.offline {
+		color: #fe635f;
+	}
+
+	.fa,
+	.ng-fa-icon {
+		margin: 0;
+	}
+}
+
+.stars {
+	color: #FABA03;
 }
 
 .divider-text {

@@ -24,6 +24,8 @@ export default class MemberListComponent implements AfterViewInit, OnDestroy {
 		gender: Genders.NotSpecified,
 		minAge: 16,
 		maxAge: 99,
+		likees: false,
+		likers: false,
 		orderBy: [
 			{
 				name: "lastActive",
@@ -63,9 +65,11 @@ export default class MemberListComponent implements AfterViewInit, OnDestroy {
 					result: [],
 					pagination: {
 						...this.pagination,
+						gender: Genders.NotSpecified,
+						likees: false,
+						likers: false,
 						page: 1,
-						count: 0,
-						gender: Genders.NotSpecified
+						count: 0
 					}
 				});
 			}))

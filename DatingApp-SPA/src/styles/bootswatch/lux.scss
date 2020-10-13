@@ -20,6 +20,15 @@ $btn-padding-x: $input-btn-padding-x !default;
 $btn-padding-y-lg: $input-btn-padding-y-lg !default;
 $btn-padding-x-lg: $input-btn-padding-x-lg !default;
 
+.navbar {
+	&-nav {
+		.nav-link {
+			padding-top: 0 !important;
+			padding-bottom: 0 !important;
+		}
+	}
+}
+
 .btn-group,
 .btn-group-vertical {
 	.btn {

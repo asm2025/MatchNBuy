@@ -35,16 +35,17 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	user: IUserForDetails | null | undefined;
 	activeTab = this._tabSubject.asObservable();
 	images: NgxGalleryImage[] = [];
-	galleryOptions: NgxGalleryOptions[];
+	galleryOptions: NgxGalleryOptions[] = [];
 	imagesPagination: ISortablePagination = {
 		page: 1,
 		pageSize: 12,
-		orderBy: [
-			{
-				name: "dateAdded",
-				type: SortType.Descending
-			}
-		]
+		orderBy: [{
+			name: "isDefault"
+		},
+		{
+			name: "dateAdded",
+			type: SortType.Descending
+		}]
 	};
 
 	@Input() id: string;
@@ -55,39 +56,61 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	ngOnInit() {
-		this.galleryOptions = [
+		this.galleryOptions = [{
+			width: "640px",
+			height: "480px",
+			fullWidth: true,
+			imageArrows: false,
+			imageDescription: true,
+			imagePercent: 100,
+			imageAnimation: NgxGalleryAnimation.Slide,
+			thumbnailsColumns: 4,
+			thumbnailsMoveSize: 4,
+			preview: true,
+			previewDescription: true,
+			previewArrows: false,
+			previewCloseOnClick: true,
+			previewCloseOnEsc: true,
+			previewZoom: true,
+			imageActions: [{
+				icon: "fad fa-user",
+				titleText: "Default",
+				onClick: this.imageDefaultClick.bind(this)
+			},
 			{
-				width: "500px",
-				height: "500px",
-				imagePercent: 100,
-				thumbnailsColumns: 4,
-				imageAnimation: NgxGalleryAnimation.Slide,
-				preview: false
-			}
-		];
+				icon: "fad fa-edit",
+				titleText: "Edit",
+				onClick: this.imageEditClick.bind(this)
+			},
+			{
+				icon: "fad fa-trash",
+				titleText: "Delete",
+				onClick: this.imageDeleteClick.bind(this)
+			}]
+		}];
 		this._tabSubject
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(tab => {
 				if (!this.user) return;
 
 				switch (tab) {
-				case 1:
-					// about user
-					break;
-				case 2:
-					// photos
-					if (this.imagesPagination.page !== 1) {
-						this.imagesPagination = {
-							...this.imagesPagination,
-							page: 1
+					case 1:
+						// about user
+						break;
+					case 2:
+						// photos
+						if (this.imagesPagination.page !== 1) {
+							this.imagesPagination = {
+								...this.imagesPagination,
+								page: 1
+							};
+						} else {
+							this.loadUserImages();
 						}
-					} else {
-						this.loadUserImages();
-					}
-					break;
-				case 3:
-					// messages
-					break;
+						break;
+					case 3:
+						// messages
+						break;
 				}
 			});
 	}
@@ -176,13 +199,25 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			});
 	}
 
+	imageDefaultClick() {
+		alert("Image default clicked...");
+	}
+
+	imageEditClick() {
+		alert("Image edit clicked...");
+	}
+
+	imageDeleteClick() {
+		alert("Image delete clicked...");
+	}
+
 	messagesPageChanged(page: number): void {
 		this.imagesPagination.page = page;
 		this.loadUserMessages();
 	}
 
 	loadUserMessages() {
-
+		alert("Load user messages...");
 	}
 
 	range(start: number, count: number, step = 1): Range {

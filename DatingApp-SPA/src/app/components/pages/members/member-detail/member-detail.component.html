@@ -54,8 +54,7 @@
 				<li [ngbNavItem]="2">
 					<a ngbNavLink>Photos</a>
 					<ng-template ngbNavContent>
-						<ngx-gallery [options]="galleryOptions" [images]="images">
-						</ngx-gallery>
+						<ngx-gallery [options]="galleryOptions" [images]="images"></ngx-gallery>
 						<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
 										[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
 

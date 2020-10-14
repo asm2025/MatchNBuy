@@ -26,12 +26,17 @@ export default class MemberListComponent implements AfterViewInit, OnDestroy {
 		maxAge: 99,
 		likees: false,
 		likers: false,
-		orderBy: [
-			{
-				name: "lastActive",
-				type: SortType.Descending
-			}
-		]
+		orderBy: [{
+			name: "likes",
+			type: SortType.Descending
+		},
+		{
+			name: "lastActive",
+			type: SortType.Descending
+		},
+		{
+			name: "knownAs"
+		}]
 	};
 
 	constructor(private readonly _route: ActivatedRoute,

@@ -229,28 +229,6 @@ namespace MatchNBuy.API
 				.AddNewtonsoftJson(options =>
 				{
 					JsonHelper.SetDefaults(options.SerializerSettings, contractResolver: new CamelCasePropertyNamesContractResolver());
-
-					/*
-					 * add all the converters except date formatters.
-					 * Why? because the formatted date sometimes lack the time
-					 * zone anyway, which is weird ;(. Not sure why the serializer
-					 * sometimes produces dates with timezone and sometimes not.
-					 * Is this another bug?
-					 *
-					 * Another reason is the date actually will be a string on the other
-					 * end in spite of the damn type specification! Which means we'll have
-					 * to deal with both JS date and string even if the TypeScript has date
-					 * type specified. Apparently, the type is lost when converted to JavaScript
-					 * code. All in all, JS date time zone's is not reliable and its compatibility
-					 * is absolute garbage!! So forget it.
-					 *
-					 * The better option is to fix the date format string.
-					 * options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-					 * is important otherwise, the serializer will suddenly use Microsoft date format Date(number)
-					 * because some psycho decided for some weird unwelcome reason to use the strange MS date format.
-					 * Take your wildest guesses!
-					 */
-					options.SerializerSettings.DateFormatString = DateTimeHelper.LONG_DATE_TIME_FORMAT;
 					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
 
 					JsonSerializerSettingsConverters allConverters = EnumHelper<JsonSerializerSettingsConverters>.GetAllFlags() &

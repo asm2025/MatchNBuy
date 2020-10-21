@@ -71,6 +71,12 @@ select {
 	}
 }
 
+.nav-tabs {
+	.nav-item {
+		margin-right: 0;
+	}
+}
+
 .alert {
 	border-radius: 0 !important;
 	margin-bottom: 2px !important;

@@ -20,7 +20,11 @@ import {
 	NgbModalConfig,
 	NgbProgressbarConfig
 } from "@ng-bootstrap/ng-bootstrap";
-import { NgxGalleryModule } from "ngx-gallery-9";
+
+import "hammerjs";
+import "mousetrap";
+import { GalleryModule } from "@ks89/angular-modal-gallery";
+
 import { FileUploadModule } from "ng2-file-upload";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { NgOptionHighlightModule } from "@ng-select/ng-option-highlight";
@@ -102,7 +106,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		//MatIconModule,
 		NgSelectModule,
 		NgOptionHighlightModule,
-		NgxGalleryModule,
+		GalleryModule.forRoot(),
 		FileUploadModule,
 		NgbModule,
 		JwtModule.forRoot({

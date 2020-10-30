@@ -2,16 +2,15 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input } from "@angular/cor
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
-import { AccessibilityConfig, Image, ImageEvent } from "@ks89/angular-modal-gallery";
 
 import Range from "@common/collections/Range";
 import { IUserForDetails } from "@data/model/User";
 import { IPaginated } from "@common/pagination/Paginated";
+import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { SortType } from "@common/sorting/SortType";
 import { IPhoto } from "@data/model/Photo";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
-import GuidHelper from "@common/helpers/guid.helper";
 
 import config from "@/config.json";
 
@@ -29,7 +28,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	disposed$ = new ReplaySubject<boolean>();
 	user: IUserForDetails | null | undefined;
 	activeTab = this._tabSubject.asObservable();
-	images: Image[] = [];
+	images: IPhoto[] = [];
 	imagesPagination: ISortablePagination = {
 		page: 1,
 		pageSize: 12,
@@ -149,16 +148,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			}))
 			.subscribe((res: IPaginated<IPhoto>) => {
 				this.imagesPagination = res.pagination;
-				this.images = (res.result || []).map(e => {
-					const img: Image = {
-						id: GuidHelper.toNumber(e.id),
-						modal: {
-							img: e.url,
-							description: e.description
-						}
-					};
-					return img;
-				});
+				this.images = res.result || [];
 			});
 	}
 

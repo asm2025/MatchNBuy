@@ -9,7 +9,11 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
+import "hammerjs";
+import "mousetrap";
+
 import { JwtModule } from "@auth0/angular-jwt";
+
 import { LazyLoadImageModule } from "ng-lazyload-image";
 import {
 	NgbModule,
@@ -20,10 +24,6 @@ import {
 	NgbModalConfig,
 	NgbProgressbarConfig
 } from "@ng-bootstrap/ng-bootstrap";
-
-import "hammerjs";
-import "mousetrap";
-import { GalleryModule } from "@ks89/angular-modal-gallery";
 
 import { FileUploadModule } from "ng2-file-upload";
 import { NgSelectModule } from "@ng-select/ng-select";
@@ -101,12 +101,13 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		FormsModule,
 		ReactiveFormsModule,
 		HttpClientModule,
-		LazyLoadImageModule,
 		FontAwesomeModule,
+		LazyLoadImageModule,
 		//MatIconModule,
+		GalleryModule,
+		LightboxModule,
 		NgSelectModule,
 		NgOptionHighlightModule,
-		GalleryModule.forRoot(),
 		FileUploadModule,
 		NgbModule,
 		JwtModule.forRoot({

@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 
 import ApiClient from "@common/web/ApiClient";
-import { ICountry, ICity } from "@data/model/Country";
+import { ICountry, ICity } from "@data/common/Country";
 
 import config from "@/config.json";
 

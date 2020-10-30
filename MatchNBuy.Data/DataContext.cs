@@ -446,7 +446,7 @@ namespace MatchNBuy.Data
 					CancellationToken token = cts?.Token ?? CancellationToken.None;
 					IOHttpDownloadFileWebRequestSettings downloadSettings = new IOHttpDownloadFileWebRequestSettings
 					{
-						BufferSize = Constants.BUFFER_256KB,
+						BufferSize = Constants.BUFFER_256_KB,
 						Overwrite = true,
 						Timeout = TimeSpan.FromSeconds(configuration.GetValue("images:users:requestTimeout", 30).Within(0, 180)).TotalIntMilliseconds()
 					};

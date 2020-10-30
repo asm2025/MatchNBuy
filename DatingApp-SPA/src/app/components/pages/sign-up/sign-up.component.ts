@@ -10,7 +10,7 @@ import { Observable, BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 
 import { Genders } from "@data/common/Genders";
-import { ICountry, ICity } from "@data/model/Country";
+import { ICountry, ICity } from "@data/common/Country";
 import { IUserToRegister } from "@data/model/User";
 import CustomValidators from "@common/validation/custom-validators";
 import FormHelper from "@common/helpers/form.helper";

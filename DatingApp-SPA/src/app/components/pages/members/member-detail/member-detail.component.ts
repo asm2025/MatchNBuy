@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input } from "@angular/core";
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
+import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 
 import Range from "@common/collections/Range";
 import { IUserForDetails } from "@data/model/User";
@@ -28,10 +29,11 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	disposed$ = new ReplaySubject<boolean>();
 	user: IUserForDetails | null | undefined;
 	activeTab = this._tabSubject.asObservable();
+	selectedImageId = "";
 	images: IPhoto[] = [];
 	imagesPagination: ISortablePagination = {
 		page: 1,
-		pageSize: 12,
+		pageSize: 5,
 		orderBy: [{
 			name: "isDefault"
 		},
@@ -43,9 +45,14 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	@Input() id: string;
 
+	@ViewChild("galleryCarousel") galleryCarousel!: NgbCarousel;
+
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
-		private readonly _alertService: AlertService) {
+		private readonly _alertService: AlertService,
+		config: NgbCarouselConfig) {
+		config.showNavigationArrows = false;
+		config.showNavigationIndicators = false;
 	}
 
 	ngOnInit() {
@@ -129,11 +136,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	loadUserImages() {
-		if (!this.user) {
-			this.images = [];
-			return;
-		}
-
+		if (!this.user) return;
 		this._userClient.photos(this.user.id, this.imagesPagination)
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
@@ -150,6 +153,19 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				this.imagesPagination = res.pagination;
 				this.images = res.result || [];
 			});
+	}
+
+	selectImage(id: string) {
+		setTimeout(() => {
+			this.selectedImageId = id;
+
+			if (!this.galleryCarousel.slides) {
+				this.galleryCarousel.activeId = id;
+				return;
+			}
+
+			this.galleryCarousel.select(id, NgbSlideEventSource.INDICATOR);
+		}, 0);
 	}
 
 	imageDefaultClick() {

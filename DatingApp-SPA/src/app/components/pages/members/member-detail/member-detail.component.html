@@ -54,10 +54,36 @@
 				<li [ngbNavItem]="2">
 					<a ngbNavLink>Photos</a>
 					<ng-template ngbNavContent>
-						<gallery gallerize [items]="images"></gallery>
-						<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
-										[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
-
+						<div class="gallery-padding">
+							<div class="row container d-flex justify-content-center">
+								<div class="grid-margin stretch-card">
+									<div class="card card-gallery border-0">
+										<div class="card-body p-0">
+											<ngb-carousel #galleryCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
+														  [interval]="false" [activeId]="selectedImageId">
+												<ng-template ngbSlide [id]="image.id" *ngFor="let image of images">
+													<div class="picsum-img-wrapper">
+														<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
+													</div>
+													<div class="carousel-caption">
+														<div [innerHtml]="image.description">
+														</div>
+													</div>
+												</ng-template>
+											</ngb-carousel>
+											<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
+															[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+										</div>
+									</div>
+									<div class="card-body pt-0 d-flex gallery-thumbs">
+										<div *ngFor="let image of images" class="thumb px-2"
+											[class.active]="image.id === selectedImageId" (click)="selectImage(image.id)">
+											<img [src]="image.thumb" alt="" class="img-thumbnail" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</ng-template>
 				</li>
 				<li [ngbNavItem]="3">

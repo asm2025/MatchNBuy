@@ -24,9 +24,9 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _weatherClient: WeatherClient,
 		private readonly _alertService: AlertService,
-		config: NgbCarouselConfig) {
-		config.showNavigationArrows = false;
-		config.showNavigationIndicators = false;
+		carouselConfig: NgbCarouselConfig) {
+		carouselConfig.showNavigationArrows = false;
+		carouselConfig.showNavigationIndicators = false;
 	}
 
 	ngAfterViewInit(): void {

@@ -29,26 +29,33 @@
 				<li [ngbNavItem]="1">
 					<a ngbNavLink>About {{user.knownAs}}</a>
 					<ng-template ngbNavContent>
-						<dl>
-							<dt>Date of birth</dt>
-							<dd>{{user.dateOfBirth | customDate:'shortDate'}}, {{user.age | number:'1.0-0'}} years old</dd>
-							<dt>Member since</dt>
-							<dd>{{user.created | customDate:'shortDate'}}</dd>
-							<dt>Location</dt>
-							<dd>{{user.city}}, {{user.country}}</dd>
-							<dt>Member since</dt>
-							<dd>{{user.created | customDate:'shortDate'}}</dd>
-							<dt>Last active</dt>
-							<dd>{{user.lastActive | timeAgo}}</dd>
-							<dt *ngIf="user.introduction">Description</dt>
-							<dd *ngIf="user.introduction">{{user.introduction}}</dd>
-							<dt *ngIf="user.lookingFor">Looking for</dt>
-							<dd *ngIf="user.lookingFor" [innerHtml]="user.introduction"></dd>
-							<dt *ngIf="user.interests && user.interests.length > 0">Interests</dt>
-							<dd *ngIf="user.interests && user.interests.length > 0">
-								<span *ngFor="let interest of user.interests"><fa-icon icon="badge"></fa-icon>{{interest}}</span>
-							</dd>
-						</dl>
+						<div>
+							<dl>
+								<dt>Date of birth</dt>
+								<dd>{{user.dateOfBirth | customDate:'shortDate'}}, {{user.age | number:'1.0-0'}} years old</dd>
+								<dt>Member since</dt>
+								<dd>{{user.created | customDate:'shortDate'}}</dd>
+								<dt>Location</dt>
+								<dd>{{user.city}}, {{user.country}}</dd>
+								<dt>Member since</dt>
+								<dd>{{user.created | customDate:'shortDate'}}</dd>
+								<dt>Last active</dt>
+								<dd>{{user.lastActive | timeAgo}}</dd>
+								<dt *ngIf="user.introduction">Description</dt>
+								<dd *ngIf="user.introduction">{{user.introduction}}</dd>
+								<dt *ngIf="user.lookingFor">Looking for</dt>
+								<dd *ngIf="user.lookingFor" [innerHtml]="user.introduction"></dd>
+								<dt *ngIf="user.interests && user.interests.length > 0">Interests</dt>
+								<dd *ngIf="user.interests && user.interests.length > 0">
+									<span *ngFor="let interest of user.interests"><fa-icon icon="badge"></fa-icon>{{interest}}</span>
+								</dd>
+							</dl>
+							<div class="btn-container row flex-row justify-content-end">
+								<button type="button" class="btn btn-primary col-12 col-sm-5" routerLink="/members/{{user.id}}/edit">
+									<fa-icon icon="edit"></fa-icon> Edit profile
+								</button>
+							</div>
+						</div>
 					</ng-template>
 				</li>
 				<li [ngbNavItem]="2">
@@ -65,7 +72,7 @@
 													<div class="picsum-img-wrapper">
 														<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
 													</div>
-													<div class="carousel-caption">
+													<div *ngIf="image.description" class="carousel-caption">
 														<div [innerHtml]="image.description">
 														</div>
 													</div>
@@ -74,11 +81,13 @@
 											<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
 															[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
 										</div>
-									</div>
-									<div class="card-body pt-0 d-flex gallery-thumbs">
-										<div *ngFor="let image of images" class="thumb px-2"
-											[class.active]="image.id === selectedImageId" (click)="selectImage(image.id)">
-											<img [src]="image.thumb" alt="" class="img-thumbnail" />
+										<div class="card-body p-0 d-flex gallery-thumbs">
+											<div ng2FileDrop class="thumb px-2 drop-zone" [uploader]="uploader" [ngClass]="{'nv-file-over': hasDropZoneOver}" (fileOver)="fileOver($event)">
+											</div>
+											<div *ngFor="let image of images" class="thumb px-2"
+												 [class.active]="image.id === selectedImageId" (click)="selectImage(image.id)">
+												<app-lazy-image [src]="image.thumb" [responsive]="true"></app-lazy-image>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -94,11 +103,6 @@
 				</li>
 			</ul>
 			<div [ngbNavOutlet]="nav" class="mt-2 px-2"></div>
-		</div>
-		<div class="btn-container row flex-row justify-content-end">
-			<button type="button" class="btn btn-primary col-12 col-sm-5" routerLink="/members/{{user.id}}/edit">
-				<fa-icon icon="edit"></fa-icon> Edit profile
-			</button>
 		</div>
 	</div>
 </div>

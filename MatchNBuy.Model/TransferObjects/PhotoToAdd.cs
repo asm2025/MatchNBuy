@@ -8,6 +8,9 @@ namespace MatchNBuy.Model.TransferObjects
 	public class PhotoToAdd : PhotoToEdit
 	{
 		[Required]
+		public string UserId { get; set; }
+
+		[Required]
 		public IFormFile File { get; set; }
 	}
 }

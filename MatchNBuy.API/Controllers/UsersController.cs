@@ -339,10 +339,10 @@ namespace MatchNBuy.API.Controllers
 		[HttpPost("{userId}/Photos/Add")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.Created)]
-		public async Task<IActionResult> AddPhoto([FromRoute] string userId, [FromForm][NotNull] PhotoToAdd photoParams, CancellationToken token)
+		public async Task<IActionResult> AddPhoto([FromForm][NotNull] PhotoToAdd photoParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			if (string.IsNullOrEmpty(photoParams.UserId) || !photoParams.UserId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(photoParams.UserId);
 			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
 
 			Stream stream = null;
@@ -352,7 +352,7 @@ namespace MatchNBuy.API.Controllers
 
 			try
 			{
-				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), userId);
+				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), photoParams.UserId);
 				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
@@ -367,14 +367,13 @@ namespace MatchNBuy.API.Controllers
 				ObjectHelper.Dispose(ref resizedImage);
 			}
 
-			if (string.IsNullOrEmpty(fileName)) throw new Exception($"Could not upload image for user '{userId}'.");
+			if (string.IsNullOrEmpty(fileName)) throw new Exception($"Could not upload image for user '{photoParams.UserId}'.");
 
 			Photo photo = _mapper.Map<Photo>(photoParams);
-			photo.UserId = userId;
 			photo.Url = Path.GetFileName(fileName);
 			photo = await _repository.Photos.AddAsync(photo, token);
 			token.ThrowIfCancellationRequested();
-			if (photo == null) throw new Exception($"Add photo '{fileName}' for the user '{userId}' failed.");
+			if (photo == null) throw new Exception($"Add photo '{fileName}' for the user '{photoParams.UserId}' failed.");
 			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 			

@@ -3,6 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
+import { FileUploader } from "ng2-file-upload";
 
 import Range from "@common/collections/Range";
 import { IUserForDetails } from "@data/model/User";
@@ -33,7 +34,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	images: IPhoto[] = [];
 	imagesPagination: ISortablePagination = {
 		page: 1,
-		pageSize: 5,
+		pageSize: 4,
 		orderBy: [{
 			name: "isDefault"
 		},
@@ -42,6 +43,8 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			type: SortType.Descending
 		}]
 	};
+	uploader: FileUploader;
+	hasDropZoneOver = false;
 
 	@Input() id: string;
 
@@ -50,9 +53,24 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	constructor(private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService,
-		config: NgbCarouselConfig) {
-		config.showNavigationArrows = false;
-		config.showNavigationIndicators = false;
+		carouselConfig: NgbCarouselConfig) {
+		carouselConfig.showNavigationArrows = false;
+		carouselConfig.showNavigationIndicators = false;
+		this.uploader = new FileUploader({
+			url: `${config.backend.url}/Photos/Add`,
+			disableMultipart: true,
+			formatDataFunctionIsAsync: true,
+			formatDataFunction: async (item) => {
+				return new Promise((resolve) => {
+					resolve({
+						name: item._file.name,
+						length: item._file.size,
+						contentType: item._file.type,
+						date: new Date()
+					});
+				});
+			}
+		});
 	}
 
 	ngOnInit() {
@@ -152,19 +170,24 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			.subscribe((res: IPaginated<IPhoto>) => {
 				this.imagesPagination = res.pagination;
 				this.images = res.result || [];
+
+				if (this.images.length > 0)
+					this.selectImage(this.images[0].id);
+				else
+					this.selectImage(null);
 			});
 	}
 
-	selectImage(id: string) {
+	selectImage(id: string | null | undefined) {
 		setTimeout(() => {
-			this.selectedImageId = id;
+			this.selectedImageId = id || "";
 
 			if (!this.galleryCarousel.slides) {
-				this.galleryCarousel.activeId = id;
+				this.galleryCarousel.activeId = this.selectedImageId;
 				return;
 			}
 
-			this.galleryCarousel.select(id, NgbSlideEventSource.INDICATOR);
+			this.galleryCarousel.select(this.selectedImageId, NgbSlideEventSource.INDICATOR);
 		}, 0);
 	}
 

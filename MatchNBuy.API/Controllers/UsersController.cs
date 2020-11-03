@@ -179,12 +179,20 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(id)) return BadRequest(id);
 
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
 			User user = await _repository.GetAsync(token, id);
 			token.ThrowIfCancellationRequested();
 			if (user == null) return NotFound(id);
+
+			bool isLikee = await _repository.IsLikeeAsync(user.Id, userId, token);
+			token.ThrowIfCancellationRequested();
 			
 			UserForDetails userForDetails = _mapper.Map<UserForDetails>(user);
-			if (userForDetails != null && !string.IsNullOrEmpty(userForDetails.PhotoUrl)) userForDetails.PhotoUrl = _repository.ImageBuilder.Build(user.PhotoUrl).ToString();
+			userForDetails.CanBeLiked = !isLikee;
+			userForDetails.CanBeDisliked = isLikee;
+			if (!string.IsNullOrEmpty(userForDetails.PhotoUrl)) userForDetails.PhotoUrl = _repository.ImageBuilder.Build(user.PhotoUrl).ToString();
 			return Ok(userForDetails);
 		}
 
@@ -260,9 +268,10 @@ namespace MatchNBuy.API.Controllers
 			user = await _repository.UpdateAsync(user, token);
 			token.ThrowIfCancellationRequested();
 			if (user == null) throw new Exception("Updating user failed.");
-			
+		
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
 			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
+			userForSerialization.CanBeDisliked = userForSerialization.CanBeLiked = false;
 			return Ok(userForSerialization);
 		}
 
@@ -339,10 +348,10 @@ namespace MatchNBuy.API.Controllers
 		[HttpPost("{userId}/Photos/Add")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		[SwaggerResponse((int)HttpStatusCode.Created)]
-		public async Task<IActionResult> AddPhoto([FromForm][NotNull] PhotoToAdd photoParams, CancellationToken token)
+		public async Task<IActionResult> AddPhoto([FromRoute] string userId, [FromForm][NotNull] PhotoToAdd photoParams, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (string.IsNullOrEmpty(photoParams.UserId) || !photoParams.UserId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(photoParams.UserId);
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			if (photoParams.File == null || photoParams.File.Length == 0) throw new InvalidOperationException("No photo was provided to upload.");
 
 			Stream stream = null;
@@ -352,7 +361,7 @@ namespace MatchNBuy.API.Controllers
 
 			try
 			{
-				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), photoParams.UserId);
+				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), userId);
 				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
@@ -367,13 +376,14 @@ namespace MatchNBuy.API.Controllers
 				ObjectHelper.Dispose(ref resizedImage);
 			}
 
-			if (string.IsNullOrEmpty(fileName)) throw new Exception($"Could not upload image for user '{photoParams.UserId}'.");
+			if (string.IsNullOrEmpty(fileName)) throw new Exception($"Could not upload image for user '{userId}'.");
 
 			Photo photo = _mapper.Map<Photo>(photoParams);
+			photo.UserId = userId;
 			photo.Url = Path.GetFileName(fileName);
 			photo = await _repository.Photos.AddAsync(photo, token);
 			token.ThrowIfCancellationRequested();
-			if (photo == null) throw new Exception($"Add photo '{fileName}' for the user '{photoParams.UserId}' failed.");
+			if (photo == null) throw new Exception($"Add photo '{fileName}' for the user '{userId}' failed.");
 			await _repository.Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 			

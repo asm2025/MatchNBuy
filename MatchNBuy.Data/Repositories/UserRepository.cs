@@ -701,6 +701,23 @@ namespace MatchNBuy.Data.Repositories
 		}
 
 		/// <inheritdoc />
+		public bool IsLikee(string userId, string id)
+		{
+			ThrowIfDisposed();
+			return Context.Likes
+						.FirstOrDefault(e => e.LikerId == userId && id == e.LikeeId) != null;
+		}
+
+		/// <inheritdoc />
+		public async ValueTask<bool> IsLikeeAsync(string userId, string id, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			return await Context.Likes
+								.FirstOrDefaultAsync(e => e.LikerId == userId && id == e.LikeeId, cancellationToken: token) != null;
+		}
+
+		/// <inheritdoc />
 		public ISet<string> LikeesFromList(string userId, params string[] idList) { return LikeesFromList(userId, (IEnumerable<string>)idList); }
 		/// <inheritdoc />
 		public ISet<string> LikeesFromList(string userId, IEnumerable<string> idList)

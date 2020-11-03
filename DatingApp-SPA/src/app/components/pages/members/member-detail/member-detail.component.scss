@@ -21,7 +21,7 @@ $btn-padding-y-lg: $input-btn-padding-y-lg;
 $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 .btn {
-	@include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
+	@include button-size(0, 0, $btn-font-size, $btn-line-height, $btn-border-radius);
 }
 
 .row {
@@ -51,7 +51,7 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 	.name {
 		padding: 8px;
-		border-left: 8px solid #c2c2c2; /*7e8c8d*/
+		border-left: 8px solid $input-border-color;
 	}
 
 	.info {
@@ -81,22 +81,6 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 			margin: 0 2px !important;
 		}
 	}
-}
-
-@media (max-width:991.98px) {
-	.gallery-padding {
-		padding: 0.5rem
-	}
-}
-
-@media (max-width:767.98px) {
-	.gallery-padding {
-		padding: 0.75rem
-	}
-}
-
-.gallery-padding {
-	padding: 1rem
 }
 
 .stretch-card {
@@ -139,32 +123,102 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 }
 
 .gallery-thumbs {
-	overflow-x: auto;
+	overflow: hidden;
+	padding: 0.5rem 0 0 0;
 
 	.thumb {
 		flex: 0 0 20%;
-		border-right: 1px solid #f2f2f2;
+		border: 1px solid transparent;
 		text-align: center;
 		cursor: pointer;
+		overflow: hidden;
+		position: relative;
 
 		i {
 			font-size: 1.2rem;
 		}
 
-		&.active {
-			background-color: lightgrey;
+		.overlay {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-end;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			padding: 0 2px;
+			pointer-events: none;
+			background: rgba(255, 255, 255, 0.7);
+			opacity: 0;
+			-webkit-transition: opacity 0.5s ease, opacity 0.5s ease;
+			-moz-transition: opacity 0.5s ease, opacity 0.5s ease;
+			-o-transition: opacity 0.5s ease, opacity 0.5s ease;
+			transition: opacity 0.5s ease, opacity 0.5s ease;
+
+			.btn:focus {
+				box-shadow: none;
+			}
+
+			.info {
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 6;
+				width: 100%;
+				word-break: break-all !important;
+				overflow-wrap: break-word !important;
+				white-space: initial;
+				overflow: hidden !important;
+				text-overflow: ellipsis !important;
+
+				.h1, .h2, .h3, .h4, .h5, .h6,
+				h1, h2, h3, h4, h5, h6 {
+					word-break: keep-all !important;
+					overflow-wrap: normal !important;
+					overflow: hidden !important;
+					text-overflow: ellipsis !important;
+				}
+
+				> p,
+				> div {
+					display: contents !important;
+
+					&:after {
+						content: "\A";
+						white-space: pre;
+					}
+				}
+			}
 		}
 
 		&:hover {
-			background-color: gainsboro;
+			.overlay {
+				opacity: 1;
+				pointer-events: auto;
+				-o-backdrop-filter: blur(5px) opacity(0.65);
+				-ms-backdrop-filter: blur(5px) opacity(0.65);
+				-moz-backdrop-filter: blur(5px) opacity(0.65);
+				-webkit-backdrop-filter: blur(5px) opacity(0.65);
+				backdrop-filter: blur(5px) opacity(0.65);
+			}
 		}
-	}
-}
 
-.drop-zone {
-	border: 2px dotted $input-border-color;
+		&.active {
+			border-color: $input-border-color;
+		}
 
-	&.active {
-		border-color: $input-focus-border-color;
+		&.drop-zone {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			border-style: dashed;
+			border-color: $input-border-color;
+
+			&.nv-file-over {
+				background-color: $link-hover-color;
+				border-color: $input-focus-border-color;
+			}
+		}
 	}
 }

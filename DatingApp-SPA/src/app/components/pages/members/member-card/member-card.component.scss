@@ -25,6 +25,10 @@
 			-o-transition: opacity 0.5s ease, opacity 0.5s ease;
 			transition: opacity 0.5s ease, opacity 0.5s ease;
 
+			.btn:focus {
+				box-shadow: none;
+			}
+
 			.info {
 				display: -webkit-box;
 				-webkit-box-orient: vertical;
@@ -44,7 +48,8 @@
 					text-overflow: ellipsis !important;
 				}
 
-				> p {
+				> p,
+				> div {
 					display: contents !important;
 
 					&:after {

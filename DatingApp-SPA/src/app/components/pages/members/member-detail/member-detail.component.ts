@@ -44,7 +44,8 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		}]
 	};
 	uploader: FileUploader;
-	hasDropZoneOver = false;
+	hasDropFile = false;
+	uploadProgress = 0.0;
 
 	@Input() id: string;
 
@@ -54,13 +55,19 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService,
 		carouselConfig: NgbCarouselConfig) {
+
 		carouselConfig.showNavigationArrows = false;
 		carouselConfig.showNavigationIndicators = false;
+
 		this.uploader = new FileUploader({
-			url: `${config.backend.url}/Photos/Add`,
-			disableMultipart: true,
+			allowedFileType: ["image"],
+			maxFileSize: 10 * 1024 * 1024, // 10MB
+			authToken: this._userClient.token || "",
+			queueLimit: 1,
+			disableMultipart: true, // must be true for formatDataFunction to be called.
 			formatDataFunctionIsAsync: true,
-			formatDataFunction: async (item) => {
+			formatDataFunction: async (item: any) => {
+				console.log("formatDataFunction", item);
 				return new Promise((resolve) => {
 					resolve({
 						name: item._file.name,
@@ -71,6 +78,9 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				});
 			}
 		});
+
+		this.uploader.onProgressItem = (item, progress) => this.uploadProgress = progress;
+		this.uploader.onCompleteItem = (item, response, status, headers) => this.uploadProgress = 0.0;
 	}
 
 	ngOnInit() {
@@ -128,6 +138,13 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			.subscribe(data => {
 				setTimeout(() => {
 					this.user = data["resolved"];
+
+					if (!this.user)
+						this.uploader.options.url = "";
+					else
+						this.uploader.options.url = `${config.backend.url}/${this.user.id}/Photos/Add`;
+
+					this.selectTab(TABS_MIN);
 				}, 0);
 			});
 	}
@@ -137,20 +154,52 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		this.disposed$.complete();
 	}
 
-	getUserImage(): string {
+	get isCurrentUser(): boolean {
+		if (!this.user) return false;
+		const currentUser = this._userClient.user;
+		if (!currentUser) return false;
+		return currentUser.id === this.user.id;
+	}
+
+	get userImage(): string {
 		if (!this.user) return config.users.defaultImage;
 		return this.user.photoUrl || config.users.defaultImage;
+	}
+
+	get isUploading(): boolean {
+		return this.uploadProgress > 0.0;
+	}
+
+	imagesPageChanged(page: number): void {
+		this.imagesPagination.page = page;
+		this.loadUserImages();
+	}
+
+	imageDefaultClick(id: string) {
+		console.log("imageDefaultClick", id);
+	}
+
+	imageEditClick(id: string) {
+		console.log("imageEditClick", id);
+	}
+
+	imageDeleteClick(id: string) {
+		console.log("imageDeleteClick", id);
+	}
+
+	imageUploaderHover(evt: boolean) {
+		this.hasDropFile = evt;
+	}
+
+	messagesPageChanged(page: number): void {
+		this.imagesPagination.page = page;
+		this.loadUserMessages();
 	}
 
 	selectTab(tab: number) {
 		if (tab < TABS_MIN) tab = TABS_MIN;
 		if (tab > TABS_MAX) tab = TABS_MAX;
 		this._tabSubject.next(tab);
-	}
-
-	imagesPageChanged(page: number): void {
-		this.imagesPagination.page = page;
-		this.loadUserImages();
 	}
 
 	loadUserImages() {
@@ -171,10 +220,12 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				this.imagesPagination = res.pagination;
 				this.images = res.result || [];
 
-				if (this.images.length > 0)
-					this.selectImage(this.images[0].id);
-				else
+				if (this.images.length > 0) {
+					const id = (this.images.find(e => e.isDefault) || this.images[0]).id;
+					this.selectImage(id);
+				} else {
 					this.selectImage(null);
+				}
 			});
 	}
 
@@ -189,23 +240,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 			this.galleryCarousel.select(this.selectedImageId, NgbSlideEventSource.INDICATOR);
 		}, 0);
-	}
-
-	imageDefaultClick() {
-		alert("Image default clicked...");
-	}
-
-	imageEditClick() {
-		alert("Image edit clicked...");
-	}
-
-	imageDeleteClick() {
-		alert("Image delete clicked...");
-	}
-
-	messagesPageChanged(page: number): void {
-		this.imagesPagination.page = page;
-		this.loadUserMessages();
 	}
 
 	loadUserMessages() {

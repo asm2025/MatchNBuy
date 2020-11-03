@@ -1,7 +1,7 @@
 <div *ngIf="user; else notFound" class="row h-100">
 	<div class="summary col-md-4 col-sm-12 border-sm-right-none border-right">
 		<h2 class="name">{{user.knownAs}}</h2>
-		<app-lazy-image [src]="getUserImage()" [cssClass]="'img-fluid w-100 mx-auto d-block'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
+		<app-lazy-image [src]="userImage" [cssClass]="'img-fluid w-100 mx-auto d-block'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="info">
 			<small *ngIf="user.likes">{{ user.likes }}<fa-icon icon="heart"></fa-icon></small>
 			<small class="status"><fa-icon icon="check-circle"></fa-icon> <!--{{user.status}}--></small>
@@ -14,9 +14,10 @@
 				<dd>{{user.lastName}}</dd>
 			</dl>
 		</div>
-		<div class="btn-group d-flex mt-2">
-			<button class="btn btn-primary">Like</button>
-			<button class="btn btn-success" (click)="activeTab = 3">Message</button>
+		<div *ngIf="!isCurrentUser" class="d-flex mt-2">
+			<button *ngIf="user.canBeLiked" type="button" class="btn" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
+			<button *ngIf="user.canBeDisliked" type="button" class="btn" (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
+			<button type="button" class="btn" (click)="selectTab(3)"><fa-icon icon="envelope"></fa-icon></button>
 		</div>
 	</div>
 	<div class="details col-md-8 col-sm-12">
@@ -50,7 +51,7 @@
 									<span *ngFor="let interest of user.interests"><fa-icon icon="badge"></fa-icon>{{interest}}</span>
 								</dd>
 							</dl>
-							<div class="btn-container row flex-row justify-content-end">
+							<div *ngIf="isCurrentUser" class="btn-container row flex-row justify-content-end">
 								<button type="button" class="btn btn-primary col-12 col-sm-5" routerLink="/members/{{user.id}}/edit">
 									<fa-icon icon="edit"></fa-icon> Edit profile
 								</button>
@@ -61,33 +62,44 @@
 				<li [ngbNavItem]="2">
 					<a ngbNavLink>Photos</a>
 					<ng-template ngbNavContent>
-						<div class="gallery-padding">
-							<div class="row container d-flex justify-content-center">
-								<div class="grid-margin stretch-card">
-									<div class="card card-gallery border-0">
-										<div class="card-body p-0">
-											<ngb-carousel #galleryCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
-														  [interval]="false" [activeId]="selectedImageId">
-												<ng-template ngbSlide [id]="image.id" *ngFor="let image of images">
-													<div class="picsum-img-wrapper">
-														<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
-													</div>
-													<div *ngIf="image.description" class="carousel-caption">
-														<div [innerHtml]="image.description">
-														</div>
-													</div>
-												</ng-template>
-											</ngb-carousel>
-											<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
-															[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+						<div class="row container d-flex justify-content-center">
+							<div class="grid-margin stretch-card">
+								<div class="card card-gallery border-0">
+									<div class="card-body p-0">
+										<ngb-carousel #galleryCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
+													  [interval]="false" [activeId]="selectedImageId">
+											<ng-template ngbSlide [id]="image.id" *ngFor="let image of images">
+												<div class="picsum-img-wrapper">
+													<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
+												</div>
+												<div *ngIf="image.description" class="carousel-caption" [innerHtml]="image.description">
+												</div>
+											</ng-template>
+										</ngb-carousel>
+										<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
+														[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+									</div>
+									<div class="card-body d-flex gallery-thumbs">
+										<div *ngFor="let image of images" class="thumb"
+											 [class.active]="image.id === selectedImageId" (click)="selectImage(image.id)">
+											<app-lazy-image [src]="image.thumb" [responsive]="true"></app-lazy-image>
+											<div *ngIf="image.description || isCurrentUser" class="overlay">
+												<div class="info" *ngIf="image.description" [innerHtml]="image.description">
+												</div>
+												<div *ngIf="isCurrentUser" class="btn-group text-center" role="group" aria-label="Image actions">
+													<button *ngIf="!image.isDefault" type="button" class="btn" (click)="imageDefaultClick(image.id)"><fa-icon icon="check-circle"></fa-icon></button>
+													<button type="button" class="btn" (click)="imageEditClick(image.id)"><fa-icon icon="edit"></fa-icon></button>
+													<button *ngIf="!image.isDefault" type="button" class="btn" (click)="imageDeleteClick(image.id)"><fa-icon icon="trash"></fa-icon></button>
+												</div>
+											</div>
 										</div>
-										<div class="card-body p-0 d-flex gallery-thumbs">
-											<div ng2FileDrop class="thumb px-2 drop-zone" [uploader]="uploader" [ngClass]="{'nv-file-over': hasDropZoneOver}" (fileOver)="fileOver($event)">
+										<div *ngIf="isCurrentUser" ng2FileDrop class="thumb drop-zone" [uploader]="uploader" [ngClass]="{'nv-file-over': hasDropFile}" (fileOver)="imageUploaderHover($event)">
+											<div *ngIf="isUploading; else upload">
+												<ngb-progressbar type="dark" textType="white" [value]="50" [showValue]="true"></ngb-progressbar>
 											</div>
-											<div *ngFor="let image of images" class="thumb px-2"
-												 [class.active]="image.id === selectedImageId" (click)="selectImage(image.id)">
-												<app-lazy-image [src]="image.thumb" [responsive]="true"></app-lazy-image>
-											</div>
+											<ng-template #upload>
+												<fa-icon icon="upload"></fa-icon>
+											</ng-template>
 										</div>
 									</div>
 								</div>

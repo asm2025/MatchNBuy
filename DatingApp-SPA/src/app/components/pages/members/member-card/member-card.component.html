@@ -7,7 +7,7 @@
 				<p>{{ user.dateOfBirth | customDate:'shortDate' }} ({{ user.age | number:'1.0-0' }} years)</p>
 				<p>Since: {{ user.created | customDate:'shortDate' }}</p>
 				<p>Active: {{ user.lastActive | timeAgo }}</p>
-				<p *ngIf="user.introduction" [innerHtml]="user.introduction"></p>
+				<div *ngIf="user.introduction" [innerHtml]="user.introduction"></div>
 			</div>
 			<div class="btn-group text-center" role="group" aria-label="Member actions">
 				<button type="button" class="btn" [routerLink]="['/members/', user.id]"><fa-icon icon="user"></fa-icon></button>

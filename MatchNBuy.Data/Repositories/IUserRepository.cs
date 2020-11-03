@@ -85,6 +85,8 @@ namespace MatchNBuy.Data.Repositories
 		ValueTask<int> LikesAsync([NotNull] string userId, CancellationToken token = default(CancellationToken));
 		int Likees([NotNull] string userId);
 		ValueTask<int> LikeesAsync([NotNull] string userId, CancellationToken token = default(CancellationToken));
+		bool IsLikee([NotNull] string userId, [NotNull] string id);
+		ValueTask<bool> IsLikeeAsync([NotNull] string userId, [NotNull] string id, CancellationToken token = default(CancellationToken));
 		[NotNull]
 		ISet<string> LikeesFromList([NotNull] string userId, [NotNull] params string[] idList);
 		[NotNull]

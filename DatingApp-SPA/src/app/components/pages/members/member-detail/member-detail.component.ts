@@ -59,8 +59,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		carouselConfig.showNavigationArrows = false;
 		carouselConfig.showNavigationIndicators = false;
 
+		const authUser = this._userClient.user;
+		if (!authUser) throw new Error("Unauthorized");
 		this._uploader = new FileUploader({
-			url: `${config.backend.url}/${this.user.id}/Photos/Add`,
+			url: `${config.backend.url}/${authUser.id}/Photos/Add`,
 			//allowedFileType: ["image"],
 			maxFileSize: 10 * 1024 * 1024, // 10MB
 			authToken: `Bearer ${this._userClient.token}`,

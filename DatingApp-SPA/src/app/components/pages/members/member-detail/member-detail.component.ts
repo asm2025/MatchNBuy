@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
-import { FileUploader, FileItem, ParsedResponseHeaders } from "ng2-file-upload";
+import { FileUploader, FileItem } from "ng2-file-upload";
 
 import Range from "@common/collections/Range";
 import { IUserForDetails } from "@data/model/User";
@@ -60,9 +60,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		carouselConfig.showNavigationIndicators = false;
 
 		this._uploader = new FileUploader({
-			allowedFileType: ["image"],
+			url: `${config.backend.url}/${this.user.id}/Photos/Add`,
+			//allowedFileType: ["image"],
 			maxFileSize: 10 * 1024 * 1024, // 10MB
-			authToken: this._userClient.token || "",
+			authToken: `Bearer ${this._userClient.token}`,
 			queueLimit: 1,
 			disableMultipart: true, // must be true for formatDataFunction to be called.
 			formatDataFunctionIsAsync: true,
@@ -80,6 +81,8 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem;
 		this._uploader.onProgressItem = this.imageUploaderProgressItem;
+		this._uploader.onSuccessItem = this.imageUploaderSuccessItem;
+		this._uploader.onErrorItem = this.imageUploaderErrorItem;
 		this._uploader.onCancelItem = this.imageUploaderCancelItem;
 		this._uploader.onCompleteItem = this.imageUploaderCompleteItem;
 	}
@@ -142,12 +145,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			.subscribe(data => {
 				setTimeout(() => {
 					this.user = data["resolved"];
-
-					if (!this.user)
-						this._uploader.options.url = "";
-					else
-						this._uploader.options.url = `${config.backend.url}/${this.user.id}/Photos/Add`;
-
 					this.selectTab(this._tabSubject.value);
 				}, 0);
 			});
@@ -205,19 +202,28 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderProgressItem(item: FileItem, progress: any) {
+		console.log("Progress", item.file.name, progress);
 		this.uploadProgress = progress;
 	}
 
-	imageUploaderCancelItem(item: FileItem) {
-		this._alertService.toasts.info(`Uploading file '${item.file.name}' was cancelled.`);
+	imageUploaderSuccessItem(item: FileItem) {
+		console.log("Success", item.file.name);
+		//this._alertService.toasts.success(`File '${item.file.name}' was uploaded successfully.`);
 	}
 
-	imageUploaderCompleteItem(item: FileItem, response: string, status: number) {
+	imageUploaderErrorItem(item: FileItem, response: string, status: number) {
+		console.log("Error", item.file.name, response, status);
+		//this._alertService.toasts.error(`File '${item.file.name}' failed to be uploaded. Status: ${status}. Response: ${response}`);
+	}
+
+	imageUploaderCancelItem(item: FileItem) {
+		console.log("Cancelled", item.file.name);
+		//this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
+	}
+
+	imageUploaderCompleteItem() {
+		console.log("Completed");
 		this.uploadProgress = 0.0;
-		this._alertService.toasts.info(`For the file '${item.file.name}' recieved the following response:
-Status: ${status}
-Response:
-${response}`);
 	}
 
 	messagesPageChanged(page: number): void {

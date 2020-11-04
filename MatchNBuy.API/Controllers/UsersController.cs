@@ -361,13 +361,19 @@ namespace MatchNBuy.API.Controllers
 
 			try
 			{
-				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), userId);
+				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar),
+												userId);
 				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
 				(int x, int y) = asm.Numeric.Math.AspectRatio(image.Width, image.Height, Configuration.GetValue("images:users:size", 128));
 				resizedImage = ImageHelper.Resize(image, x, y);
 				fileName = ImageHelper.Save(resizedImage, fileName);
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError(ex.CollectMessages());
+				return StatusCode((int)HttpStatusCode.InternalServerError, ex);
 			}
 			finally
 			{

@@ -93,9 +93,11 @@
 												</div>
 											</div>
 										</div>
-										<div *ngIf="isCurrentUser" ng2FileDrop class="thumb drop-zone" [uploader]="uploader" [ngClass]="{'nv-file-over': hasDropFile}" (fileOver)="imageUploaderHover($event)">
-											<div *ngIf="isUploading; else upload">
+										<div *ngIf="isCurrentUser" ng2FileDrop class="thumb drop-zone" [uploader]="_uploader" [ngClass]="{'nv-file-over': hasDropFile}"
+											(fileOver)="imageUploaderHover($event)" (onFileDrop)="imageUploaderDropFiles($event)">
+											<div *ngIf="isUploading; else upload" class="d-flex">
 												<ngb-progressbar type="dark" textType="white" [value]="50" [showValue]="true"></ngb-progressbar>
+
 											</div>
 											<ng-template #upload>
 												<fa-icon icon="upload"></fa-icon>

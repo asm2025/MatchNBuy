@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
-import { FileUploader } from "ng2-file-upload";
+import { FileUploader, FileItem, ParsedResponseHeaders } from "ng2-file-upload";
 
 import Range from "@common/collections/Range";
 import { IUserForDetails } from "@data/model/User";
@@ -26,6 +26,7 @@ const TABS_MAX = 3;
 })
 export default class MemberDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 	private readonly _tabSubject = new BehaviorSubject<number>(TABS_MIN);
+	private readonly _uploader: FileUploader;
 
 	disposed$ = new ReplaySubject<boolean>();
 	user: IUserForDetails | null | undefined;
@@ -43,7 +44,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			type: SortType.Descending
 		}]
 	};
-	uploader: FileUploader;
 	hasDropFile = false;
 	uploadProgress = 0.0;
 
@@ -59,7 +59,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		carouselConfig.showNavigationArrows = false;
 		carouselConfig.showNavigationIndicators = false;
 
-		this.uploader = new FileUploader({
+		this._uploader = new FileUploader({
 			allowedFileType: ["image"],
 			maxFileSize: 10 * 1024 * 1024, // 10MB
 			authToken: this._userClient.token || "",
@@ -67,20 +67,21 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			disableMultipart: true, // must be true for formatDataFunction to be called.
 			formatDataFunctionIsAsync: true,
 			formatDataFunction: async (item: any) => {
-				console.log("formatDataFunction", item);
 				return new Promise((resolve) => {
 					resolve({
-						name: item._file.name,
-						length: item._file.size,
-						contentType: item._file.type,
+						name: item.file.name,
+						length: item.file.size,
+						contentType: item.file.type,
 						date: new Date()
 					});
 				});
 			}
 		});
 
-		this.uploader.onProgressItem = (item, progress) => this.uploadProgress = progress;
-		this.uploader.onCompleteItem = (item, response, status, headers) => this.uploadProgress = 0.0;
+		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem;
+		this._uploader.onProgressItem = this.imageUploaderProgressItem;
+		this._uploader.onCancelItem = this.imageUploaderCancelItem;
+		this._uploader.onCompleteItem = this.imageUploaderCompleteItem;
 	}
 
 	ngOnInit() {
@@ -109,6 +110,9 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 						break;
 				}
 			});
+		this._uploader.response
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(res => this._alertService.toasts.success(res));
 	}
 
 	ngAfterViewInit() {
@@ -140,11 +144,11 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 					this.user = data["resolved"];
 
 					if (!this.user)
-						this.uploader.options.url = "";
+						this._uploader.options.url = "";
 					else
-						this.uploader.options.url = `${config.backend.url}/${this.user.id}/Photos/Add`;
+						this._uploader.options.url = `${config.backend.url}/${this.user.id}/Photos/Add`;
 
-					this.selectTab(TABS_MIN);
+					this.selectTab(this._tabSubject.value);
 				}, 0);
 			});
 	}
@@ -176,19 +180,44 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageDefaultClick(id: string) {
-		console.log("imageDefaultClick", id);
+		alert(`imageDefaultClick: ${id}`);
 	}
 
 	imageEditClick(id: string) {
-		console.log("imageEditClick", id);
+		alert(`imageEditClick: ${id}`);
 	}
 
 	imageDeleteClick(id: string) {
-		console.log("imageDeleteClick", id);
+		alert(`imageDeleteClick: ${id}`);
 	}
 
-	imageUploaderHover(evt: boolean) {
-		this.hasDropFile = evt;
+	imageUploaderHover(hover: boolean) {
+		this.hasDropFile = hover;
+	}
+
+	imageUploaderDropFiles(files: FileList) {
+		if (files.length === 0) return;
+		this._uploader.uploadAll();
+	}
+
+	imageUploaderBeforeUploadItem(item: FileItem) {
+		this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size}...`);
+	}
+
+	imageUploaderProgressItem(item: FileItem, progress: any) {
+		this.uploadProgress = progress;
+	}
+
+	imageUploaderCancelItem(item: FileItem) {
+		this._alertService.toasts.info(`Uploading file '${item.file.name}' was cancelled.`);
+	}
+
+	imageUploaderCompleteItem(item: FileItem, response: string, status: number) {
+		this.uploadProgress = 0.0;
+		this._alertService.toasts.info(`For the file '${item.file.name}' recieved the following response:
+Status: ${status}
+Response:
+${response}`);
 	}
 
 	messagesPageChanged(page: number): void {

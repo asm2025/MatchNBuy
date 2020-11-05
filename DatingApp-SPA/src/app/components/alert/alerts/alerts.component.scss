@@ -1,16 +1,16 @@
 .alerts {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	min-width: 100%;
-	min-height: 100%;
-	width: 100%;
-	height: 100%;
+	position: fixed !important;
+	top: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	min-width: 100% !important;
+	min-height: 100% !important;
+	width: 100% !important;
+	height: 100% !important;
 	margin: 0 !important;
 	padding: 0 !important;
-	z-index: 1200;
+	z-index: 1200 !important;
 	pointer-events: none;
 	background: none !important;
 
@@ -35,22 +35,28 @@
 
 	.toasts-container {
 		display: flex;
+		flex-direction: column-reverse;
+		align-items: flex-end;
 		position: absolute !important;
 		top: 0 !important;
 		right: 0 !important;
 		bottom: 0 !important;
 		left: 0 !important;
-		min-width: 100%;
+		min-width: 100% !important;
 
 		> * {
 			pointer-events: all;
-			margin: auto 10px 10px auto;
+			margin: 10px;
 		}
 
-		.toast-body {
-			max-height: 100px;
-			overflow-y: auto;
-			overflow-x: hidden
+		.toast {
+			flex-basis: auto;
+
+			.toast-body {
+				padding: 4px;
+				overflow-y: auto;
+				overflow-x: hidden;
+			}
 		}
 	}
 }

@@ -81,12 +81,12 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			}
 		});
 
-		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem;
-		this._uploader.onProgressItem = this.imageUploaderProgressItem;
-		this._uploader.onSuccessItem = this.imageUploaderSuccessItem;
-		this._uploader.onErrorItem = this.imageUploaderErrorItem;
-		this._uploader.onCancelItem = this.imageUploaderCancelItem;
-		this._uploader.onCompleteItem = this.imageUploaderCompleteItem;
+		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem.bind(this);
+		this._uploader.onProgressItem = this.imageUploaderProgressItem.bind(this);
+		this._uploader.onSuccessItem = this.imageUploaderSuccessItem.bind(this);
+		this._uploader.onErrorItem = this.imageUploaderErrorItem.bind(this);
+		this._uploader.onCancelItem = this.imageUploaderCancelItem.bind(this);
+		this._uploader.onCompleteItem = this.imageUploaderCompleteItem.bind(this);
 	}
 
 	ngOnInit() {
@@ -115,9 +115,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 						break;
 				}
 			});
-		this._uploader.response
-			.pipe(takeUntil(this.disposed$))
-			.subscribe(res => this._alertService.toasts.success(res));
 	}
 
 	ngAfterViewInit() {
@@ -196,36 +193,37 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	imageUploaderDropFiles(files: FileList) {
 		if (files.length === 0) return;
+
+		if (files[0].size === 0) {
+			this._uploader.clearQueue();
+			return;
+		}
+
 		this._uploader.uploadAll();
 	}
 
 	imageUploaderBeforeUploadItem(item: FileItem) {
-		console.log("BeforeUploadItem", item.file.name);
-		//this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size}...`);
+		this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size} byte(s)...`);
 	}
 
 	imageUploaderProgressItem(item: FileItem, progress: any) {
-		console.log("Progress", item.file.name, progress);
 		this.uploadProgress = progress;
 	}
 
 	imageUploaderSuccessItem(item: FileItem) {
-		console.log("Success", item.file.name);
-		//this._alertService.toasts.success(`File '${item.file.name}' was uploaded successfully.`);
+		this._alertService.toasts.success(`File '${item.file.name}' was uploaded successfully.`);
 	}
 
 	imageUploaderErrorItem(item: FileItem, response: string, status: number) {
-		console.log("Error", item.file.name, response, status);
-		//this._alertService.toasts.error(`File '${item.file.name}' failed to be uploaded. Status: ${status}. Response: ${response}`);
+		this._alertService.toasts.error(`File '${item.file.name}' failed to be uploaded. Status: ${status}. Response: ${response}`);
+		this._uploader.clearQueue();
 	}
 
 	imageUploaderCancelItem(item: FileItem) {
-		console.log("Cancelled", item.file.name);
-		//this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
+		this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
 	}
 
 	imageUploaderCompleteItem() {
-		console.log("Completed");
 		this.uploadProgress = 0.0;
 	}
 

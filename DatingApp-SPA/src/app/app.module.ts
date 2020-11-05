@@ -1,9 +1,7 @@
-import { NgModule, Injectable } from "@angular/core";
+import { NgModule } from "@angular/core";
 import {
 	BrowserModule,
 	Title,
-	HammerGestureConfig,
-	HAMMER_GESTURE_CONFIG
 } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -45,6 +43,16 @@ import CustomDatePipe from "@common/pipes/date-time/custom-date.pipe";
 
 import { NgControlStatus } from "@common/directives/ng_control_status";
 
+import HammerConfigProvider from "@/config/hammer.config";
+
+import HTTPHeadersInterceptorProvider from "@/interceptors/http-headers.interceptor";
+import ErrorInterceptorProvider from "@/interceptors/error.interceptor";
+
+import CountriesClient from "@services/web/CountriesClient";
+import WeatherClient from "@services/web/WeatherClient";
+import UserClient, { getToken } from "@services/web/UserClient";
+import AlertService from "@services/alert.service";
+
 import AppComponent from "./app.component";
 import SpinnerComponent from "@components/spinner/spinner.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
@@ -77,20 +85,6 @@ import ThreadMessagesResolver from "@components/pages/messages/thread-messages/t
 import WeatherComponent from "@components/pages/weather/weather.component";
 import WeatherResolver from "@components/pages/weather/weather.resolver";
 
-import CountriesClient from "@services/web/CountriesClient";
-import WeatherClient from "@services/web/WeatherClient";
-import UserClient, { getToken } from "@services/web/UserClient";
-import AlertService from "@services/alert.service";
-import { ErrorInterceptorProvider } from "@services/error.service";
-
-@Injectable()
-export class CustomHammerConfig extends HammerGestureConfig {
-	overrides = {
-		pinch: { enable: false },
-		rotate: { enable: false }
-	};
-}
-
 @NgModule({
 	imports: [
 		BrowserModule,
@@ -98,13 +92,6 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		FormsModule,
 		ReactiveFormsModule,
 		HttpClientModule,
-		FontAwesomeModule,
-		LazyLoadImageModule,
-		//MatIconModule,
-		NgSelectModule,
-		NgOptionHighlightModule,
-		FileUploadModule,
-		NgbModule,
 		JwtModule.forRoot({
 			config: {
 				tokenGetter: getToken,
@@ -112,6 +99,13 @@ export class CustomHammerConfig extends HammerGestureConfig {
 				disallowedRoutes: ["localhost:8000/Users/Login"]
 			}
 		}),
+		FontAwesomeModule,
+		LazyLoadImageModule,
+		//MatIconModule,
+		NgSelectModule,
+		NgOptionHighlightModule,
+		FileUploadModule,
+		NgbModule,
 		AppRoutingModule
 	],
 	exports: [
@@ -144,9 +138,10 @@ export class CustomHammerConfig extends HammerGestureConfig {
 		WeatherComponent
 	],
 	providers: [
-		{ provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig },
-		Title,
+		HTTPHeadersInterceptorProvider,
 		ErrorInterceptorProvider,
+		HammerConfigProvider,
+		Title,
 		NgbAlertConfig,
 		NgbToastConfig,
 		NgbTooltipConfig,

@@ -59,6 +59,7 @@ namespace MatchNBuy.API
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			string[] allowedClients = _configuration.GetValue("AllowedClients", "*").Split(';', StringSplitOptions.RemoveEmptyEntries);
 			services
 				// config
 				.AddSingleton(_configuration)
@@ -223,7 +224,7 @@ namespace MatchNBuy.API
 					});
 				})
 				// MVC
-				.AddDefaultCors()
+				.AddDefaultCors(allowedClients)
 				.AddForwardedHeaders()
 				.AddControllers()
 				.AddNewtonsoftJson(options =>
@@ -256,16 +257,19 @@ namespace MatchNBuy.API
 					config.AsStartPage();
 				})
 				.UseDefaultFiles()
-				.UseStaticFiles()
-				.UseCookiePolicy()
-				.UseRouting()
-				.UseCors()
-				.UseAuthentication()
-				.UseAuthorization()
 				.UseStaticFiles(new StaticFileOptions
 				{
 					FileProvider = new PhysicalFileProvider(AssemblyHelper.GetEntryAssembly().GetDirectoryPath())
 				})
+				.UseCookiePolicy(new CookiePolicyOptions
+				{
+					MinimumSameSitePolicy = SameSiteMode.None,
+					Secure = CookieSecurePolicy.SameAsRequest
+				})
+				.UseRouting()
+				.UseCors()
+				.UseAuthentication()
+				.UseAuthorization()
 				.UseEndpoints(endpoints =>
 				{
 					endpoints.MapControllers();

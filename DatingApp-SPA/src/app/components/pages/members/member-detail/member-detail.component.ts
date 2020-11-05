@@ -62,7 +62,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		const authUser = this._userClient.user;
 		if (!authUser) throw new Error("Unauthorized");
 		this._uploader = new FileUploader({
-			url: `${config.backend.url}/${authUser.id}/Photos/Add`,
+			url: `${config.backend.url}/Users/${authUser.id}/Photos/Add`,
 			//allowedFileType: ["image"],
 			maxFileSize: 10 * 1024 * 1024, // 10MB
 			authToken: `Bearer ${this._userClient.token}`,
@@ -200,7 +200,8 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderBeforeUploadItem(item: FileItem) {
-		this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size}...`);
+		console.log("BeforeUploadItem", item.file.name);
+		//this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size}...`);
 	}
 
 	imageUploaderProgressItem(item: FileItem, progress: any) {

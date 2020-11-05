@@ -13,7 +13,7 @@ import { catchError } from "rxjs/operators";
 @Injectable({
 	providedIn: "root"
 })
-export default class ErrorService implements HttpInterceptor {
+export class ErrorInterceptor implements HttpInterceptor {
 	intercept(
 		req: HttpRequest<any>,
 		next: HttpHandler
@@ -49,8 +49,10 @@ export default class ErrorService implements HttpInterceptor {
 	}
 }
 
-export const ErrorInterceptorProvider = {
+const ErrorInterceptorProvider = {
 	provide: HTTP_INTERCEPTORS,
-	useClass: ErrorService,
+	useClass: ErrorInterceptor,
 	multi: true
 };
+
+export default ErrorInterceptorProvider;

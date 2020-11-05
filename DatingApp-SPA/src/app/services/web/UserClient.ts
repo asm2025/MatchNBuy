@@ -25,7 +25,7 @@ function setToken(value: string | null | undefined) {
 		localStorage.setItem("SESSIONID", value);
 }
 
-function getUser(): IUser | null {
+function getUser(): IUser | null | undefined {
 	if (!getToken()) return null;
 	const jsonUser = localStorage.getItem("USER");
 	if (!jsonUser) return null;
@@ -33,7 +33,6 @@ function getUser(): IUser | null {
 }
 
 function setUser(value: IUser | null | undefined) {
-
 	if (!value)
 		localStorage.removeItem("USER");
 	else
@@ -102,7 +101,7 @@ export default class UserClient extends ApiClient<HttpClient> {
 				setToken(res.token);
 				setUser(this._user);
 				this.init();
-				return this._user !== null;
+				return Boolean(this._user);
 			}));
 	}
 

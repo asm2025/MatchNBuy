@@ -93,14 +93,24 @@
 												</div>
 											</div>
 										</div>
-										<div *ngIf="isCurrentUser" ng2FileDrop class="thumb drop-zone" [uploader]="_uploader" [ngClass]="{'nv-file-over': hasDropFile}"
+										<div *ngIf="isCurrentUser" ng2FileDrop title="Drop an image here to be uploaded..." class="thumb drop-zone" [uploader]="_uploader" [ngClass]="{'nv-file-over': hasDropFile}"
 											(fileOver)="imageUploaderHover($event)" (onFileDrop)="imageUploaderDropFiles($event)">
 											<div *ngIf="isUploading; else upload" class="d-flex">
-												<ngb-progressbar type="dark" textType="white" [value]="50" [showValue]="true"></ngb-progressbar>
-
+												<ngb-progressbar type="dark" textType="white" [value]="uploadProgress" [showValue]="true"></ngb-progressbar>
+												<button *ngIf="hasUploadFile" type="button" class="btn" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
 											</div>
 											<ng-template #upload>
-												<fa-icon icon="upload"></fa-icon>
+												<div class="d-flex">
+													<fa-icon icon="upload"></fa-icon>
+													<div class="form-group">
+														<label for="description">Description</label>
+														<textarea id="description" [ngModel]="" class="form-control" rows="3" maxlength="512"></textarea>
+													</div>
+													<div class="form-group form-check">
+														<input type="checkbox" id="isDefault" class="form-check-input">
+														<label class="form-check-label" for="isDefault">Set as default image</label>
+													</div>
+												</div>
 											</ng-template>
 										</div>
 									</div>

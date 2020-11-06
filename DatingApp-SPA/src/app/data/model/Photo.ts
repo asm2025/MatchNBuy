@@ -8,6 +8,6 @@ export interface IPhoto {
 }
 
 export interface IPhotoToEdit {
-	description: string;
-	isDefault: boolean;
+	description?: string;
+	isDefault?: boolean;
 }

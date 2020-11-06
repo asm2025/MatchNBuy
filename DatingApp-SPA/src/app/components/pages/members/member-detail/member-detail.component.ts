@@ -45,7 +45,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		}]
 	};
 	hasDropFile = false;
-	uploadProgress = 0.0;
+	photoToAdd: IPhotoToAdd = {
+		description: "",
+		isDefault: false,
+	};
 
 	@Input() id: string;
 
@@ -82,11 +85,9 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		});
 
 		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem.bind(this);
-		this._uploader.onProgressItem = this.imageUploaderProgressItem.bind(this);
 		this._uploader.onSuccessItem = this.imageUploaderSuccessItem.bind(this);
 		this._uploader.onErrorItem = this.imageUploaderErrorItem.bind(this);
 		this._uploader.onCancelItem = this.imageUploaderCancelItem.bind(this);
-		this._uploader.onCompleteItem = this.imageUploaderCompleteItem.bind(this);
 	}
 
 	ngOnInit() {
@@ -166,8 +167,16 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		return this.user.photoUrl || config.users.defaultImage;
 	}
 
+	get hasUploadFile(): boolean {
+		return this._uploader.queue.length > 0;
+	}
+
 	get isUploading(): boolean {
 		return this.uploadProgress > 0.0;
+	}
+
+	get uploadProgress(): number {
+		return this._uploader.progress;
 	}
 
 	imagesPageChanged(page: number): void {
@@ -206,10 +215,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size} byte(s)...`);
 	}
 
-	imageUploaderProgressItem(item: FileItem, progress: any) {
-		this.uploadProgress = progress;
-	}
-
 	imageUploaderSuccessItem(item: FileItem) {
 		this._alertService.toasts.success(`File '${item.file.name}' was uploaded successfully.`);
 	}
@@ -223,8 +228,8 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
 	}
 
-	imageUploaderCompleteItem() {
-		this.uploadProgress = 0.0;
+	imageUploaderCancelClick() {
+		this._uploader.cancelAll();
 	}
 
 	messagesPageChanged(page: number): void {

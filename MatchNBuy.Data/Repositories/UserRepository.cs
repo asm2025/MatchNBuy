@@ -714,7 +714,7 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 			return await Context.Likes
-								.FirstOrDefaultAsync(e => e.LikerId == userId && id == e.LikeeId, cancellationToken: token) != null;
+								.FirstOrDefaultAsync(e => e.LikerId == userId && id == e.LikeeId, token) != null;
 		}
 
 		/// <inheritdoc />

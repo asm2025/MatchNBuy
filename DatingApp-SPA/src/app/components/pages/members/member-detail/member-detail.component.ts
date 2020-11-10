@@ -10,7 +10,7 @@ import { IUserForDetails } from "@data/model/User";
 import { IPaginated } from "@common/pagination/Paginated";
 import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { SortType } from "@common/sorting/SortType";
-import { IPhoto } from "@data/model/Photo";
+import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
@@ -45,7 +45,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		}]
 	};
 	hasDropFile = false;
-	photoToAdd: IPhotoToAdd = {
+	photoProps: IPhotoToEdit = {
 		description: "",
 		isDefault: false,
 	};
@@ -85,9 +85,11 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		});
 
 		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem.bind(this);
+		this._uploader.onBuildItemForm = this.imageUploaderBuildItemForm.bind(this);
 		this._uploader.onSuccessItem = this.imageUploaderSuccessItem.bind(this);
 		this._uploader.onErrorItem = this.imageUploaderErrorItem.bind(this);
 		this._uploader.onCancelItem = this.imageUploaderCancelItem.bind(this);
+		this._uploader.onCompleteItem = this.imageUploaderCompleteItem.bind(this);
 	}
 
 	ngOnInit() {
@@ -201,18 +203,18 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderDropFiles(files: FileList) {
-		if (files.length === 0) return;
-
-		if (files[0].size === 0) {
-			this._uploader.clearQueue();
-			return;
-		}
-
-		this._uploader.uploadAll();
+		if (files.length === 0 || files[0].size > 128) return;
+		this._uploader.clearQueue();
 	}
 
 	imageUploaderBeforeUploadItem(item: FileItem) {
 		this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size} byte(s)...`);
+	}
+
+	imageUploaderBuildItemForm(item: FileItem, form: FormData) {
+		for (const key of Object.keys(this.photoProps)) {
+			form.append(key, this.photoProps[key]);
+		}
 	}
 
 	imageUploaderSuccessItem(item: FileItem) {
@@ -226,6 +228,15 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	imageUploaderCancelItem(item: FileItem) {
 		this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
+	}
+
+	imageUploaderCompleteItem() {
+		this.photoProps.description = "";
+		this.photoProps.isDefault = false;
+	}
+
+	imageUploaderUploadClick() {
+		this._uploader.uploadAll();
 	}
 
 	imageUploaderCancelClick() {

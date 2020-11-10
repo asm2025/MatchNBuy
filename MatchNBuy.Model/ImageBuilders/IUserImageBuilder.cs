@@ -1,4 +1,4 @@
-﻿using asm.Patterns.Images;
+﻿using asm.Patterns.Imaging;
 using JetBrains.Annotations;
 
 namespace MatchNBuy.Model.ImageBuilders

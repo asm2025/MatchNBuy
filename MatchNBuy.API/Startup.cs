@@ -17,7 +17,7 @@ using asm.Extensions;
 using asm.Helpers;
 using asm.Logging.Helpers;
 using asm.Newtonsoft.Serialization;
-using asm.Patterns.Images;
+using asm.Patterns.Imaging;
 using AutoMapper;
 using MatchNBuy.API.ImageBuilders;
 using MatchNBuy.Data.Repositories;

@@ -2,7 +2,7 @@
 using System.IO;
 using asm.Extensions;
 using asm.Helpers;
-using asm.Patterns.Images;
+using asm.Patterns.Imaging;
 using JetBrains.Annotations;
 using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Http;

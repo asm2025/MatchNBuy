@@ -95,21 +95,27 @@
 										</div>
 										<div *ngIf="isCurrentUser" ng2FileDrop title="Drop an image here to be uploaded..." class="thumb drop-zone" [uploader]="_uploader" [ngClass]="{'nv-file-over': hasDropFile}"
 											(fileOver)="imageUploaderHover($event)" (onFileDrop)="imageUploaderDropFiles($event)">
-											<div *ngIf="isUploading; else upload" class="d-flex">
-												<ngb-progressbar type="dark" textType="white" [value]="uploadProgress" [showValue]="true"></ngb-progressbar>
-												<button *ngIf="hasUploadFile" type="button" class="btn" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
+											<div *ngIf="hasUploadFile; else upload">
+												<div *ngIf="isUploading; else imageProps" class="d-flex flex-column px-2">
+													<ngb-progressbar type="dark" textType="white" [value]="uploadProgress" [showValue]="true"></ngb-progressbar>
+													<button type="button" class="btn" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
+												</div>
+												<ng-template #imageProps>
+													<div class="d-flex flex-column p-2">
+														<div class="form-group">
+															<textarea id="description" [ngModel]="photoProps.description" placeholder="Description" class="form-control" rows="3" maxlength="512"></textarea>
+														</div>
+														<div class="form-group form-check">
+															<input type="checkbox" id="isDefault" [ngModel]="photoProps.isDefault" class="form-check-input">
+															<label class="form-check-label" for="isDefault">Set as default</label>
+														</div>
+														<button type="button" class="btn btn-primary" title="Upload" (click)="imageUploaderUploadClick()"><fa-icon icon="upload"></fa-icon></button>
+													</div>
+												</ng-template>
 											</div>
 											<ng-template #upload>
-												<div class="d-flex">
+												<div class="d-flex flex-column p-2">
 													<fa-icon icon="upload"></fa-icon>
-													<div class="form-group">
-														<label for="description">Description</label>
-														<textarea id="description" [ngModel]="" class="form-control" rows="3" maxlength="512"></textarea>
-													</div>
-													<div class="form-group form-check">
-														<input type="checkbox" id="isDefault" class="form-check-input">
-														<label class="form-check-label" for="isDefault">Set as default image</label>
-													</div>
 												</div>
 											</ng-template>
 										</div>

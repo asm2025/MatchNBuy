@@ -1,21 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<FileVersion>20.11.5.0</FileVersion>
+		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="31.0.3" />
 		<PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.9" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.9" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="3.1.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
 		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.5" />
@@ -30,10 +31,10 @@
 			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Core.Authentication.JwtBearer">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netcoreapp3.1\asm.Core.Authentication.JwtBearer.dll</HintPath>
+		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Authentication.JwtBearer.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Core.Data.Entity">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netcoreapp3.1\asm.Core.Data.Entity.dll</HintPath>
+			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Data.Entity.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Data">
 			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Data.dll</HintPath>

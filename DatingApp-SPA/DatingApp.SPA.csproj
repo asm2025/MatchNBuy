@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<FileVersion>20.11.5.0</FileVersion>
+		<LangVersion>9.0</LangVersion>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 		<OutputType>Library</OutputType>
 		<AssemblyName>DatingApp.SPA</AssemblyName>

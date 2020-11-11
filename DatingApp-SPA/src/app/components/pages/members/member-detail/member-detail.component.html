@@ -65,20 +65,35 @@
 						<div class="row container d-flex justify-content-center">
 							<div class="grid-margin stretch-card">
 								<div class="card card-gallery border-0">
-									<div class="card-body p-0">
-										<ngb-carousel #galleryCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
-													  [interval]="false" [activeId]="selectedImageId">
-											<ng-template ngbSlide [id]="image.id" *ngFor="let image of images">
-												<div class="picsum-img-wrapper">
-													<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
-												</div>
-												<div *ngIf="image.description" class="carousel-caption" [innerHtml]="image.description">
-												</div>
-											</ng-template>
-										</ngb-carousel>
-										<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
-														[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+									<div *ngIf="hasUploadFile; else carousel" class="d-flex flex-column p-2">
+										<p class="lead mb-2">You can specify additional properties for the file:<br />'{{ uploadedFile.name }}'...</p>
+										<div class="form-group">
+											<textarea id="description" [(ngModel)]="imageProps.description" placeholder="Description" class="form-control" rows="3" maxlength="512"></textarea>
+										</div>
+										<div class="form-group form-check">
+											<input type="checkbox" id="isDefault" [(ngModel)]="imageProps.isDefault" class="form-check-input">
+											<label class="form-check-label" for="isDefault">Set as default</label>
+										</div>
+										<div class="btn-container row flex-row justify-content-end">
+											<button type="button" class="btn btn-primary" title="Upload" (click)="imageUploaderUploadClick()"><fa-icon icon="upload"></fa-icon> Upload</button>
+										</div>
 									</div>
+									<ng-template #carousel>
+										<div class="card-body p-0">
+											<ngb-carousel #galleryCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
+														  [interval]="false" [activeId]="selectedImageId">
+												<ng-template ngbSlide [id]="image.id" *ngFor="let image of images">
+													<div class="picsum-img-wrapper">
+														<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
+													</div>
+													<div *ngIf="image.description" class="carousel-caption" [innerHtml]="image.description">
+													</div>
+												</ng-template>
+											</ngb-carousel>
+											<ngb-pagination *ngIf="imagesPagination.count > imagesPagination.pageSize" [pageSize]="imagesPagination.pageSize" [collectionSize]="imagesPagination.count"
+															[(page)]="imagesPagination.page" (pageChange)="imagesPageChanged($event)"></ngb-pagination>
+										</div>
+									</ng-template>
 									<div class="card-body d-flex gallery-thumbs">
 										<div *ngFor="let image of images" class="thumb"
 											 [class.active]="image.id === selectedImageId" (click)="selectImage(image.id)">
@@ -94,30 +109,14 @@
 											</div>
 										</div>
 										<div *ngIf="isCurrentUser" ng2FileDrop title="Drop an image here to be uploaded..." class="thumb drop-zone" [uploader]="_uploader" [ngClass]="{'nv-file-over': hasDropFile}"
-											(fileOver)="imageUploaderHover($event)" (onFileDrop)="imageUploaderDropFiles($event)">
-											<div *ngIf="hasUploadFile; else upload">
-												<div *ngIf="isUploading; else imageProps" class="d-flex flex-column px-2">
-													<ngb-progressbar type="dark" textType="white" [value]="uploadProgress" [showValue]="true"></ngb-progressbar>
-													<button type="button" class="btn" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
-												</div>
-												<ng-template #imageProps>
-													<div class="d-flex flex-column p-2">
-														<div class="form-group">
-															<textarea id="description" [ngModel]="photoProps.description" placeholder="Description" class="form-control" rows="3" maxlength="512"></textarea>
-														</div>
-														<div class="form-group form-check">
-															<input type="checkbox" id="isDefault" [ngModel]="photoProps.isDefault" class="form-check-input">
-															<label class="form-check-label" for="isDefault">Set as default</label>
-														</div>
-														<button type="button" class="btn btn-primary" title="Upload" (click)="imageUploaderUploadClick()"><fa-icon icon="upload"></fa-icon></button>
-													</div>
-												</ng-template>
+											 (fileOver)="imageUploaderHover($event)" (onFileDrop)="imageUploaderDropFiles($event)">
+											<div *ngIf="isUploading" class="d-flex flex-column p-2">
+												<ngb-progressbar type="dark" textType="white" [value]="uploadProgress" [showValue]="true"></ngb-progressbar>
+												<button type="button" class="btn" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
 											</div>
-											<ng-template #upload>
-												<div class="d-flex flex-column p-2">
-													<fa-icon icon="upload"></fa-icon>
-												</div>
-											</ng-template>
+											<div *ngIf="!hasUploadFile" class="d-flex flex-column p-2">
+												<fa-icon icon="upload"></fa-icon>
+											</div>
 										</div>
 									</div>
 								</div>

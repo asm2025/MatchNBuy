@@ -20,10 +20,6 @@ $btn-padding-x: $input-btn-padding-x;
 $btn-padding-y-lg: $input-btn-padding-y-lg;
 $btn-padding-x-lg: $input-btn-padding-x-lg;
 
-.btn {
-	@include button-size(0, 0, $btn-font-size, $btn-line-height, $btn-border-radius);
-}
-
 .row {
 	margin: 0;
 }

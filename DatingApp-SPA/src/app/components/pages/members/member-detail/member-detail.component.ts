@@ -44,11 +44,13 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			type: SortType.Descending
 		}]
 	};
-	hasDropFile = false;
-	photoProps: IPhotoToEdit = {
+
+	imageProps: IPhotoToEdit = {
 		description: "",
-		isDefault: false,
+		isDefault: false
 	};
+
+	hasDropFile = false;
 
 	@Input() id: string;
 
@@ -169,6 +171,12 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		return this.user.photoUrl || config.users.defaultImage;
 	}
 
+	get uploadedFile(): File | null {
+		return this._uploader.queue.length > 0
+			? this._uploader.queue[0]._file
+			: null;
+	}
+
 	get hasUploadFile(): boolean {
 		return this._uploader.queue.length > 0;
 	}
@@ -212,8 +220,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderBuildItemForm(item: FileItem, form: FormData) {
-		for (const key of Object.keys(this.photoProps)) {
-			form.append(key, this.photoProps[key]);
+		for (const key of Object.keys(this.imageProps)) {
+			const value = this.imageProps[key];
+			if (!value) continue;
+			form.append(key, value.toString());
 		}
 	}
 
@@ -231,10 +241,11 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderCompleteItem() {
-		this.photoProps = {
+		this.imageProps = {
 			description: "",
-			isDefault: false,
+			isDefault: false
 		};
+		this._uploader.clearQueue();
 	}
 
 	imageUploaderUploadClick() {

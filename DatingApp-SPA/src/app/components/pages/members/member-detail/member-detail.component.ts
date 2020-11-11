@@ -231,8 +231,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderCompleteItem() {
-		this.photoProps.description = "";
-		this.photoProps.isDefault = false;
+		this.photoProps = {
+			description: "",
+			isDefault: false,
+		};
 	}
 
 	imageUploaderUploadClick() {

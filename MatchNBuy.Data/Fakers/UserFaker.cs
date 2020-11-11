@@ -41,7 +41,7 @@ namespace MatchNBuy.Data.Fakers
 			base.RuleFor(e => e.City, f => f.PickRandom(cities));
 			base.RuleFor(e => e.CityId, (f, e) => e.City.Id);
 			base.RuleFor(e => e.Created, f => f.Date.Past(RandomHelper.Next(1, 10)));
-			base.RuleFor(e => e.DateOfBirth, f => f.Date.Past(RNGRandomHelper.Next(User.AGE_MIN, User.AGE_MAX)));
+			base.RuleFor(e => e.DateOfBirth, f => f.Date.Past(RandomHelper.Next(User.AGE_MIN, User.AGE_MAX), DateTime.Now.AddYears(-User.AGE_MIN - 2)));
 			base.RuleFor(e => e.Introduction, f => f.Lorem.Sentences());
 			base.RuleFor(e => e.LookingFor, f => f.Lorem.Sentences());
 			base.RuleFor(e => e.LastActive, f => f.Date.Past());

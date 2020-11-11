@@ -206,7 +206,7 @@ namespace MatchNBuy.Data
 		public async Task SeedData([NotNull] UserManager<User> userManager, [NotNull] RoleManager<Role> roleManager, [NotNull] string defaultPassword, [NotNull] IMapper mapper, [NotNull] IConfiguration configuration, [NotNull] IHostEnvironment environment, ILogger logger)
 		{
 			const string USER_SYNC_DATA = "UserSyncData.json";
-			const int USERS_COUNT = 21;
+			const int USERS_COUNT = 51;
 
 			const string IMAGES_FOLDER_DEF = "files/images/users";
 			// {0} = gender, {1} = number

@@ -407,10 +407,8 @@ namespace MatchNBuy.Data
 				if (femalesNeeded == 0 && malesNeeded == 0) return null;
 				logger?.LogInformation($"Need {femalesNeeded} female images and {malesNeeded} male images.");
 
-				Queue<string> females = new Queue<string>(Directory.EnumerateFiles(imagesPath, $"{IMAGES_PREFIX_FEMALE}??.jpg", SearchOption.TopDirectoryOnly)
-																	.Select(Path.GetFileName));
-				Queue<string> males = new Queue<string>(Directory.EnumerateFiles(imagesPath, $"{IMAGES_PREFIX_MALE}??.jpg", SearchOption.TopDirectoryOnly)
-																.Select(Path.GetFileName));
+				Queue<string> females = new Queue<string>(Directory.EnumerateFiles(imagesPath, $"{IMAGES_PREFIX_FEMALE}??.jpg", SearchOption.AllDirectories));
+				Queue<string> males = new Queue<string>(Directory.EnumerateFiles(imagesPath, $"{IMAGES_PREFIX_MALE}??.jpg", SearchOption.AllDirectories));
 				femalesNeeded = (femalesNeeded - females.Count).NotBelow(0);
 				malesNeeded = (malesNeeded - males.Count).NotBelow(0);
 				logger?.LogInformation($"Will download {femalesNeeded} female images and {malesNeeded} male images.");
@@ -421,7 +419,7 @@ namespace MatchNBuy.Data
 					[Genders.Male] = males
 				};
 
-				Regex regex = new Regex("auto_[fm]_(?<x>\\d+)\\.jpg", RegexHelper.OPTIONS_I);
+				Regex regex = new Regex("auto_[fm]_(?<x>\\d+)\\.jpg$", RegexHelper.OPTIONS_I);
 				HashSet<int> usedFemales = new HashSet<int>(females.Select(e =>
 				{
 					Match match = regex.Match(e);
@@ -507,7 +505,7 @@ namespace MatchNBuy.Data
 															? IMAGES_GENDER_FEMALE
 															: IMAGES_GENDER_MALE, x);
 				FileStream stream = null;
-				string fileName = Path.Combine(sourcePath, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{x:D2}.jpg");
+				string fileName = Path.Combine(sourcePath, , $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{x:D2}.jpg");
 
 				try
 				{

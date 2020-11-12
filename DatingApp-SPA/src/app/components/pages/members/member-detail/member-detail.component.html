@@ -14,7 +14,7 @@
 				<dd>{{user.lastName}}</dd>
 			</dl>
 		</div>
-		<div *ngIf="!isCurrentUser" class="d-flex mt-2">
+		<div *ngIf="!isCurrentUser" class="d-flex">
 			<button *ngIf="user.canBeLiked" type="button" class="btn" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
 			<button *ngIf="user.canBeDisliked" type="button" class="btn" (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
 			<button type="button" class="btn" (click)="selectTab(3)"><fa-icon icon="envelope"></fa-icon></button>
@@ -65,8 +65,10 @@
 						<div class="row container d-flex justify-content-center">
 							<div class="grid-margin stretch-card">
 								<div class="card card-gallery border-0">
-									<div *ngIf="hasUploadFile; else carousel" class="d-flex flex-column p-2">
-										<p class="lead mb-2">You can specify additional properties for the file:<br />'{{ uploadedFile.name }}'...</p>
+									<div *ngIf="hasUploadFile; else carousel"
+										 class="d-flex flex-column p-2">
+										<p class="lead mb-2">You can specify additional properties for the file...</p>
+										<p>{{ uploadedFile.name }}</p>
 										<div class="form-group">
 											<textarea id="description" [(ngModel)]="imageProps.description" placeholder="Description" class="form-control" rows="3" maxlength="512"></textarea>
 										</div>
@@ -75,7 +77,8 @@
 											<label class="form-check-label" for="isDefault">Set as default</label>
 										</div>
 										<div class="btn-container row flex-row justify-content-end">
-											<button type="button" class="btn btn-primary" title="Upload" (click)="imageUploaderUploadClick()"><fa-icon icon="upload"></fa-icon> Upload</button>
+											<button type="button" class="btn btn-primary" (click)="imageUploaderUploadClick()">Upload</button>
+											<button type="button" class="btn btn-secondary" (click)="imageUploaderCancelClick()">Cancel</button>
 										</div>
 									</div>
 									<ng-template #carousel>
@@ -83,10 +86,14 @@
 											<ngb-carousel #galleryCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
 														  [interval]="false" [activeId]="selectedImageId">
 												<ng-template ngbSlide [id]="image.id" *ngFor="let image of images">
-													<div class="picsum-img-wrapper">
-														<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
-													</div>
-													<div *ngIf="image.description" class="carousel-caption" [innerHtml]="image.description">
+													<div class="w-100 h-100"
+														 [@fadeInOnEnter]
+														 [@fadeOutOnLeave]>
+														<div class="picsum-img-wrapper">
+															<app-lazy-image [src]="image.url" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
+														</div>
+														<div *ngIf="image.description" class="carousel-caption" [innerHtml]="image.description">
+														</div>
 													</div>
 												</ng-template>
 											</ngb-carousel>
@@ -108,13 +115,14 @@
 												</div>
 											</div>
 										</div>
-										<div *ngIf="isCurrentUser" ng2FileDrop title="Drop an image here to be uploaded..." class="thumb drop-zone" [uploader]="_uploader" [ngClass]="{'nv-file-over': hasDropFile}"
+										<div *ngIf="isCurrentUser" ng2FileDrop class="thumb drop-zone"
+											 [uploader]="_uploader" [class.nv-file-over]="hasDropFile" [class.borders]="!hasUploadFile"
 											 (fileOver)="imageUploaderHover($event)" (onFileDrop)="imageUploaderDropFiles($event)">
 											<div *ngIf="isUploading" class="d-flex flex-column p-2">
 												<ngb-progressbar type="dark" textType="white" [value]="uploadProgress" [showValue]="true"></ngb-progressbar>
-												<button type="button" class="btn" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
+												<button type="button" class="btn" title="Cancel" (click)="imageUploaderCancelClick()"><fa-icon icon="times"></fa-icon></button>
 											</div>
-											<div *ngIf="!hasUploadFile" class="d-flex flex-column p-2">
+											<div *ngIf="!hasUploadFile" class="d-flex flex-column p-2" title="Drop an image here to be uploaded...">
 												<fa-icon icon="upload"></fa-icon>
 											</div>
 										</div>

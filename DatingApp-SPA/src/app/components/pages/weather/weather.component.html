@@ -12,19 +12,23 @@
 				<div class="card-body">
 					<ngb-carousel #weatherCarousel="ngbCarousel" [showNavigationArrows]="false" [showNavigationIndicators]="false"
 								[interval]="false" [activeId]="selectedDate">
-						<ng-template ngbSlide [id]="key(forecast.date)" *ngFor="let forecast of forecasts">
-							<div class="picsum-img-wrapper">
-								<app-lazy-image [src]="image(forecast)" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
-							</div>
-							<div class="carousel-caption">
-								<div class="weather-date-location">
-									<h3>{{ forecast.date | date:'EEEE' }}</h3>
-									<p>{{ forecast.date | date:'d MMMM, yyyy' }}</p>
+						<ng-template ngbSlide [id]="forecast.key" *ngFor="let forecast of forecasts">
+							<div class="w-100 h-100"
+								[@fadeInOnEnter]
+								[@fadeOutOnLeave]>
+								<div class="picsum-img-wrapper">
+									<app-lazy-image [src]="image(forecast)" [cssClass]="'img-fluid'" [responsive]="true"></app-lazy-image>
 								</div>
-								<div class="weather-data">
-									<h4 class="display-3 text-white">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
-									<p>{{ forecast.keyword }}</p>
-									<p>{{ forecast.summary }}</p>
+								<div class="carousel-caption">
+									<div class="weather-date-location">
+										<h3>{{ forecast.date | date:'EEEE' }}</h3>
+										<p>{{ forecast.date | date:'d MMMM, yyyy' }}</p>
+									</div>
+									<div class="weather-data">
+										<h4 class="display-3 text-white">{{ forecast.temperatureC }} <span class="symbol">°</span>C</h4>
+										<p>{{ forecast.keyword }}</p>
+										<p>{{ forecast.summary }}</p>
+									</div>
 								</div>
 							</div>
 						</ng-template>
@@ -32,7 +36,7 @@
 				</div>
 				<div class="card-body pt-0 d-flex weakly-weather">
 					<div *ngFor="let forecast of forecasts" class="weakly-weather-item px-2"
-						[class.active]="forecast.date === selectedDate" (click)="select(forecast.date)">
+						[class.active]="forecast.key === selectedDate" (click)="select(forecast.key)">
 						<div class="d-flex">
 							<div>{{ forecast.date | date:'EEE' }}</div>
 							<div class="ml-auto">{{ forecast.temperatureC }} <span class="symbol">°</span></div>

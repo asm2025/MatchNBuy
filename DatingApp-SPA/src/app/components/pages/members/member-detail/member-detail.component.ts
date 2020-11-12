@@ -2,6 +2,10 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild } from "@
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
+import {
+	fadeInOnEnterAnimation,
+	fadeOutOnLeaveAnimation
+} from "angular-animations";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 import { FileUploader, FileItem } from "ng2-file-upload";
 
@@ -22,7 +26,11 @@ const TABS_MAX = 3;
 @Component({
 	selector: "app-member-detail",
 	templateUrl: "./member-detail.component.html",
-	styleUrls: ["./member-detail.component.scss"]
+	styleUrls: ["./member-detail.component.scss"],
+	animations: [
+		fadeInOnEnterAnimation(),
+		fadeOutOnLeaveAnimation()
+	]
 })
 export default class MemberDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 	private readonly _tabSubject = new BehaviorSubject<number>(TABS_MIN);
@@ -254,6 +262,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	imageUploaderCancelClick() {
 		this._uploader.cancelAll();
+		this._uploader.clearQueue();
 	}
 
 	messagesPageChanged(page: number): void {

@@ -10,34 +10,42 @@ const FULL_TIME_FORMAT = "HH:mm:ss.SSSS";
 
 export default class DateTimeHelper {
 	static formatISODate(date: any): string {
-		return moment(date).toISOString();
+		const result = moment(date).toISOString();
+		return result;
 	}
 
 	static formatDate(date: any): string {
-		return moment(date).format(DATE_FORMAT);
+		const result = moment(date).format(DATE_FORMAT);
+		return result;
 	}
 
 	static formatDateShortTime(date: any): string {
-		return moment(date).format(DATE_TIME_FORMAT);
+		const result = moment(date).format(DATE_TIME_FORMAT);
+		return result;
 	}
 
 	static formatDateTime(date: any): string {
-		return moment(date).format(LONG_DATE_TIME_FORMAT);
+		const result = moment(date).format(LONG_DATE_TIME_FORMAT);
+		return result;
 	}
 
 	static formatDateFullTime(date: any): string {
-		return moment(date).format(FULL_DATE_TIME_FORMAT);
+		const result = moment(date).format(FULL_DATE_TIME_FORMAT);
+		return result;
 	}
 
 	static formatShortTime(date: any): string {
-		return moment(date).format(TIME_FORMAT);
+		const result = moment(date).format(TIME_FORMAT);
+		return result;
 	}
 
 	static formatTime(date: any): string {
-		return moment(date).format(LONG_TIME_FORMAT);
+		const result = moment(date).format(LONG_TIME_FORMAT);
+		return result;
 	}
 
 	static formatFullTime(date: any): string {
-		return moment(date).format(FULL_TIME_FORMAT);
+		const result = moment(date).format(FULL_TIME_FORMAT);
+		return result;
 	}
 }

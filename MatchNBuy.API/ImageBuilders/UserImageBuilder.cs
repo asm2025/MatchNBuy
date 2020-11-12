@@ -29,16 +29,18 @@ namespace MatchNBuy.API.ImageBuilders
 		/// <inheritdoc />
 		public override Uri Build([NotNull] string imageName, ImageSize imageSize)
 		{
-			HttpRequest request = _context.HttpContext.Request;
-			return UriHelper.ToUri($"{request.Scheme}://{request.Host}/{BuildRelative(imageName, imageSize)}", UriKind.Absolute);
+			HttpRequest request = _context.HttpContext?.Request;
+			return request == null
+						? null
+						: UriHelper.ToUri($"{request.Scheme}://{request.Host}/{BuildRelative(imageName, imageSize)}", UriKind.Absolute);
 		}
 
 		[NotNull]
-		public string BuildRelative(string imageName, ImageSize imageSize)
+		public Uri BuildRelative(string imageName, ImageSize imageSize)
 		{
 			imageName = UriHelper.Trim(imageName) ?? _default ?? throw new ArgumentNullException(nameof(imageName));
 			if (string.IsNullOrEmpty(Path.GetExtension(imageName))) imageName += FileExtension;
-			return $"/{BaseUri}/{imageName}";
+			return UriHelper.Combine(BaseUri, imageName);
 		}
 	}
 }

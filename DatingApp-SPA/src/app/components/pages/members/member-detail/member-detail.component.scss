@@ -45,6 +45,10 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 .summary {
 	@include main-box;
 
+	.btn {
+		padding: 0;
+	}
+
 	.name {
 		padding: 8px;
 		border-left: 8px solid $input-border-color;
@@ -208,11 +212,15 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			border: 1px dashed $input-border-color;
 			padding: 0;
+
 			&.nv-file-over {
 				background-color: $link-hover-color;
 				border-color: $input-focus-border-color;
+			}
+
+			&.borders {
+				border: 1px dashed $input-border-color;
 			}
 		}
 	}

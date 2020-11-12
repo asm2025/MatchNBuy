@@ -6,6 +6,10 @@ export interface IForecast {
 	summary: string;
 }
 
+export interface IKeyedForecast extends IForecast {
+	key: string;
+}
+
 export interface IForecastResult {
 	selectedDate: Date;
 	forecasts: IForecast[];

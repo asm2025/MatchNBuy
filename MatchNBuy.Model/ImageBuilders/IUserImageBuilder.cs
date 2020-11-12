@@ -1,4 +1,5 @@
-﻿using asm.Patterns.Imaging;
+﻿using System;
+using asm.Patterns.Imaging;
 using JetBrains.Annotations;
 
 namespace MatchNBuy.Model.ImageBuilders
@@ -8,6 +9,6 @@ namespace MatchNBuy.Model.ImageBuilders
 		[NotNull]
 		string FileExtension { get; }
 
-		string BuildRelative([NotNull] string imageName, ImageSize imageSize);
+		Uri BuildRelative([NotNull] string imageName, ImageSize imageSize);
 	}
 }

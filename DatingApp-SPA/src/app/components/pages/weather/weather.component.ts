@@ -1,10 +1,14 @@
 import { Component, AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import {
+	fadeInOnEnterAnimation,
+	fadeOutOnLeaveAnimation,
+} from "angular-animations";
 import { ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 
-import { IForecastResult, IForecast } from "@data/model/Forecast";
+import { IForecastResult, IForecast, IKeyedForecast } from "@data/model/Forecast";
 import WeatherClient from "@services/web/WeatherClient";
 import AlertService from "@services/alert.service";
 import DateTimeHelper from "@common/helpers/date-time.helper";
@@ -12,11 +16,15 @@ import DateTimeHelper from "@common/helpers/date-time.helper";
 @Component({
 	selector: "app-weather",
 	templateUrl: "./weather.component.html",
-	styleUrls: ["./weather.component.scss"]
+	styleUrls: ["./weather.component.scss"],
+	animations: [
+		fadeInOnEnterAnimation(),
+		fadeOutOnLeaveAnimation()
+	]
 })
 export default class WeatherComponent implements AfterViewInit, OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();
-	forecasts: IForecast[];
+	forecasts: IKeyedForecast[];
 	selectedDate: string;
 
 	@ViewChild("weatherCarousel") weatherCarousel!: NgbCarousel;
@@ -35,8 +43,10 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(data => {
 				const result = data["resolved"];
-				setTimeout(() => this.forecasts = result.forecasts || [], 0);
-				this.select(this.key(result.selectedDate));
+				setTimeout(() => {
+					this.forecasts = result.forecasts.map((e: IForecast) => Object.assign(e, { key: this.key(e.date) })) || [];
+					this.select(this.key(result.selectedDate));
+				}, 0);
 			});
 	}
 
@@ -60,21 +70,21 @@ export default class WeatherComponent implements AfterViewInit, OnDestroy {
 				});
 			}))
 			.subscribe((res: IForecastResult) => {
-				this.forecasts = res.forecasts || [];
+				this.forecasts = res.forecasts.map((e: IForecast) => Object.assign(e, { key: this.key(e.date) })) || [];
 				this.select(this.key(res.selectedDate));
 			});
 	}
 
-	select(id: string): void {
+	select(key: string): void {
 		setTimeout(() => {
-			this.selectedDate = id;
+			this.selectedDate = key;
 
 			if (!this.weatherCarousel.slides) {
-				this.weatherCarousel.activeId = id;
+				this.weatherCarousel.activeId = this.selectedDate;
 				return;
 			}
 
-			this.weatherCarousel.select(id, NgbSlideEventSource.INDICATOR);
+			this.weatherCarousel.select(this.selectedDate, NgbSlideEventSource.INDICATOR);
 		}, 0);
 	}
 

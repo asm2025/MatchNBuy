@@ -241,6 +241,7 @@ namespace MatchNBuy.Data
 				logger?.LogInformation("Adding countries data.");
 				countries.AddRange(RegionInfoHelper.Regions.Values
 													.OrderBy(e => e.EnglishName)
+													.Where(e => !string)
 													.Select(e => new Country
 													{
 														Code = e.ThreeLetterISORegionName,
@@ -401,17 +402,43 @@ namespace MatchNBuy.Data
 					return null;
 				}
 
-				int femalesNeeded = users.Count(e => e.Gender == Genders.Female);
-				int malesNeeded = users.Count(e => e.Gender == Genders.Male);
+				User[] femaleUsers = users.Where(e => e.Gender == Genders.Female).ToArray();
+				User[] maleUsers = users.Where(e => e.Gender == Genders.Male).ToArray();
+				if (femaleUsers.Length == 0 && maleUsers.Length == 0) return null;
+				logger?.LogInformation($"Need {femaleUsers.Length} female images and {maleUsers.Length} male images.");
 
-				if (femalesNeeded == 0 && malesNeeded == 0) return null;
-				logger?.LogInformation($"Need {femalesNeeded} female images and {malesNeeded} male images.");
+				Queue<string> females = new Queue<string>();
+				Queue<string> femalesNeeded = new Queue<string>();
+				Queue<string> males = new Queue<string>();
+				Queue<string> malesNeeded = new Queue<string>();
 
-				Queue<string> females = new Queue<string>(Directory.EnumerateFiles(imagesPath, $"{IMAGES_PREFIX_FEMALE}??.jpg", SearchOption.AllDirectories));
-				Queue<string> males = new Queue<string>(Directory.EnumerateFiles(imagesPath, $"{IMAGES_PREFIX_MALE}??.jpg", SearchOption.AllDirectories));
-				femalesNeeded = (femalesNeeded - females.Count).NotBelow(0);
-				malesNeeded = (malesNeeded - males.Count).NotBelow(0);
-				logger?.LogInformation($"Will download {femalesNeeded} female images and {malesNeeded} male images.");
+				foreach (User user in femaleUsers)
+				{
+					string file = Directory.EnumerateFiles(Path.Combine(imagesPath, user.Id), $"{IMAGES_PREFIX_FEMALE}??.jpg", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+					if (string.IsNullOrEmpty(file))
+					{
+						femalesNeeded.Enqueue(user.Id);
+						continue;
+					}
+
+					females.Enqueue(file);
+				}
+
+				foreach (User user in maleUsers)
+				{
+					string file = Directory.EnumerateFiles(Path.Combine(imagesPath, user.Id), $"{IMAGES_PREFIX_MALE}??.jpg", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+					if (string.IsNullOrEmpty(file))
+					{
+						malesNeeded.Enqueue(user.Id);
+						continue;
+					}
+
+					males.Enqueue(file);
+				}
+
+				logger?.LogInformation($"Will download {femalesNeeded.Count} female images and {malesNeeded.Count} male images.");
 
 				IDictionary<Genders, Queue<string>> result = new Dictionary<Genders, Queue<string>>
 				{
@@ -457,22 +484,16 @@ namespace MatchNBuy.Data
 					int threads = TaskHelper.ProcessMaximum;
 #endif
 					// Imagine doing this from scratch!! I love my library!!
-					using (IProducerConsumer<Genders> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, new ProducerConsumerThreadQueueOptions<Genders>(threads, gender => DownloadUserImage(imagesPath, gender, gender == Genders.Female ? usedFemales : usedMales, result[gender], downloadSettings, logger, token)), token))
+					using (IProducerConsumer<(string Id, Genders Gender)> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, new ProducerConsumerThreadQueueOptions<(string Id, Genders Gender)>(threads, e => DownloadUserImage(Path.Combine(imagesPath, e.Id!), e.Gender, e.Gender == Genders.Female ? usedFemales : usedMales, result[e.Gender], downloadSettings, logger, token)), token))
 					{
 						requests.WorkStarted += (sender, args) => logger?.LogInformation($"Download started using {threads} threads...");
 						requests.WorkCompleted += (sender, args) => logger?.LogInformation("Download completed.");
 
-						while (femalesNeeded > 0)
-						{
-							requests.Enqueue(Genders.Female);
-							femalesNeeded--;
-						}
+						while (femalesNeeded.Count > 0) 
+							requests.Enqueue((femalesNeeded.Dequeue(), Genders.Female));
 
-						while (malesNeeded > 0)
-						{
-							requests.Enqueue(Genders.Male);
-							malesNeeded--;
-						}
+						while (malesNeeded.Count > 0)
+							requests.Enqueue((malesNeeded.Dequeue(), Genders.Male));
 
 						requests.Complete();
 						await requests.WaitAsync();
@@ -505,7 +526,7 @@ namespace MatchNBuy.Data
 															? IMAGES_GENDER_FEMALE
 															: IMAGES_GENDER_MALE, x);
 				FileStream stream = null;
-				string fileName = Path.Combine(sourcePath, , $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{x:D2}.jpg");
+				string fileName = Path.Combine(sourcePath, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{x:D2}.jpg");
 
 				try
 				{

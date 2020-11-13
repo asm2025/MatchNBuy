@@ -22,7 +22,6 @@ using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
 using MatchNBuy.Model.TransferObjects;
 using JetBrains.Annotations;
-using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -89,7 +88,6 @@ namespace MatchNBuy.API.Controllers
 
 			if (users.Count > 0)
 			{
-				IUserImageBuilder userImageBuilder = _repository.ImageBuilder;
 				ISet<string> likees = await _repository.LikeesFromListAsync(userId, users.Select(e => e.Id), token);
 				token.ThrowIfCancellationRequested();
 
@@ -98,7 +96,7 @@ namespace MatchNBuy.API.Controllers
 					bool isLikee = likees.Contains(user.Id);
 					user.CanBeLiked = !isLikee;
 					user.CanBeDisliked = isLikee;
-					if (!string.IsNullOrEmpty(user.PhotoUrl)) user.PhotoUrl = Convert.ToString(userImageBuilder.Build(user.PhotoUrl));
+					user.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
 				}
 			}
 
@@ -192,7 +190,7 @@ namespace MatchNBuy.API.Controllers
 			UserForDetails userForDetails = _mapper.Map<UserForDetails>(user);
 			userForDetails.CanBeLiked = !isLikee;
 			userForDetails.CanBeDisliked = isLikee;
-			if (!string.IsNullOrEmpty(userForDetails.PhotoUrl)) userForDetails.PhotoUrl = _repository.ImageBuilder.Build(user.PhotoUrl).ToString();
+			userForDetails.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
 			return Ok(userForDetails);
 		}
 
@@ -228,7 +226,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
-			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
+			userForSerialization.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
 			return CreatedAtAction(nameof(Get), new { id = user.Id }, userForSerialization);
 		}
 
@@ -270,7 +268,7 @@ namespace MatchNBuy.API.Controllers
 			if (user == null) throw new Exception("Updating user failed.");
 		
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
-			if (!string.IsNullOrEmpty(userForSerialization.PhotoUrl)) userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(userForSerialization.PhotoUrl).ToString();
+			userForSerialization.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
 			userForSerialization.CanBeDisliked = userForSerialization.CanBeLiked = false;
 			return Ok(userForSerialization);
 		}
@@ -314,13 +312,9 @@ namespace MatchNBuy.API.Controllers
 														.ProjectTo<PhotoForList>(_mapper.ConfigurationProvider)
 														.ToListAsync(token);
 			token.ThrowIfCancellationRequested();
-			IUserImageBuilder userImageBuilder = _repository.ImageBuilder;
 
-			foreach (PhotoForList photo in photos)
-			{
-				if (string.IsNullOrEmpty(photo.Url)) continue;
-				photo.Url = Convert.ToString(userImageBuilder.Build(photo.Url));
-			}
+			foreach (PhotoForList photo in photos) 
+				photo.Url = BuildUserImage(userId, photo.Url);
 
 			return Ok(new Paginated<PhotoForList>(photos, pagination));
 		}
@@ -341,7 +335,7 @@ namespace MatchNBuy.API.Controllers
 			if (!userId.IsSame(photo.UserId)) return Unauthorized(userId);
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
-			photoForList.Url = Convert.ToString(_repository.ImageBuilder.Build(photo.Url));
+			photoForList.Url = BuildUserImage(userId, photo.Url);
 			return Ok(photoForList);
 		}
 
@@ -361,8 +355,7 @@ namespace MatchNBuy.API.Controllers
 
 			try
 			{
-				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar),
-												userId);
+				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace('/', '\\'), userId);
 				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
@@ -394,7 +387,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
-			photoForList.Url = _repository.ImageBuilder.Build(photoForList.Url).ToString();
+			photoForList.Url = BuildUserImage(userId, photo.Url);
 			return CreatedAtAction(nameof(Get), new { id = photo.Id }, photoForList);
 		}
 
@@ -419,7 +412,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
-			photoForList.Url = _repository.ImageBuilder.Build(photoForList.Url).ToString();
+			photoForList.Url = BuildUserImage(userId, photoForList.Url);
 			return Ok(photoForList);
 		}
 

@@ -59,6 +59,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	};
 
 	hasDropFile = false;
+	uploadProgress = 0.0;
 
 	@Input() id: string;
 
@@ -80,18 +81,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 			maxFileSize: 10 * 1024 * 1024, // 10MB
 			authToken: `Bearer ${this._userClient.token}`,
 			queueLimit: 1,
-			disableMultipart: true, // must be true for formatDataFunction to be called.
-			formatDataFunctionIsAsync: true,
-			formatDataFunction: async (item: any) => {
-				return new Promise((resolve) => {
-					resolve({
-						name: item.file.name,
-						length: item.file.size,
-						contentType: item.file.type,
-						date: new Date()
-					});
-				});
-			}
+			removeAfterUpload: true
 		});
 
 		this._uploader.onBeforeUploadItem = this.imageUploaderBeforeUploadItem.bind(this);
@@ -191,10 +181,6 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	get isUploading(): boolean {
 		return this.uploadProgress > 0.0;
-	}
-
-	get uploadProgress(): number {
-		return this._uploader.progress;
 	}
 
 	imagesPageChanged(page: number): void {

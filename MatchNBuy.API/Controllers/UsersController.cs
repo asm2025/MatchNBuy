@@ -208,7 +208,7 @@ namespace MatchNBuy.API.Controllers
 			if (user == null || string.IsNullOrEmpty(user.Token)) return Unauthorized(loginParams.UserName);
 			
 			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(user);
-			if (!string.IsNullOrEmpty(userForLoginDisplay.PhotoUrl)) userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(userForLoginDisplay.PhotoUrl).ToString();
+			userForLoginDisplay.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
 			return Ok(new
 			{
 				token = user.Token,
@@ -696,5 +696,12 @@ namespace MatchNBuy.API.Controllers
 			return Ok(count);
 		}
 		#endregion
+
+		private string BuildUserImage(string id, string photoUrl)
+		{
+			return string.IsNullOrEmpty(photoUrl)
+						? null
+						: _repository.ImageBuilder.Build(string.Join('/', id, photoUrl)).ToString();
+		}
 	}
 }

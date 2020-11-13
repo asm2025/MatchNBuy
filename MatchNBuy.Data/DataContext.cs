@@ -241,7 +241,7 @@ namespace MatchNBuy.Data
 				logger?.LogInformation("Adding countries data.");
 				countries.AddRange(RegionInfoHelper.Regions.Values
 													.OrderBy(e => e.EnglishName)
-													.Where(e => !string)
+													.Where(e => !string.IsNullOrEmpty(e.ThreeLetterISORegionName))
 													.Select(e => new Country
 													{
 														Code = e.ThreeLetterISORegionName,
@@ -402,49 +402,59 @@ namespace MatchNBuy.Data
 					return null;
 				}
 
-				User[] femaleUsers = users.Where(e => e.Gender == Genders.Female).ToArray();
-				User[] maleUsers = users.Where(e => e.Gender == Genders.Male).ToArray();
-				if (femaleUsers.Length == 0 && maleUsers.Length == 0) return null;
-				logger?.LogInformation($"Need {femaleUsers.Length} female images and {maleUsers.Length} male images.");
-
-				Queue<string> females = new Queue<string>();
 				Queue<string> femalesNeeded = new Queue<string>();
-				Queue<string> males = new Queue<string>();
 				Queue<string> malesNeeded = new Queue<string>();
+				Queue<string> females = new Queue<string>();
+				Queue<string> males = new Queue<string>();
+				string femalePattern = $"{IMAGES_PREFIX_FEMALE}??.jpg";
+				string malePattern = $"{IMAGES_PREFIX_MALE}??.jpg";
 
-				foreach (User user in femaleUsers)
+				foreach (User user in users.Where(e => e.Gender == Genders.Female || e.Gender == Genders.Male))
 				{
-					string file = Directory.EnumerateFiles(Path.Combine(imagesPath, user.Id), $"{IMAGES_PREFIX_FEMALE}??.jpg", SearchOption.TopDirectoryOnly).FirstOrDefault();
+					string pattern;
+					Queue<string> needed, queue;
 
-					if (string.IsNullOrEmpty(file))
+					if (user.Gender == Genders.Female)
 					{
-						femalesNeeded.Enqueue(user.Id);
+						pattern = femalePattern;
+						needed = femalesNeeded;
+						queue = females;
+					}
+					else
+					{
+						pattern = malePattern;
+						needed = malesNeeded;
+						queue = males;
+					}
+
+					string path = Path.Combine(imagesPath, user.Id);
+
+					if (!Directory.Exists(path))
+					{
+						needed.Enqueue(user.Id);
 						continue;
 					}
 
-					females.Enqueue(file);
-				}
-
-				foreach (User user in maleUsers)
-				{
-					string file = Directory.EnumerateFiles(Path.Combine(imagesPath, user.Id), $"{IMAGES_PREFIX_MALE}??.jpg", SearchOption.TopDirectoryOnly).FirstOrDefault();
+					string file = Directory.EnumerateFiles(path, pattern, SearchOption.TopDirectoryOnly)
+											.FirstOrDefault();
 
 					if (string.IsNullOrEmpty(file))
 					{
-						malesNeeded.Enqueue(user.Id);
+						needed.Enqueue(user.Id);
 						continue;
 					}
 
-					males.Enqueue(file);
+					queue.Enqueue(file);
 				}
-
-				logger?.LogInformation($"Will download {femalesNeeded.Count} female images and {malesNeeded.Count} male images.");
 
 				IDictionary<Genders, Queue<string>> result = new Dictionary<Genders, Queue<string>>
 				{
 					[Genders.Female] = females,
 					[Genders.Male] = males
 				};
+
+				if (femalesNeeded.Count == 0 && malesNeeded.Count == 0) return result;
+				logger?.LogInformation($"Will download {femalesNeeded.Count} female images and {malesNeeded.Count} male images.");
 
 				Regex regex = new Regex("auto_[fm]_(?<x>\\d+)\\.jpg$", RegexHelper.OPTIONS_I);
 				HashSet<int> usedFemales = new HashSet<int>(females.Select(e =>

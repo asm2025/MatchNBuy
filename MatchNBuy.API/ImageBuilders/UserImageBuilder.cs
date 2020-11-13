@@ -36,11 +36,12 @@ namespace MatchNBuy.API.ImageBuilders
 		}
 
 		[NotNull]
-		public Uri BuildRelative(string imageName, ImageSize imageSize)
+		public string BuildRelative(string imageName, ImageSize imageSize)
 		{
 			imageName = UriHelper.Trim(imageName) ?? _default ?? throw new ArgumentNullException(nameof(imageName));
 			if (string.IsNullOrEmpty(Path.GetExtension(imageName))) imageName += FileExtension;
-			return UriHelper.Combine(BaseUri, imageName);
+			Uri uri = UriHelper.Combine(BaseUri, imageName);
+			return uri.PathAndQuery.TrimStart('/');
 		}
 	}
 }

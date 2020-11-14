@@ -96,7 +96,7 @@ namespace MatchNBuy.API.Controllers
 					bool isLikee = likees.Contains(user.Id);
 					user.CanBeLiked = !isLikee;
 					user.CanBeDisliked = isLikee;
-					user.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
+					user.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl);
 				}
 			}
 
@@ -190,7 +190,7 @@ namespace MatchNBuy.API.Controllers
 			UserForDetails userForDetails = _mapper.Map<UserForDetails>(user);
 			userForDetails.CanBeLiked = !isLikee;
 			userForDetails.CanBeDisliked = isLikee;
-			userForDetails.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
+			userForDetails.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl);
 			return Ok(userForDetails);
 		}
 
@@ -206,7 +206,7 @@ namespace MatchNBuy.API.Controllers
 			if (user == null || string.IsNullOrEmpty(user.Token)) return Unauthorized(loginParams.UserName);
 			
 			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(user);
-			userForLoginDisplay.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
+			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl);
 			return Ok(new
 			{
 				token = user.Token,
@@ -226,7 +226,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
-			userForSerialization.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
+			userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl);
 			return CreatedAtAction(nameof(Get), new { id = user.Id }, userForSerialization);
 		}
 
@@ -268,7 +268,7 @@ namespace MatchNBuy.API.Controllers
 			if (user == null) throw new Exception("Updating user failed.");
 		
 			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
-			userForSerialization.PhotoUrl = BuildUserImage(user.Id, user.PhotoUrl);
+			userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl);
 			userForSerialization.CanBeDisliked = userForSerialization.CanBeLiked = false;
 			return Ok(userForSerialization);
 		}
@@ -314,7 +314,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 
 			foreach (PhotoForList photo in photos) 
-				photo.Url = BuildUserImage(userId, photo.Url);
+				photo.Url = _repository.ImageBuilder.Build(userId, photo.Url);
 
 			return Ok(new Paginated<PhotoForList>(photos, pagination));
 		}
@@ -335,7 +335,7 @@ namespace MatchNBuy.API.Controllers
 			if (!userId.IsSame(photo.UserId)) return Unauthorized(userId);
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
-			photoForList.Url = BuildUserImage(userId, photo.Url);
+			photoForList.Url = _repository.ImageBuilder.Build(userId, photo.Url);
 			return Ok(photoForList);
 		}
 
@@ -387,7 +387,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
-			photoForList.Url = BuildUserImage(userId, photo.Url);
+			photoForList.Url = _repository.ImageBuilder.Build(userId, photo.Url);
 			return CreatedAtAction(nameof(Get), new { id = photo.Id }, photoForList);
 		}
 
@@ -412,7 +412,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 
 			PhotoForList photoForList = _mapper.Map<PhotoForList>(photo);
-			photoForList.Url = BuildUserImage(userId, photoForList.Url);
+			photoForList.Url = _repository.ImageBuilder.Build(userId, photo.Url);
 			return Ok(photoForList);
 		}
 
@@ -689,12 +689,5 @@ namespace MatchNBuy.API.Controllers
 			return Ok(count);
 		}
 		#endregion
-
-		private string BuildUserImage(string id, string photoUrl)
-		{
-			return string.IsNullOrEmpty(photoUrl)
-						? null
-						: _repository.ImageBuilder.Build(string.Join('/', id, photoUrl)).ToString();
-		}
 	}
 }

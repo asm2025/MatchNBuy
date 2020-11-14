@@ -9,6 +9,8 @@ namespace MatchNBuy.Model.ImageBuilders
 		[NotNull]
 		string FileExtension { get; }
 
-		string BuildRelative([NotNull] string imageName, ImageSize imageSize);
+		string Build([NotNull] string id, string imageName, ImageSize imageSize = ImageSize.Default);
+
+		string BuildRelative([NotNull] string id, string imageName, ImageSize imageSize = ImageSize.Default);
 	}
 }

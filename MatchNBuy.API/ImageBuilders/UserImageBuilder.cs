@@ -13,34 +13,38 @@ namespace MatchNBuy.API.ImageBuilders
 	public class UserImageBuilder : ImageBuilder, IUserImageBuilder
 	{
 		private readonly IHttpContextAccessor _context;
-		private readonly string _default;
 
 		/// <inheritdoc />
 		public UserImageBuilder([NotNull] IConfiguration configuration, [NotNull] IHttpContextAccessor context)
 			: base(UriHelper.Trim(configuration.GetValue<string>("images:users:url")))
 		{
 			_context = context;
-			_default = UriHelper.Trim(configuration.GetValue<string>("images:users:default"));
 			FileExtension = UriHelper.Trim(configuration.GetValue<string>("images:users:extension")).Prefix('.');
 		}
 
 		public string FileExtension { get; }
 
 		/// <inheritdoc />
-		public override Uri Build([NotNull] string imageName, ImageSize imageSize)
+		public sealed override Uri Build([NotNull] string imageName, ImageSize imageSize) => throw new NotSupportedException();
+
+		/// <inheritdoc />
+		public string Build(string id, string imageName, ImageSize imageSize = ImageSize.Default)
 		{
 			HttpRequest request = _context.HttpContext?.Request;
-			return request == null
+			if (request == null) return null;
+			string relUrl = BuildRelative(imageName, id, imageSize);
+			return string.IsNullOrEmpty(relUrl)
 						? null
-						: UriHelper.ToUri($"{request.Scheme}://{request.Host}/{BuildRelative(imageName, imageSize)}", UriKind.Absolute);
+						: UriHelper.Combine($"{request.Scheme}://{request.Host}", relUrl)?.ToString();
 		}
 
-		[NotNull]
-		public string BuildRelative(string imageName, ImageSize imageSize)
+		/// <inheritdoc />
+		public string BuildRelative(string id, string imageName, ImageSize imageSize = ImageSize.Default)
 		{
-			imageName = UriHelper.Trim(imageName) ?? _default ?? throw new ArgumentNullException(nameof(imageName));
+			imageName = UriHelper.Trim(imageName);
+			if (imageName == null) return null;
 			if (string.IsNullOrEmpty(Path.GetExtension(imageName))) imageName += FileExtension;
-			Uri uri = UriHelper.Combine(BaseUri, imageName);
+			Uri uri = UriHelper.Join(BaseUri, id, imageName);
 			return uri.PathAndQuery.TrimStart('/');
 		}
 	}

@@ -393,7 +393,7 @@ namespace MatchNBuy.Data
 				string imagesUrl = UriHelper.Trim(configuration.GetValue<string>("images:users:url")) ?? IMAGES_FOLDER_DEF;
 				string imagesPath = PathHelper.Trim(environment.ContentRootPath);
 				if (string.IsNullOrEmpty(imagesPath) || !Directory.Exists(imagesPath)) imagesPath = Directory.GetCurrentDirectory();
-				imagesPath = Path.Combine(imagesPath, imagesUrl.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+				imagesPath = Path.Combine(imagesPath, imagesUrl.Replace('/', '\\'));
 				logger?.LogInformation($"Initialized images directory as '{imagesPath}'.");
 
 				if (!DirectoryHelper.Ensure(imagesPath))

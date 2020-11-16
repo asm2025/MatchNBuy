@@ -16,7 +16,7 @@ namespace MatchNBuy.API.ImageBuilders
 
 		/// <inheritdoc />
 		public UserImageBuilder([NotNull] IConfiguration configuration, [NotNull] IHttpContextAccessor context)
-			: base(UriHelper.Trim(configuration.GetValue<string>("images:users:url")))
+			: base(UriHelper.ToUri(configuration.GetValue<string>("images:users:url"), UriKind.Relative).String())
 		{
 			_context = context;
 			FileExtension = UriHelper.Trim(configuration.GetValue<string>("images:users:extension")).Prefix('.');
@@ -35,17 +35,15 @@ namespace MatchNBuy.API.ImageBuilders
 			string relUrl = BuildRelative(imageName, id, imageSize);
 			return string.IsNullOrEmpty(relUrl)
 						? null
-						: UriHelper.Combine($"{request.Scheme}://{request.Host}", relUrl)?.ToString();
+						: UriHelper.ToUri($"{request.Scheme}://{request.Host}/{BuildRelative(imageName, imageSize).String()}", UriKind.Absolute);
 		}
 
-		/// <inheritdoc />
-		public string BuildRelative(string id, string imageName, ImageSize imageSize = ImageSize.Default)
+		[NotNull]
+		public Uri BuildRelative(string imageName, ImageSize imageSize)
 		{
-			imageName = UriHelper.Trim(imageName);
-			if (imageName == null) return null;
+			imageName = UriHelper.Trim(imageName) ?? _default ?? throw new ArgumentNullException(nameof(imageName));
 			if (string.IsNullOrEmpty(Path.GetExtension(imageName))) imageName += FileExtension;
-			Uri uri = UriHelper.Join(BaseUri, id, imageName);
-			return uri.PathAndQuery.TrimStart('/');
+			return UriHelper.Combine(BaseUri, imageName);
 		}
 	}
 }

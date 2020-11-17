@@ -390,10 +390,10 @@ namespace MatchNBuy.Data
 			{
 				if (users.Count == 0) return null;
 				
-				string imagesUrl = UriHelper.Trim(configuration.GetValue<string>("images:users:url")) ?? IMAGES_FOLDER_DEF;
+				string imagesUrl = UriHelper.ToUri(configuration.GetValue<string>("images:users:url"), UriKind.Relative).String() ?? IMAGES_FOLDER_DEF;
 				string imagesPath = PathHelper.Trim(environment.ContentRootPath);
 				if (string.IsNullOrEmpty(imagesPath) || !Directory.Exists(imagesPath)) imagesPath = Directory.GetCurrentDirectory();
-				imagesPath = Path.Combine(imagesPath, imagesUrl.Replace('/', '\\'));
+				imagesPath = Path.Combine(imagesPath, imagesUrl.Replace('/', '\\').TrimStart('\\'));
 				logger?.LogInformation($"Initialized images directory as '{imagesPath}'.");
 
 				if (!DirectoryHelper.Ensure(imagesPath))
@@ -494,16 +494,41 @@ namespace MatchNBuy.Data
 					int threads = TaskHelper.ProcessMaximum;
 #endif
 					// Imagine doing this from scratch!! I love my library!!
-					using (IProducerConsumer<(string Id, Genders Gender)> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, new ProducerConsumerThreadQueueOptions<(string Id, Genders Gender)>(threads, e => DownloadUserImage(Path.Combine(imagesPath, e.Id!), e.Gender, e.Gender == Genders.Female ? usedFemales : usedMales, result[e.Gender], downloadSettings, logger, token)), token))
+					using (IProducerConsumer<(string Id, Genders Gender, int Number)> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, new ProducerConsumerThreadQueueOptions<(string Id, Genders Gender, int Number)>(threads, e =>
+					{
+						// copy to local vars for threading issues
+						string path = Path.Combine(imagesPath, e.Id!);
+						Queue<string> queue = result[e.Gender!];
+						CancellationToken tkn = token;
+						return DownloadUserImage(path, e.Gender, e.Number, queue, downloadSettings, logger, tkn);
+					}), token))
 					{
 						requests.WorkStarted += (sender, args) => logger?.LogInformation($"Download started using {threads} threads...");
 						requests.WorkCompleted += (sender, args) => logger?.LogInformation("Download completed.");
 
-						while (femalesNeeded.Count > 0) 
-							requests.Enqueue((femalesNeeded.Dequeue(), Genders.Female));
+						int number;
+
+						while (femalesNeeded.Count > 0)
+						{
+							do
+							{
+								number = RNGRandomHelper.Next(0, 99);
+							}
+							while (usedFemales.Contains(number));
+
+							requests.Enqueue((femalesNeeded.Dequeue(), Genders.Female, number));
+						}
 
 						while (malesNeeded.Count > 0)
-							requests.Enqueue((malesNeeded.Dequeue(), Genders.Male));
+						{
+							do
+							{
+								number = RNGRandomHelper.Next(0, 99);
+							}
+							while (usedMales.Contains(number));
+
+							requests.Enqueue((malesNeeded.Dequeue(), Genders.Male, number));
+						}
 
 						requests.Complete();
 						await requests.WaitAsync();
@@ -513,30 +538,15 @@ namespace MatchNBuy.Data
 				return result;
 			}
 
-			static TaskResult DownloadUserImage(string sourcePath, Genders gender, ISet<int> usedNumbers, Queue<string> files, IOHttpDownloadFileWebRequestSettings settings, ILogger logger, CancellationToken token)
+			static TaskResult DownloadUserImage(string sourcePath, Genders gender, int number, Queue<string> files, IOHttpDownloadFileWebRequestSettings settings, ILogger logger, CancellationToken token)
 			{
 				if (token.IsCancellationRequested) return TaskResult.Canceled;
 
-				int x;
-
-				lock(usedNumbers)
-				{
-					if (token.IsCancellationRequested) return TaskResult.Canceled;
-
-					do
-					{
-						x = RNGRandomHelper.Next(0, 99);
-					}
-					while (usedNumbers.Contains(x));
-
-					usedNumbers.Add(x);
-				}
-
 				string url = string.Format(IMAGES_URL, gender == Genders.Female
 															? IMAGES_GENDER_FEMALE
-															: IMAGES_GENDER_MALE, x);
+															: IMAGES_GENDER_MALE, number);
 				FileStream stream = null;
-				string fileName = Path.Combine(sourcePath, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{x:D2}.jpg");
+				string fileName = Path.Combine(sourcePath, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{number:D2}.jpg");
 
 				try
 				{

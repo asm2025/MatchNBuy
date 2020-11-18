@@ -132,9 +132,10 @@
 						</div>
 					</ng-template>
 				</li>
-				<li [ngbNavItem]="3">
+				<li *ngIf="!isCurrentUser" [ngbNavItem]="3">
 					<a ngbNavLink>Messages</a>
 					<ng-template ngbNavContent>
+						<small class="text-muted">Messages received from this member</small>
 						<app-member-messages [recipientId]="user.id"></app-member-messages>
 					</ng-template>
 				</li>

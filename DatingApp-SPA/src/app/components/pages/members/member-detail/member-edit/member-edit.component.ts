@@ -33,7 +33,7 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 
 	@HostListener("window:beforeunload", ["$event"])
 	unloadNotification($event: any) {
-		if (this.editForm.dirty) $event.returnValue = true;
+		if (this.editForm && this.editForm.dirty === true) $event.returnValue = true;
 	}
 
 	ngOnInit() {

@@ -1,11 +1,10 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, OnInit, OnDestroy, ViewChild } from "@angular/core";
 import {
 	fadeInOnEnterAnimation,
 	fadeOutOnLeaveAnimation,
 } from "angular-animations";
 import { ReplaySubject, of } from "rxjs";
-import { takeUntil, catchError } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 import { NgbCarouselConfig, NgbCarousel, NgbSlideEventSource } from "@ng-bootstrap/ng-bootstrap";
 
 import { IForecastResult, IForecast, IKeyedForecast } from "@data/model/Forecast";
@@ -22,32 +21,22 @@ import DateTimeHelper from "@common/helpers/date-time.helper";
 		fadeOutOnLeaveAnimation()
 	]
 })
-export default class WeatherComponent implements AfterViewInit, OnDestroy {
+export default class WeatherComponent implements OnInit, OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();
 	forecasts: IKeyedForecast[];
 	selectedDate: string;
 
 	@ViewChild("weatherCarousel") weatherCarousel!: NgbCarousel;
 
-	constructor(private readonly _route: ActivatedRoute,
-		private readonly _weatherClient: WeatherClient,
+	constructor(private readonly _weatherClient: WeatherClient,
 		private readonly _alertService: AlertService,
 		carouselConfig: NgbCarouselConfig) {
 		carouselConfig.showNavigationArrows = false;
 		carouselConfig.showNavigationIndicators = false;
 	}
 
-	ngAfterViewInit(): void {
-		this._route
-			.data
-			.pipe(takeUntil(this.disposed$))
-			.subscribe(data => {
-				const result = data["resolved"];
-				setTimeout(() => {
-					this.forecasts = result.forecasts.map((e: IForecast) => Object.assign(e, { key: this.key(e.date) })) || [];
-					this.select(this.key(result.selectedDate));
-				}, 0);
-			});
+	ngOnInit(): void {
+		this.list(new Date());
 	}
 
 	ngOnDestroy(): void {

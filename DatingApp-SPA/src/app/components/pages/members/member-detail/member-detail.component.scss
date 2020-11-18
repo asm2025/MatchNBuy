@@ -24,6 +24,13 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 	margin: 0;
 }
 
+.btn-group,
+.btn-group-vertical {
+	.btn {
+		padding: 0.5rem;
+	}
+}
+
 @mixin main-box {
 	margin-bottom: 0.5rem;
 	display: flex;
@@ -44,10 +51,6 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 .summary {
 	@include main-box;
-
-	.btn {
-		padding: 0;
-	}
 
 	.name {
 		padding: 8px;
@@ -74,8 +77,6 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 	}
 
 	.info {
-		flex-grow: 1;
-
 		.fa,
 		.ng-fa-icon {
 			margin: 0 2px !important;
@@ -114,7 +115,7 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 		margin: 0 2%;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: flex-end;
 
 		* {
 			color: white;

@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 import {
@@ -65,7 +65,8 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	@ViewChild("galleryCarousel") galleryCarousel!: NgbCarousel;
 
-	constructor(private readonly _route: ActivatedRoute,
+	constructor(private readonly _router: Router,
+		private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService,
 		carouselConfig: NgbCarouselConfig) {
@@ -89,7 +90,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		this._uploader.onSuccessItem = this.imageUploaderSuccessItem.bind(this);
 		this._uploader.onErrorItem = this.imageUploaderErrorItem.bind(this);
 		this._uploader.onCancelItem = this.imageUploaderCancelItem.bind(this);
-		this._uploader.onCompleteItem = this.imageUploaderCompleteItem.bind(this);
+		this._uploader.onCompleteAll = this.imageUploaderComplete.bind(this);
 	}
 
 	ngOnInit() {
@@ -128,6 +129,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				setTimeout(() => {
 					if (!this.id && params["id"]) {
 						this.id = params["id"];
+						this.loadUserData();
 					}
 
 					let tab: number;
@@ -141,15 +143,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 					this.selectTab(tab);
 				}, 0);
 			});
-		this._route
-			.data
-			.pipe(takeUntil(this.disposed$))
-			.subscribe(data => {
-				setTimeout(() => {
-					this.user = data["resolved"];
-					this.selectTab(this._tabSubject.value);
-				}, 0);
-			});
+		this.loadUserData();
 	}
 
 	ngOnDestroy(): void {
@@ -234,12 +228,13 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
 	}
 
-	imageUploaderCompleteItem() {
+	imageUploaderComplete() {
 		this.imageProps = {
 			description: "",
 			isDefault: false
 		};
 		this._uploader.clearQueue();
+		this.loadUserImages();
 	}
 
 	imageUploaderUploadClick() {
@@ -254,6 +249,25 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	messagesPageChanged(page: number): void {
 		this.imagesPagination.page = page;
 		this.loadUserMessages();
+	}
+
+	loadUserData() {
+		if (!this.id) {
+			this.user = null;
+			return;
+		}
+
+		this._userClient
+			.get(this.id)
+			.pipe(catchError(error => {
+				this._alertService.alerts.error(error.toString());
+				this._router.navigate(["/"]);
+				return of(null);
+			}))
+			.subscribe((res: IUserForDetails | null | undefined) => {
+				this.user = res;
+				this.selectTab(this._tabSubject.value);
+			});
 	}
 
 	selectTab(tab: number) {

@@ -1,7 +1,6 @@
-import { Component, AfterViewInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ReplaySubject, of } from "rxjs";
-import { takeUntil, catchError } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 
 import { SortType } from "@common/sorting/SortType";
 import { IPaginated } from "@common/pagination/Paginated";
@@ -15,7 +14,7 @@ import AlertService from "@services/alert.service";
 	templateUrl: "./member-list.component.html",
 	styleUrls: ["./member-list.component.scss"]
 })
-export default class MemberListComponent implements AfterViewInit, OnDestroy {
+export default class MemberListComponent implements OnInit, OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();
 	users: IUserForList[];
 	pagination: IUserList = {
@@ -39,22 +38,12 @@ export default class MemberListComponent implements AfterViewInit, OnDestroy {
 		}]
 	};
 
-	constructor(private readonly _route: ActivatedRoute,
-		private readonly _userClient: UserClient,
+	constructor(private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService) {
 	}
 
-	ngAfterViewInit(): void {
-		this._route
-			.data
-			.pipe(takeUntil(this.disposed$))
-			.subscribe(data => {
-				setTimeout(() => {
-					const resolved = data["resolved"];
-					this.users = resolved.result || [];
-					this.pagination = <IUserList>resolved.pagination;
-				}, 0);
-			});
+	ngOnInit(): void {
+		this.loadUsers();
 	}
 
 	ngOnDestroy(): void {

@@ -53,6 +53,9 @@ import WeatherClient from "@services/web/WeatherClient";
 import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
+import AuthGuard from "@/_guards/auth.guard";
+import UnsavedChangesGuard from "@/_guards/unsaved-changes.guard";
+
 import AppComponent from "./app.component";
 import SpinnerComponent from "@components/spinner/spinner.component";
 import AlertsComponent from "@components/alert/alerts/alerts.component";
@@ -61,29 +64,24 @@ import LazyImageComponent from "@components/lazy-image/lazy-image.component";
 
 import HomeComponent from "@components/pages/home/home.component";
 
+import MemberListComponent from "@components/pages/members/member-list/member-list.component";
+import MemberCardComponent from "@components/pages/members/member-card/member-card.component";
+import MemberDetailComponent from "@components/pages/members/member-detail/member-detail.component";
+import MemberEditComponent from "@components/pages/members/member-detail/member-edit/member-edit.component";
+import MemberEditResolver from "@components/pages/members/member-detail/member-edit/member-edit.resolver";
+import MemberGalleryComponent from "@components/pages/members/member-detail/member-gallery/member-gallery.component";
+import MemberMessageComponent from "@components/pages/members/member-detail/member-messages/member-messages.component";
+import MemberPhotoEditorComponent from "@components/pages/members/member-detail/member-photo-editor/member-photo-editor.component";
+import MemberPhotoEditorResolver from "@components/pages/members/member-detail/member-photo-editor/member-photo-editor.resolver";
+
+import MessagesComponent from "@components/pages/messages/messages.component";
+import ThreadsComponent from "@components/pages/messages/threads/threads.component";
+import ThreadMessagesComponent from "@components/pages/messages/thread-messages/thread-messages.component";
+
 import SignInComponent from "@components/pages/sign-in/sign-in.component";
 import SignUpComponent from "@components/pages/sign-up/sign-up.component";
 
-import MemberListComponent from "@components/pages/members/member-list/member-list.component";
-import MemberListResolver from "@components/pages/members/member-list/member-list.resolver";
-import PhotoEditorComponent from "@components/pages/members/photo-editor/photo-editor.component";
-import MemberCardComponent from "@components/pages/members/member-card/member-card.component";
-import MemberEditComponent from "@components/pages/members/member-edit/member-edit.component";
-import MemberEditResolver from "@components/pages/members/member-edit/member-edit.resolver";
-import MemberEditUnsavedChanges from "@components/pages/members/member-edit/member-edit-unsaved-changes.guard";
-import MemberDetailComponent from "@components/pages/members/member-detail/member-detail.component";
-import MemberDetailResolver from "@components/pages/members/member-detail/member-detail.resolver";
-import MemberMessagesComponent from "@components/pages/members/member-messages/member-messages.component";
-
-import MessagesComponent from "@components/pages/messages/messages.component";
-import MessagesResolver from "@components/pages/messages/messages.resolver";
-import MessageThreadsComponent from "@components/pages/messages/message-threads/message-threads.component";
-import MessageThreadsResolver from "@components/pages/messages/message-threads/message-threads.resolver";
-import ThreadMessagesComponent from "@components/pages/messages/thread-messages/thread-messages.component";
-import ThreadMessagesResolver from "@components/pages/messages/thread-messages/thread-messages.resolver";
-
 import WeatherComponent from "@components/pages/weather/weather.component";
-import WeatherResolver from "@components/pages/weather/weather.resolver";
 
 @NgModule({
 	imports: [
@@ -124,17 +122,18 @@ import WeatherResolver from "@components/pages/weather/weather.resolver";
 		NavComponent,
 		LazyImageComponent,
 		HomeComponent,
+		MemberListComponent,
+		MemberCardComponent,
+		MemberDetailComponent,
+		MemberEditComponent,
+		MemberGalleryComponent,
+		MemberMessageComponent,
+		MemberPhotoEditorComponent,
+		MessagesComponent,
+		ThreadsComponent,
+		ThreadMessagesComponent,
 		SignInComponent,
 		SignUpComponent,
-		MemberListComponent,
-		PhotoEditorComponent,
-		MemberCardComponent,
-		MemberEditComponent,
-		MemberDetailComponent,
-		MemberMessagesComponent,
-		MessagesComponent,
-		MessageThreadsComponent,
-		ThreadMessagesComponent,
 		WeatherComponent
 	],
 	providers: [
@@ -152,14 +151,10 @@ import WeatherResolver from "@components/pages/weather/weather.resolver";
 		WeatherClient,
 		UserClient,
 		AlertService,
-		MemberListResolver,
+		AuthGuard,
+		UnsavedChangesGuard,
 		MemberEditResolver,
-		MemberEditUnsavedChanges,
-		MemberDetailResolver,
-		MessagesResolver,
-		MessageThreadsResolver,
-		ThreadMessagesResolver,
-		WeatherResolver
+		MemberPhotoEditorResolver
 	],
 	bootstrap: [
 		AppComponent

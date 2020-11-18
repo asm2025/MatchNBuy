@@ -18,10 +18,9 @@ export default class MemberEditResolver implements Resolve<IUserToUpdate | null 
 		const id = (<IUser>this._userClient.user).id;
 		return this._userClient
 			.edit(id)
-			.pipe(
-				catchError(error => {
+			.pipe(catchError(error => {
 					this._alertService.toasts.error(error.toString());
-					this._router.navigate(["/members"]);
+					this._router.navigate(["/"]);
 					return of(null);
 				})
 			);

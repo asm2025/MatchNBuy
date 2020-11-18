@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 
 @Component({
     selector: "app-member-messages",
@@ -6,4 +6,5 @@ import { Component } from "@angular/core";
     styleUrls: ["./member-messages.component.scss"]
 })
 export default class MemberMessagesComponent {
+	@Input() recipientId: string;
 }

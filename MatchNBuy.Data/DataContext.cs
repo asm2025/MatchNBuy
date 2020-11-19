@@ -66,19 +66,17 @@ namespace MatchNBuy.Data
 				return;
 			}
 
+			string workingDirectory = AssemblyHelper.GetEntryAssembly().GetDirectoryPath();
 			IHostEnvironment environment = new HostingEnvironment
 			{
 				EnvironmentName = EnvironmentHelper.GetEnvironmentName(),
 				ApplicationName = AppDomain.CurrentDomain.FriendlyName,
-				ContentRootPath = AppDomain.CurrentDomain.BaseDirectory,
-				ContentRootFileProvider = new PhysicalFileProvider(GetType().Assembly.GetPath())
+				ContentRootPath = workingDirectory,
+				ContentRootFileProvider = new PhysicalFileProvider(workingDirectory)
 			};
 
-			string contentRoot = PathHelper.Trim(environment.ContentRootPath);
-			if (string.IsNullOrEmpty(contentRoot) || !Directory.Exists(contentRoot)) contentRoot = Directory.GetCurrentDirectory();
-
 			IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-			configurationBuilder.SetBasePath(contentRoot);
+			configurationBuilder.SetBasePath(workingDirectory);
 
 			IConfiguration configuration = IConfigurationBuilderHelper.CreateConfiguration()
 																	.AddConfigurationFiles(EnvironmentHelper.GetEnvironmentName())

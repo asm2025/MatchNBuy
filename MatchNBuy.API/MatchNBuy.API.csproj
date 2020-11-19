@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>20.11.17.5</FileVersion>
+		<FileVersion>20.11.19.0</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
@@ -28,7 +28,7 @@
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.7.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.8.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

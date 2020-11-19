@@ -10,7 +10,7 @@ import MemberDetailComponent from "@components/pages/members/member-detail/membe
 import MemberEditComponent from "@components/pages/members/member-detail/member-edit/member-edit.component";
 import MemberEditResolver from "@components/pages/members/member-detail/member-edit/member-edit.resolver";
 import MemberGalleryComponent from "@components/pages/members/member-detail/member-gallery/member-gallery.component";
-import MemberMessageComponent from "@components/pages/members/member-detail/member-messages/member-messages.component";
+import MemberMessagesComponent from "@components/pages/members/member-detail/member-messages/member-messages.component";
 import MemberPhotoEditorComponent from "@components/pages/members/member-detail/member-photo-editor/member-photo-editor.component";
 import MemberPhotoEditorResolver from "@components/pages/members/member-detail/member-photo-editor/member-photo-editor.resolver";
 
@@ -60,6 +60,20 @@ export const routes: Routes = [{
 			path: ":id/edit",
 			component: MemberEditComponent,
 			resolve: { resolved: MemberEditResolver },
+			canDeactivate: [UnsavedChangesGuard]
+		},
+		{
+			path: ":id/messages",
+			component: MemberMessagesComponent
+		},
+		{
+			path: ":id/gallery",
+			component: MemberGalleryComponent
+		},
+		{
+			path: ":id/gallery/:photoId",
+			component: MemberPhotoEditorComponent,
+			resolve: { resolved: MemberPhotoEditorResolver },
 			canDeactivate: [UnsavedChangesGuard]
 		}]
 	},

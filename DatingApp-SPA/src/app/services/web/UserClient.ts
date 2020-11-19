@@ -8,7 +8,7 @@ import querystring from "querystring";
 import ApiClient from "@common/web/ApiClient";
 import { ISortablePagination } from "@common/pagination/SortablePagination";
 import { IPaginated } from "@common/pagination/Paginated";
-import { IUser, IUserForList, IUserForDetails, IUserForSerialization, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
+import { IUser, IUserForList, IUserForDetails, IUserToRegister, IUserToUpdate, IUserList } from "@data/model/User";
 import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
 import { IMessageThread, IMessage, IMessageToAdd, IMessageToEdit } from "@data/model/Message";
 
@@ -130,8 +130,8 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this.client.get<IUserToUpdate>(`${this.baseUrl}/${encodeURIComponent(id)}/Edit`);
 	}
 
-	update(id: string, user: IUserToUpdate): Observable<IUserForSerialization> {
-		return this.client.put<IUserForSerialization>(`${this.baseUrl}/${encodeURIComponent(id)}/Update`, user);
+	update(id: string, user: IUserToUpdate): Observable<IUserToUpdate> {
+		return this.client.put<IUserToUpdate>(`${this.baseUrl}/${encodeURIComponent(id)}/Update`, user);
 	}
 
 	delete(id: string): Observable<any> {

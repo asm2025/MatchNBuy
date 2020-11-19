@@ -78,6 +78,10 @@ namespace MatchNBuy.Model
 
         public virtual ICollection<Like> Likees { get; set; }
 
+        public virtual ICollection<Thread> ThreadsSent { get; set; }
+
+        public virtual ICollection<Thread> ThreadsReceived { get; set; }
+
         public virtual ICollection<Message> MessagesSent { get; set; }
 
         public virtual ICollection<Message> MessagesReceived { get; set; }

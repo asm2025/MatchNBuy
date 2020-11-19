@@ -40,11 +40,11 @@ namespace MatchNBuy.Model
 			CreateMap<Photo, PhotoForList>();
 			CreateMap<PhotoToEdit, Photo>().ReverseMap();
 
-			CreateMap<IGrouping<string, Message>, MessageThread>()
-				.ForMember(m => m.ThreadId, opt => opt.MapFrom(g => g.Key))
-				.ForMember(m => m.Count, opt => opt.MapFrom(g => g.Count()))
-				.ForMember(m => m.IsRead, opt => opt.MapFrom(g => g.All(e => e.DateRead == null)))
-				.ForMember(m => m.LastModified, opt => opt.MapFrom(g => g.OrderByDescending(e => e.MessageSent).First().MessageSent));
+			CreateMap<Thread, MessageThread>()
+				.ForMember(m => m.ThreadId, opt => opt.MapFrom(e => e.Id))
+				.ForMember(m => m.Count, opt => opt.MapFrom(e => e.Messages.Count))
+				.ForMember(m => m.IsRead, opt => opt.MapFrom(e => e.Messages.All(e => e.DateRead == null)))
+				.ForMember(m => m.LastModified, opt => opt.MapFrom(e => e.Modified));
 
 			CreateMap<MessageToAdd, Message>().ReverseMap();
 			CreateMap<MessageToEdit, Message>().ReverseMap();

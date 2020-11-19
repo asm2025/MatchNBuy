@@ -29,6 +29,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.API.Controllers
 {
@@ -267,10 +268,8 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (user == null) throw new Exception("Updating user failed.");
 		
-			UserForSerialization userForSerialization = _mapper.Map<UserForSerialization>(user);
-			userForSerialization.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl).String();
-			userForSerialization.CanBeDisliked = userForSerialization.CanBeLiked = false;
-			return Ok(userForSerialization);
+			UserToUpdate userToUpdate = _mapper.Map<UserToUpdate>(user);
+			return Ok(userToUpdate);
 		}
 
 		[HttpDelete("{id}/[action]")]
@@ -483,24 +482,38 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			pagination ??= new MessageList();
-
-			Paginated<MessageThread> threads = await _repository.Messages.ThreadsAsync(userId, pagination, token);
+			
+			IQueryable<Thread> queryable = _repository.Messages.Threads(userId, pagination);
+			pagination.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
-			return Ok(threads);
+
+			IList<MessageThread> messageThreads = new List<MessageThread>(pagination.PageSize);
+
+			await foreach (Thread thread in queryable.Paginate(pagination).AsAsyncEnumerable().WithCancellation(token))
+			{
+				MessageThread messageThread = _mapper.Map<MessageThread>(thread);
+				messageThread.Participant = _mapper.Map<UserForLoginDisplay>(thread.RecipientId == userId
+																				? thread.Recipient
+																				: thread.Sender);
+				messageThreads.Add(messageThread);
+			}
+
+			token.ThrowIfCancellationRequested();
+			return Ok(new Paginated<MessageThread>(messageThreads, pagination));
 		}
 
-		[HttpGet("{userId}/Messages/[action]/{recipientId}")]
+		[HttpGet("{userId}/Messages/[action]/{threadId}")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Thread([FromRoute] string userId, [FromRoute] string recipientId, [FromQuery] SortablePagination pagination, CancellationToken token)
+		public async Task<IActionResult> Thread([FromRoute] string userId, [FromRoute] string threadId, [FromQuery] SortablePagination pagination, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(userId)) return Unauthorized(userId);
-			if (string.IsNullOrEmpty(recipientId)) return BadRequest(recipientId);
+			if (string.IsNullOrEmpty(threadId)) return BadRequest(threadId);
 			
 			string claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (!userId.IsSame(claimId) && !recipientId.IsSame(claimId)) return Unauthorized(userId);
+			if (!userId.IsSame(claimId)) return Unauthorized(userId);
 			
-			IQueryable<Message> queryable = _repository.Messages.Thread(userId, recipientId, pagination);
+			IQueryable<Message> queryable = _repository.Messages.Thread(threadId, pagination);
 			pagination.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
@@ -564,7 +577,33 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 			
 			MessageForList messageForList = _mapper.Map<MessageForList>(message);
-			return CreatedAtAction(nameof(Get), new { id = message.Id }, messageForList);
+			return CreatedAtAction(nameof(Thread), new { id = message.Id }, messageForList);
+		}
+
+		[HttpPost("{userId}/Messages/{id}/Reply")]
+		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		[SwaggerResponse((int)HttpStatusCode.Created)]
+		public async Task<IActionResult> ReplyToMessage([FromRoute] string userId, Guid id, [FromBody][NotNull] MessageToEdit messageParams, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
+			
+			Message message = await _repository.Messages.GetAsync(token, id);
+			token.ThrowIfCancellationRequested();
+			if (message == null) return NotFound(id);
+
+			Message newMessage = await _repository.Messages.ReplyToAsync(userId, message, messageParams, token);
+			token.ThrowIfCancellationRequested();
+			if (newMessage == null) throw new Exception($"Reply to message for the user '{userId}' failed.");
+			
+			MessageForList messageForList = _mapper.Map<MessageForList>(newMessage);
+			return CreatedAtAction(nameof(Thread), new
+			{
+				userId,
+				threadId = message.ThreadId
+			}, messageForList);
 		}
 
 		[HttpPut("{userId}/Messages/{id}/Update")]

@@ -70,7 +70,7 @@ import MemberDetailComponent from "@components/pages/members/member-detail/membe
 import MemberEditComponent from "@components/pages/members/member-detail/member-edit/member-edit.component";
 import MemberEditResolver from "@components/pages/members/member-detail/member-edit/member-edit.resolver";
 import MemberGalleryComponent from "@components/pages/members/member-detail/member-gallery/member-gallery.component";
-import MemberMessageComponent from "@components/pages/members/member-detail/member-messages/member-messages.component";
+import MemberMessagesComponent from "@components/pages/members/member-detail/member-messages/member-messages.component";
 import MemberPhotoEditorComponent from "@components/pages/members/member-detail/member-photo-editor/member-photo-editor.component";
 import MemberPhotoEditorResolver from "@components/pages/members/member-detail/member-photo-editor/member-photo-editor.resolver";
 
@@ -127,7 +127,7 @@ import WeatherComponent from "@components/pages/weather/weather.component";
 		MemberDetailComponent,
 		MemberEditComponent,
 		MemberGalleryComponent,
-		MemberMessageComponent,
+		MemberMessagesComponent,
 		MemberPhotoEditorComponent,
 		MessagesComponent,
 		ThreadsComponent,

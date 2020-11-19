@@ -29,6 +29,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using asm.Logging.Helpers;
+using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.Data
 {
@@ -53,6 +54,7 @@ namespace MatchNBuy.Data
 		public DbSet<Interest> Interests { get; set; }
 		public DbSet<UserInterest> UserInterests { get; set; }
 		public DbSet<Like> Likes { get; set; }
+		public DbSet<Thread> Threads { get; set; }
 		public DbSet<Message> Messages { get; set; }
 
 		/// <inheritdoc />
@@ -110,7 +112,7 @@ namespace MatchNBuy.Data
 				country.HasMany(e => e.Cities)
 						.WithOne(e => e.Country)
 						.HasForeignKey(e => e.CountryCode)
-						.OnDelete(DeleteBehavior.Cascade);
+						.OnDelete(DeleteBehavior.Restrict);
 			});
 
 			modelBuilder.Entity<City>(city =>
@@ -154,19 +156,23 @@ namespace MatchNBuy.Data
 				userInterest.HasOne(e => e.User)
 							.WithMany(e => e.UserInterests)
 							.HasForeignKey(e => e.UserId)
-							.OnDelete(DeleteBehavior.Restrict);
-				
+							.OnDelete(DeleteBehavior.Cascade);
+
 				userInterest.HasOne(e => e.Interest)
 							.WithMany(e => e.UserInterests)
 							.HasForeignKey(e => e.InterestId)
-							.OnDelete(DeleteBehavior.Restrict);
+							.OnDelete(DeleteBehavior.Cascade);
 			});
 
-			modelBuilder.Entity<Photo>()
-					.HasOne(e => e.User)
+			modelBuilder.Entity<Photo>(photo =>
+			{
+				photo.HasOne(e => e.User)
 					.WithMany(e => e.Photos)
 					.HasForeignKey(e => e.UserId)
 					.OnDelete(DeleteBehavior.Cascade);
+
+				photo.HasIndex(e => e.DateAdded);
+			});
 
 			modelBuilder.Entity<Like>(like =>
 			{
@@ -179,12 +185,33 @@ namespace MatchNBuy.Data
 				like.HasOne(e => e.Likee)
 					.WithMany(e => e.Likers)
 					.HasForeignKey(e => e.LikeeId)
-					.OnDelete(DeleteBehavior.Restrict);
+					.OnDelete(DeleteBehavior.Cascade);
 
 				like.HasOne(e => e.Liker)
 					.WithMany(e => e.Likees)
 					.HasForeignKey(e => e.LikerId)
-					.OnDelete(DeleteBehavior.Restrict);
+					.OnDelete(DeleteBehavior.Cascade);
+			});
+
+			modelBuilder.Entity<Thread>(thread =>
+			{
+				thread.HasMany(e => e.Messages)
+						.WithOne(e => e.Thread)
+						.HasForeignKey(e => e.ThreadId)
+						.OnDelete(DeleteBehavior.Cascade);
+
+				thread.HasOne(e => e.Sender)
+					.WithMany(e => e.ThreadsSent)
+					.HasForeignKey(e => e.SenderId)
+					.OnDelete(DeleteBehavior.Cascade);
+
+				thread.HasOne(u => u.Recipient)
+					.WithMany(m => m.ThreadsReceived)
+					.HasForeignKey(e => e.RecipientId)
+					.OnDelete(DeleteBehavior.Cascade);
+
+				thread.HasIndex(e => e.Modified);
+				thread.HasIndex(e => e.IsArchived);
 			});
 
 			modelBuilder.Entity<Message>(message =>
@@ -192,14 +219,16 @@ namespace MatchNBuy.Data
 				message.HasOne(e => e.Sender)
 						.WithMany(e => e.MessagesSent)
 						.HasForeignKey(e => e.SenderId)
-						.OnDelete(DeleteBehavior.Restrict);
+						.OnDelete(DeleteBehavior.Cascade);
 
 				message.HasOne(u => u.Recipient)
 						.WithMany(m => m.MessagesReceived)
 						.HasForeignKey(e => e.RecipientId)
-						.OnDelete(DeleteBehavior.Restrict);
+						.OnDelete(DeleteBehavior.Cascade);
 
-				message.HasIndex(e => e.ThreadId);
+				message.HasIndex(e => e.MessageSent);
+				message.HasIndex(e => e.DateRead);
+				message.HasIndex(e => e.IsArchived);
 			});
 		}
 
@@ -291,8 +320,8 @@ namespace MatchNBuy.Data
 
 					if (!result.Succeeded)
 					{
-						throw new DataException(result.Errors.Aggregate(new StringBuilder($"Could not add role '{roleName}'."), 
-																		(builder, error) => builder.AppendWithLine(error.Description), 
+						throw new DataException(result.Errors.Aggregate(new StringBuilder($"Could not add role '{roleName}'."),
+																		(builder, error) => builder.AppendWithLine(error.Description),
 																		builder => builder.ToString()));
 					}
 
@@ -340,8 +369,8 @@ namespace MatchNBuy.Data
 					{
 						if (userIsAdmin)
 						{
-							throw new DataException(result.Errors.Aggregate(new StringBuilder($"Could not add admin user '{user.UserName}'."), 
-																			(builder, error) => builder.AppendWithLine(error.Description), 
+							throw new DataException(result.Errors.Aggregate(new StringBuilder($"Could not add admin user '{user.UserName}'."),
+																			(builder, error) => builder.AppendWithLine(error.Description),
 																			builder => builder.ToString()));
 						}
 
@@ -361,8 +390,8 @@ namespace MatchNBuy.Data
 
 					if (!result.Succeeded)
 					{
-						throw new DataException(result.Errors.Aggregate(new StringBuilder($"Could not add user '{user.UserName}' to role."), 
-																		(builder, error) => builder.AppendWithLine(error.Description), 
+						throw new DataException(result.Errors.Aggregate(new StringBuilder($"Could not add user '{user.UserName}' to role."),
+																		(builder, error) => builder.AppendWithLine(error.Description),
 																		builder => builder.ToString()));
 					}
 
@@ -389,7 +418,7 @@ namespace MatchNBuy.Data
 			static async Task<IDictionary<Genders, Queue<string>>> DownloadUserImages(IList<User> users, IConfiguration configuration, IHostEnvironment environment, ILogger logger)
 			{
 				if (users.Count == 0) return null;
-				
+
 				string imagesUrl = UriHelper.ToUri(configuration.GetValue<string>("images:users:url"), UriKind.Relative).String() ?? IMAGES_FOLDER_DEF;
 				string imagesPath = PathHelper.Trim(environment.ContentRootPath);
 				if (string.IsNullOrEmpty(imagesPath) || !Directory.Exists(imagesPath)) imagesPath = Directory.GetCurrentDirectory();
@@ -555,7 +584,7 @@ namespace MatchNBuy.Data
 					stream = UriHelper.DownloadFile(url, fileName, settings);
 					if (token.IsCancellationRequested) return TaskResult.Canceled;
 
-					lock(files)
+					lock (files)
 					{
 						files.Enqueue(Path.GetFileName(fileName));
 					}

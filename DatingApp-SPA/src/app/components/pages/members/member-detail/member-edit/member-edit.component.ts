@@ -1,6 +1,7 @@
 import {
 	Component,
 	OnInit,
+	AfterViewInit,
 	OnDestroy,
 	ViewChild,
 	HostListener
@@ -13,13 +14,14 @@ import { takeUntil, catchError } from "rxjs/operators";
 import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
+import { IIsDirty } from "@/_guards/unsaved-changes.guard";
 
 @Component({
 	selector: "app-member-edit",
 	templateUrl: "./member-edit.component.html",
 	styleUrls: ["./member-edit.component.scss"]
 })
-export default class MemberEditComponent implements OnInit, OnDestroy {
+export default class MemberEditComponent implements OnInit, AfterViewInit, OnDestroy, IIsDirty {
 	disposed$ = new ReplaySubject<boolean>();
 	user: IUserToUpdate | null | undefined;
 	photoUrl: string;
@@ -33,23 +35,30 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 
 	@HostListener("window:beforeunload", ["$event"])
 	unloadNotification($event: any) {
-		if (this.editForm && this.editForm.dirty === true) $event.returnValue = true;
+		if (this.isDirty()) $event.returnValue = true;
 	}
 
 	ngOnInit() {
-		this._route
-			.data
-			.pipe(takeUntil(this.disposed$))
-			.subscribe(data => this.user = data["user"]);
 		this._userClient
 			.photoUrl
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(url => this.photoUrl = url);
 	}
 
+	ngAfterViewInit() {
+		this._route
+			.data
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(data => this.user = data["user"]);
+	}
+
 	ngOnDestroy(): void {
 		this.disposed$.next(true);
 		this.disposed$.complete();
+	}
+
+    isDirty(): boolean {
+		return this.editForm && this.editForm.dirty === true;
 	}
 
 	updateUser() {
@@ -61,8 +70,10 @@ export default class MemberEditComponent implements OnInit, OnDestroy {
 				this._alertService.alerts.error(error.toString());
 				return of(null);
 			}))
-			.subscribe(() => {
-					this._alertService.toasts.success("Profile updated successfully.");
+			.subscribe((res: IUserToUpdate | null | undefined) => {
+				if (!res) return;
+				this._alertService.toasts.success("Profile updated successfully.");
+					this.user = res;
 					this.editForm.reset(this.user);
 				});
 	}

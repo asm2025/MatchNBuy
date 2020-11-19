@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:origin/master" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7cd8e762-1d18-4ce3-bac5-9ef82b6cee6b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/DatingApp-SPA/DatingApp.SPA.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/DatingApp-SPA/DatingApp.SPA.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DatingApp-SPA/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/DatingApp-SPA/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DatingApp-SPA/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/DatingApp-SPA/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DatingApp-SPA/src/app/components/pages/members/member-detail/member-photo-editor/member-photo-editor.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/DatingApp-SPA/src/app/components/pages/members/member-detail/member-photo-editor/member-photo-editor.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MatchNBuy.API/MatchNBuy.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MatchNBuy.API/MatchNBuy.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MatchNBuy.Data/MatchNBuy.Data.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MatchNBuy.Data/MatchNBuy.Data.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MatchNBuy.Model/MatchNBuy.Model.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MatchNBuy.Model/MatchNBuy.Model.csproj" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1kWmCrirCoLBaCSpdEqoRC8QslM" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <created>1605824599273</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1605824599273</updated>
+      <workItem from="1605824628930" duration="160000" />
+    </task>
+    <servers />
+  </component>
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>

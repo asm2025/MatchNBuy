@@ -53,8 +53,8 @@ import WeatherClient from "@services/web/WeatherClient";
 import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
-import AuthGuard from "@/_guards/auth.guard";
-import UnsavedChangesGuard from "@/_guards/unsaved-changes.guard";
+import AuthGuard from "@common/guards/auth.guard";
+import UnsavedChangesGuard from "@common/guards/unsaved-changes.guard";
 
 import AppComponent from "./app.component";
 import SpinnerComponent from "@components/spinner/spinner.component";

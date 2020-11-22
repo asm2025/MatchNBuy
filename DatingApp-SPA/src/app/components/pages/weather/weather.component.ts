@@ -78,7 +78,7 @@ export default class WeatherComponent implements OnInit, OnDestroy {
 	}
 
 	key(date: Date | string): string {
-		return DateTimeHelper.formatDateTime(date);
+		return DateTimeHelper.formatKeyDateTime(date);
 	}
 
 	icon(forecast: IForecast): string {

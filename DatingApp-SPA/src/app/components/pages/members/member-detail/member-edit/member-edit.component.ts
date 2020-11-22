@@ -14,7 +14,7 @@ import { takeUntil, catchError } from "rxjs/operators";
 import { IUser, IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
-import { IIsDirty } from "@/_guards/unsaved-changes.guard";
+import { IIsDirty } from "@common/guards/unsaved-changes.guard";
 
 @Component({
 	selector: "app-member-edit",

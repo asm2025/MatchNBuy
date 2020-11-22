@@ -100,28 +100,28 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				if (!this.user) return;
 
 				switch (tab) {
-					case 1:
-						// about user
-						break;
-					case 2:
-						// photos
-						if (this.imagesPagination.page !== 1) {
-							this.imagesPagination = {
-								...this.imagesPagination,
-								page: 1
-							};
-						} else {
-							this.loadUserImages();
-						}
-						break;
-					case 3:
-						// messages
-						break;
+				case 1:
+					// about user
+					break;
+				case 2:
+					// photos
+					if (this.imagesPagination.page !== 1) {
+						this.imagesPagination = {
+							...this.imagesPagination,
+							page: 1
+						};
+					} else {
+						this.loadUserImages();
+					}
+					break;
+				case 3:
+					// messages
+					break;
 				}
 			});
 	}
 
-	ngAfterViewInit() {
+	ngAfterViewInit(): void {
 		this._route
 			.queryParams
 			.pipe(takeUntil(this.disposed$))
@@ -130,6 +130,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 					if (!this.id && params["id"]) {
 						this.id = params["id"];
 						this.loadUserData();
+						return;
 					}
 
 					let tab: number;
@@ -252,11 +253,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	loadUserData() {
-		if (!this.id) {
-			this.user = null;
-			return;
-		}
-
+		if (!this.id) return;
 		this._userClient
 			.get(this.id)
 			.pipe(catchError(error => {

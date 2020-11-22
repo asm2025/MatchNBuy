@@ -4,6 +4,7 @@ const DATE_FORMAT = "YYYY-MM-DD";
 const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm";
 const LONG_DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 const FULL_DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss.SSSS";
+const KEY_DATE_TIME_FORMAT = "YYYYMMDDHHmmssSSSS";
 const TIME_FORMAT = "HH:mm";
 const LONG_TIME_FORMAT = "HH:mm:ss";
 const FULL_TIME_FORMAT = "HH:mm:ss.SSSS";
@@ -31,6 +32,11 @@ export default class DateTimeHelper {
 
 	static formatDateFullTime(date: any): string {
 		const result = moment(date).format(FULL_DATE_TIME_FORMAT);
+		return result;
+	}
+
+	static formatKeyDateTime(date: any): string {
+		const result = moment(date).format(KEY_DATE_TIME_FORMAT);
 		return result;
 	}
 

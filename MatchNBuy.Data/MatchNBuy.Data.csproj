@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>20.11.19.16</FileVersion>
+		<FileVersion>20.11.19.2</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
@@ -28,7 +28,7 @@
 
 	<ItemGroup>
 		<Reference Include="asm">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
+		  <HintPath>..\..\..\..\..\Libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Core.Authentication.JwtBearer">
 		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Authentication.JwtBearer.dll</HintPath>

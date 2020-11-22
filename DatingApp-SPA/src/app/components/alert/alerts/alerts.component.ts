@@ -34,7 +34,11 @@ export default class AlertsGlobalComponent implements OnInit, OnDestroy {
 		this.service
 			.alertsChanges
 			.pipe(takeUntil(this.disposed$))
-			.subscribe(alert => this.alerts.push(alert));
+			.subscribe(alert => {
+				this.alerts.push(alert);
+				if (!alert.delay || alert.delay < 50) return;
+				setTimeout(() => this.closeAlert(alert), alert.delay);
+			});
 		this.service
 			.toastsChanges
 			.pipe(takeUntil(this.disposed$))

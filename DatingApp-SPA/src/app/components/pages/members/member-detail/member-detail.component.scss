@@ -91,11 +91,6 @@ $btn-padding-x-lg: $input-btn-padding-x-lg;
 
 .card-gallery {
 	.picsum-img-wrapper {
-		img {
-			position: relative;
-			width: 100%;
-		}
-
 		&:after {
 			content: '\A';
 			position: absolute;

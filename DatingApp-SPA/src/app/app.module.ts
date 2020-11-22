@@ -67,6 +67,7 @@ import HomeComponent from "@components/pages/home/home.component";
 import MemberListComponent from "@components/pages/members/member-list/member-list.component";
 import MemberCardComponent from "@components/pages/members/member-card/member-card.component";
 import MemberDetailComponent from "@components/pages/members/member-detail/member-detail.component";
+import MemberDetailResolver from "@components/pages/members/member-detail/member-detail.resolver";
 import MemberEditComponent from "@components/pages/members/member-detail/member-edit/member-edit.component";
 import MemberEditResolver from "@components/pages/members/member-detail/member-edit/member-edit.resolver";
 import MemberGalleryComponent from "@components/pages/members/member-detail/member-gallery/member-gallery.component";
@@ -153,6 +154,7 @@ import WeatherComponent from "@components/pages/weather/weather.component";
 		AlertService,
 		AuthGuard,
 		UnsavedChangesGuard,
+		MemberDetailResolver,
 		MemberEditResolver,
 		MemberPhotoEditorResolver
 	],

@@ -100,30 +100,30 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 				if (!this.user) return;
 
 				switch (tab) {
-				case 1:
-					// about user
-					break;
-				case 2:
-					// photos
-					if (this.imagesPagination.page !== 1) {
-						this.imagesPagination = {
-							...this.imagesPagination,
-							page: 1
-						};
-					} else {
-						this.loadUserImages();
-					}
-					break;
-				case 3:
-					// messages
-					break;
+					case 1:
+						// about user
+						break;
+					case 2:
+						// photos
+						if (this.imagesPagination.page !== 1) {
+							this.imagesPagination = {
+								...this.imagesPagination,
+								page: 1
+							};
+						} else {
+							this.loadUserImages();
+						}
+						break;
+					case 3:
+						// messages
+						break;
 				}
 			});
 	}
 
 	ngAfterViewInit(): void {
 		this._route
-			.queryParams
+			.params
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(params => {
 				setTimeout(() => {
@@ -144,7 +144,15 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 					this.selectTab(tab);
 				}, 0);
 			});
-		this.loadUserData();
+		this._route
+			.data
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(data => {
+				setTimeout(() => {
+					this.user = data["resolved"];
+					this.selectTab(this._tabSubject.value);
+				}, 0);
+			});
 	}
 
 	ngOnDestroy(): void {
@@ -205,7 +213,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderBeforeUploadItem(item: FileItem) {
-		this._alertService.toasts.info(`Uploading file '${item.file.name}', size: ${item.file.size} byte(s)...`);
+		this._alertService.alerts.info(`Uploading file '${item.file.name}', size: ${item.file.size} byte(s)...`, true, this._alertService.defaultDelay);
 	}
 
 	imageUploaderBuildItemForm(item: FileItem, form: FormData) {
@@ -217,16 +225,16 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	imageUploaderSuccessItem(item: FileItem) {
-		this._alertService.toasts.success(`File '${item.file.name}' was uploaded successfully.`);
+		this._alertService.alerts.success(`File '${item.file.name}' was uploaded successfully.`, true, this._alertService.defaultDelay);
 	}
 
 	imageUploaderErrorItem(item: FileItem, response: string, status: number) {
-		this._alertService.toasts.error(`File '${item.file.name}' failed to be uploaded. Status: ${status}. Response: ${response}`);
+		this._alertService.alerts.error(`File '${item.file.name}' failed to be uploaded. Status: ${status}. Response: ${response}`);
 		this._uploader.clearQueue();
 	}
 
 	imageUploaderCancelItem(item: FileItem) {
-		this._alertService.toasts.warning(`Uploading file '${item.file.name}' was cancelled.`);
+		this._alertService.alerts.warning(`Uploading file '${item.file.name}' was cancelled.`, true, this._alertService.defaultDelay);
 	}
 
 	imageUploaderComplete() {
@@ -253,7 +261,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 	}
 
 	loadUserData() {
-		if (!this.id) return;
+		if (!this.id) {
+			setTimeout(() => this.user = null, 0);
+			return;
+		}
 		this._userClient
 			.get(this.id)
 			.pipe(catchError(error => {

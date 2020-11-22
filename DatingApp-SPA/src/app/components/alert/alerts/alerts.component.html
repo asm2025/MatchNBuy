@@ -23,7 +23,7 @@
 				   [@fadeOutDownOnLeave]
 				   [header]="toast.title"
 				   [autohide]="isDismissible(toast)"
-				   [delay]="toast.delay || 5000"
+				   [delay]="toast.delay || service.defaultDelay"
 				   (hide)="closeToast(toast)">
 			<div class="toast-body">
 				<ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">

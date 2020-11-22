@@ -14,7 +14,7 @@
 				<dd>{{user.lastName}}</dd>
 			</dl>
 		</div>
-		<div *ngIf="!isCurrentUser" class="d-flex">
+		<div *ngIf="!isCurrentUser" class="btn-group">
 			<button *ngIf="user.canBeLiked" type="button" class="btn" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
 			<button *ngIf="user.canBeDisliked" type="button" class="btn" (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
 			<button type="button" class="btn" (click)="selectTab(3)"><fa-icon icon="envelope"></fa-icon></button>

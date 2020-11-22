@@ -7,6 +7,7 @@ import HomeComponent from "@components/pages/home/home.component";
 
 import MemberListComponent from "@components/pages/members/member-list/member-list.component";
 import MemberDetailComponent from "@components/pages/members/member-detail/member-detail.component";
+import MemberDetailResolver from "@components/pages/members/member-detail/member-detail.resolver";
 import MemberEditComponent from "@components/pages/members/member-detail/member-edit/member-edit.component";
 import MemberEditResolver from "@components/pages/members/member-detail/member-edit/member-edit.resolver";
 import MemberGalleryComponent from "@components/pages/members/member-detail/member-gallery/member-gallery.component";
@@ -53,28 +54,36 @@ export const routes: Routes = [{
 		},
 		{
 			path: ":id",
-			pathMatch: "full",
-			component: MemberDetailComponent
-		},
-		{
-			path: ":id/edit",
-			component: MemberEditComponent,
-			resolve: { resolved: MemberEditResolver },
-			canDeactivate: [UnsavedChangesGuard]
-		},
-		{
-			path: ":id/messages",
-			component: MemberMessagesComponent
-		},
-		{
-			path: ":id/gallery",
-			component: MemberGalleryComponent
-		},
-		{
-			path: ":id/gallery/:photoId",
-			component: MemberPhotoEditorComponent,
-			resolve: { resolved: MemberPhotoEditorResolver },
-			canDeactivate: [UnsavedChangesGuard]
+			children: [{
+				path: "",
+				pathMatch: "full",
+				component: MemberDetailComponent,
+				resolve: { resolved: MemberDetailResolver }
+			},
+			{
+				path: "edit",
+				component: MemberEditComponent,
+				resolve: { resolved: MemberEditResolver },
+				canDeactivate: [UnsavedChangesGuard]
+			},
+			{
+				path: "messages",
+				component: MemberMessagesComponent
+			},
+			{
+				path: "gallery",
+				children: [{
+					path: "",
+					pathMatch: "full",
+					component: MemberGalleryComponent
+				},
+				{
+					path: ":photoId",
+					component: MemberPhotoEditorComponent,
+					resolve: { resolved: MemberPhotoEditorResolver },
+					canDeactivate: [UnsavedChangesGuard]
+				}]
+			}]
 		}]
 	},
 	{
@@ -86,12 +95,15 @@ export const routes: Routes = [{
 		},
 		{
 			path: "threads",
-			pathMatch: "full",
-			component: ThreadsComponent
-		},
-		{
-			path: "threads/:id",
-			component: ThreadMessagesComponent
+			children: [{
+				path: "",
+				pathMatch: "full",
+				component: ThreadsComponent
+			},
+			{
+				path: ":id",
+				component: ThreadMessagesComponent
+			}],
 		}]
 	}]
 },

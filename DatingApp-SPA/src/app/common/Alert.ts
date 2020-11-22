@@ -25,7 +25,7 @@ export enum AlertTheme {
 export interface IAlert {
 	type?: AlertType;
 	content: string | TemplateRef<any>;
-	dismissable?: boolean | null | undefined;
+	dismissible?: boolean | null | undefined;
 	delay?: number | null | undefined;
 }
 
@@ -92,7 +92,7 @@ const alertUtil = {
 		return type;
 	},
 	isDismissible: (alert: IAlert): boolean => {
-		return alert.dismissable === undefined || alert.dismissable === null || alert.dismissable;
+		return alert.dismissible === undefined || alert.dismissible === null || alert.dismissible;
 	}
 
 };

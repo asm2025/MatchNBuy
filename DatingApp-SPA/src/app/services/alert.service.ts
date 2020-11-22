@@ -18,42 +18,60 @@ export default class AlertService implements OnDestroy {
 		this._toasts.complete();
 	}
 
+	get quickDelay(): number {
+		return 1000;
+	}
+
+	get defaultDelay(): number {
+		return 5000;
+	}
+
 	alerts = new class {
 		constructor(public readonly service: AlertService) {
 		}
 
-		success(message: string | TemplateRef<any>) {
+		success(message: string | TemplateRef<any>, dismissible: boolean | null | undefined = undefined, delay: number | null | undefined = undefined) {
 			this.service._alerts.next({
 				type: AlertType.Success,
-				content: message
+				content: message,
+				dismissible,
+				delay
 			});
 		}
 
-		error(message: string | TemplateRef<any>) {
+		error(message: string | TemplateRef<any>, dismissible: boolean | null | undefined = undefined, delay: number | null | undefined = undefined) {
 			this.service._alerts.next({
 				type: AlertType.Error,
-				content: message
+				content: message,
+				dismissible,
+				delay
 			});
 		}
 
-		warning(message: string | TemplateRef<any>) {
+		warning(message: string | TemplateRef<any>, dismissible: boolean | null | undefined = undefined, delay: number | null | undefined = undefined) {
 			this.service._alerts.next({
 				type: AlertType.Warning,
-				content: message
+				content: message,
+				dismissible,
+				delay
 			});
 		}
 
-		info(message: string | TemplateRef<any>) {
+		info(message: string | TemplateRef<any>, dismissible: boolean | null | undefined = undefined, delay: number | null | undefined = undefined) {
 			this.service._alerts.next({
 				type: AlertType.Information,
-				content: message
+				content: message,
+				dismissible,
+				delay
 			});
 		}
 
-		log(message: string | TemplateRef<any>) {
+		log(message: string | TemplateRef<any>, dismissible: boolean | null | undefined = undefined, delay: number | null | undefined = undefined) {
 			this.service._alerts.next({
 				type: AlertType.Debug,
-				content: message
+				content: message,
+				dismissible,
+				delay
 			});
 		}
 	}(this);

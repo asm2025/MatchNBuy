@@ -3,7 +3,6 @@ import { Resolve, Router, ActivatedRouteSnapshot } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { IUser } from "@data/model/User";
 import { IPhoto } from "@data/model/Photo";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
@@ -16,9 +15,10 @@ export default class MemberPhotoEditorResolver implements Resolve<IPhoto | null 
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IPhoto | null | undefined> {
-		const id = (<IUser>this._userClient.user).id;
+		const userId = this._userClient.userId;
+		if (!userId) return of(null);
 		return this._userClient
-			.defaultPhoto(id)
+			.defaultPhoto(userId)
 			.pipe(catchError(error => {
 					this._alertService.toasts.error(error.toString());
 					this._router.navigate(["/"]);

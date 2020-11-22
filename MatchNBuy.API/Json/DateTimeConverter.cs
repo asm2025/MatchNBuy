@@ -8,11 +8,12 @@ namespace MatchNBuy.API.Json
 	public class DateTimeConverter : JsonConverter<DateTime>
     {
 		/// <inheritdoc />
-		public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		public override DateTime Read(ref Utf8JsonReader reader, [NotNull] Type typeToConvert, JsonSerializerOptions options)
 		{
-			return !typeof(DateTime).IsAssignableFrom(typeToConvert)
-						? throw new InvalidOperationException()
-						: DateTime.Parse(reader.GetString());
+			if (!typeof(DateTime).IsAssignableFrom(typeToConvert)) throw new InvalidOperationException();
+			string value = reader.GetString();
+			if (string.IsNullOrEmpty(value)) return DateTime.MinValue;
+			return DateTime.Parse(value);
 		}
 
 		/// <inheritdoc />

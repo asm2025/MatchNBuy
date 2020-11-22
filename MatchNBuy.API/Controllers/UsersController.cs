@@ -22,6 +22,7 @@ using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
 using MatchNBuy.Model.TransferObjects;
 using JetBrains.Annotations;
+using MatchNBuy.API.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ using Thread = MatchNBuy.Model.Thread;
 namespace MatchNBuy.API.Controllers
 {
 	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	[ServiceFilter(typeof(LogUserActivity))]
 	[Route("[controller]")]
 	public class UsersController : ApiController
 	{

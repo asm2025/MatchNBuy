@@ -23,9 +23,9 @@ export default class NavComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this._userClient
-			.photoUrl
+			.user
 			.pipe(takeUntil(this.disposed$))
-			.subscribe(url => this.photoUrl = url);
+			.subscribe(() => this.photoUrl = this._userClient.photoUrl);
 	}
 
 	ngOnDestroy(): void {

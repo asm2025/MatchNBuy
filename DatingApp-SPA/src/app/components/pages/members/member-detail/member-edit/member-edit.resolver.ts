@@ -3,7 +3,7 @@ import { Resolve, Router, ActivatedRouteSnapshot } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { IUser, IUserToUpdate } from "@data/model/User";
+import { IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
@@ -15,9 +15,10 @@ export default class MemberEditResolver implements Resolve<IUserToUpdate | null 
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<IUserToUpdate | null | undefined> {
-		const id = (<IUser>this._userClient.user).id;
+		const userId = this._userClient.userId;
+		if (!userId) return of(null);
 		return this._userClient
-			.edit(id)
+			.edit(userId)
 			.pipe(catchError(error => {
 					this._alertService.toasts.error(error.toString());
 					this._router.navigate(["/"]);

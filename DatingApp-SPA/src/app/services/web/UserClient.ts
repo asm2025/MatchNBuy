@@ -46,9 +46,8 @@ export default class UserClient extends ApiClient<HttpClient> {
 	private readonly _jwt = new JwtHelperService();
 
 	private _token: string | null | undefined = null;
-	private _user: IUser | null | undefined = null;
-	private _photo = new BehaviorSubject<string>(config.users.defaultImage);
-	private _photoUrl = this._photo.asObservable();
+	private _userSubject = new BehaviorSubject<IUser | null | undefined>(null);
+	private _user = this._userSubject.asObservable();
 
 	constructor(client: HttpClient) {
 		super(`${config.backend.url}/Users`, client);
@@ -58,25 +57,34 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this._token;
 	}
 
-	get user(): IUser | null | undefined {
+	get user(): Observable<IUser | null | undefined> {
 		return this._user;
 	}
 
-	get photoUrl(): Observable<string> {
-		return this._photoUrl;
+	get userId(): string | null | undefined {
+		const user = this._userSubject.value as IUser;
+		return user.id;
+	}
+
+	get photoUrl(): string {
+		const user = this._userSubject.value as IUser;
+		return user.photoUrl || config.users.defaultImage;
 	}
 
 	setPhotoUrl(url: string | null | undefined) {
-		this._photo.next(url || config.users.defaultImage);
+		const oldUser = this._userSubject.value as IUser;
+		if (!oldUser) return;
+		const user: IUser = {
+			...oldUser,
+			photoUrl: url || config.users.defaultImage
+		}
+		this._userSubject.next(user);
 	}
 
 	// #region User
 	init() {
 		this._token = getToken();
-		this._user = getUser();
-
-		const photoUrl = this._user ? this._user.photoUrl : null;
-		this._photo.next(photoUrl || config.users.defaultImage);
+		this._userSubject.next(getUser());
 	}
 
 	list(userList: IUserList): Observable<IPaginated<IUserForList>> {
@@ -91,17 +99,17 @@ export default class UserClient extends ApiClient<HttpClient> {
 	login(userName: string, password: string): Observable<boolean> {
 		return this.client.post(`${this.baseUrl}/login`, { userName, password })
 			.pipe(map((res: any) => {
-				this._user = res.user as IUser;
+				const user = res.user as IUser;
 
-				if (!this._user) {
+				if (!user) {
 					this.logout();
 					return false;
 				}
 
 				setToken(res.token);
-				setUser(this._user);
+				setUser(user);
 				this.init();
-				return Boolean(this._user);
+				return Boolean(user);
 			}));
 	}
 

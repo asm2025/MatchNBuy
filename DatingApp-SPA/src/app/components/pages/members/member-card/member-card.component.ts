@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { IUserForList, IUser } from "@data/model/User";
+import { IUserForList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
@@ -27,9 +27,9 @@ export default class MemberCardComponent {
 	}
 
 	like(id: string) {
-		const user = this._userClient.user as IUser;
-		if (!user) return;
-		this._userClient.like(user.id, id)
+		const userId = this._userClient.userId;
+		if (!userId) return;
+		this._userClient.like(userId, id)
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
 				return of(-1);
@@ -41,9 +41,9 @@ export default class MemberCardComponent {
 	}
 
 	dislike(id: string) {
-		const user = this._userClient.user as IUser;
-		if (!user) return;
-		this._userClient.dislike(user.id, id)
+		const userId = this._userClient.userId;
+		if (!userId) return;
+		this._userClient.dislike(userId, id)
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
 				return of(-1);

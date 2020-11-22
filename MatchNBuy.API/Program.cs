@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using asm.Extensions;
 using asm.Helpers;
 using AutoMapper;
+using JetBrains.Annotations;
 using MatchNBuy.Data;
 using MatchNBuy.Model;
 using Microsoft.AspNetCore;
@@ -78,7 +79,8 @@ namespace MatchNBuy.API
 			}
 		}
 
-		public static IWebHostBuilder CreateHostBuilder(string[] args)
+		[NotNull]
+		public static IWebHostBuilder CreateHostBuilder([NotNull] string[] args)
 		{
 			return WebHost.CreateDefaultBuilder(args)
 						.UseSerilog()

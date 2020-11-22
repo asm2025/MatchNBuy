@@ -74,10 +74,10 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 		carouselConfig.showNavigationArrows = false;
 		carouselConfig.showNavigationIndicators = false;
 
-		const authUser = this._userClient.user;
-		if (!authUser) throw new Error("Unauthorized");
+		const userId = this._userClient.userId;
+		if (!userId) throw new Error("Unauthorized");
 		this._uploader = new FileUploader({
-			url: `${config.backend.url}/Users/${authUser.id}/Photos/Add`,
+			url: `${config.backend.url}/Users/${userId}/Photos/Add`,
 			//allowedFileType: ["image"],
 			maxFileSize: 10 * 1024 * 1024, // 10MB
 			authToken: `Bearer ${this._userClient.token}`,
@@ -162,9 +162,7 @@ export default class MemberDetailComponent implements OnInit, AfterViewInit, OnD
 
 	get isCurrentUser(): boolean {
 		if (!this.user) return false;
-		const currentUser = this._userClient.user;
-		if (!currentUser) return false;
-		return currentUser.id === this.user.id;
+		return this._userClient.userId === this.user.id;
 	}
 
 	get userImage(): string {

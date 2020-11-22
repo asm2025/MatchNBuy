@@ -19,6 +19,7 @@ using asm.Logging.Helpers;
 using asm.Newtonsoft.Serialization;
 using asm.Patterns.Imaging;
 using AutoMapper;
+using MatchNBuy.API.Filters;
 using MatchNBuy.API.ImageBuilders;
 using MatchNBuy.Data.Repositories;
 using MatchNBuy.Model;
@@ -57,7 +58,7 @@ namespace MatchNBuy.API
 		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
-		public void ConfigureServices(IServiceCollection services)
+		public void ConfigureServices([NotNull] IServiceCollection services)
 		{
 			string[] allowedClients = _configuration.GetValue("AllowedClients", "*").Split(';', StringSplitOptions.RemoveEmptyEntries);
 			services
@@ -98,7 +99,7 @@ namespace MatchNBuy.API
 				})
 				// Helpers
 				.AddHttpContextAccessor()
-
+				// Image Builders
 				.AddSingleton<IUserImageBuilder, UserImageBuilder>()
 				// Mapper
 				.AddAutoMapper((provider, builder) => builder.AddProfile(new AutoMapperProfiles()),
@@ -226,6 +227,8 @@ namespace MatchNBuy.API
 				// MVC
 				.AddDefaultCors(allowedClients)
 				.AddForwardedHeaders()
+				// Filters
+				.AddScoped<LogUserActivity>()
 				.AddControllers()
 				.AddNewtonsoftJson(options =>
 				{

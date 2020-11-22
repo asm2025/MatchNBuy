@@ -18,7 +18,7 @@ namespace MatchNBuy.API.Filters
 			string userId = resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			IUserRepository userRepository = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
 			User user = await userRepository.GetAsync(userId);
-			user.LastActive = DateTime.Now;
+			user.LastActive = DateTime.UtcNow;
 			await userRepository.Context.SaveChangesAsync();
 		}
 	}

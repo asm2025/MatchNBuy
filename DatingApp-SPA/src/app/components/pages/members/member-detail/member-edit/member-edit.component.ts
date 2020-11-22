@@ -11,7 +11,7 @@ import { NgForm } from "@angular/forms";
 import { ReplaySubject, of } from "rxjs";
 import { takeUntil, catchError } from "rxjs/operators";
 
-import { IUser, IUserToUpdate } from "@data/model/User";
+import { IUserToUpdate } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 import { IIsDirty } from "@common/guards/unsaved-changes.guard";
@@ -40,9 +40,9 @@ export default class MemberEditComponent implements OnInit, AfterViewInit, OnDes
 
 	ngOnInit() {
 		this._userClient
-			.photoUrl
+			.user
 			.pipe(takeUntil(this.disposed$))
-			.subscribe(url => this.photoUrl = url);
+			.subscribe(() => this.photoUrl = this._userClient.photoUrl);
 	}
 
 	ngAfterViewInit() {
@@ -62,10 +62,11 @@ export default class MemberEditComponent implements OnInit, AfterViewInit, OnDes
 	}
 
 	updateUser() {
-		if (!this._userClient.user || !this.user) return;
-		const id = (<IUser>this._userClient.user).id;
+		if (!this.user) return;
+		const userId = this._userClient.userId;
+		if (!userId) return;
 		this._userClient
-			.update(id, this.user)
+			.update(userId, this.user)
 			.pipe(catchError(error => {
 				this._alertService.alerts.error(error.toString());
 				return of(null);

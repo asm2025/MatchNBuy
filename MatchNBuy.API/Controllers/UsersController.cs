@@ -25,6 +25,7 @@ using JetBrains.Annotations;
 using MatchNBuy.API.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -215,6 +216,14 @@ namespace MatchNBuy.API.Controllers
 				token = user.Token,
 				user = userForLoginDisplay
 			});
+		}
+
+		[HttpPost("[action]")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> Logout(CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			throw new NotImplementedException();
 		}
 
 		[AllowAnonymous]

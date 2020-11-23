@@ -531,7 +531,7 @@ namespace MatchNBuy.Data.Repositories
 									: result.IsLockedOut
 										? "User is locked out."
 										: "User is not allowed.";
-				throw new Exception(message);
+				throw new UnauthorizedAccessException(message);
 			}
 
 			string host = SignInManager.Context?.Request.Host.Host;
@@ -558,7 +558,7 @@ namespace MatchNBuy.Data.Repositories
 
 			JwtSecurityToken securityToken = SecurityTokenHelper.CreateToken(tokenDescriptor);
 			user.Token = SecurityTokenHelper.Value(securityToken);
-			user.LastActive = DateTime.Now;
+			user.LastActive = DateTime.UtcNow;
 			Context.Entry(user).State = EntityState.Modified;
 			await Context.SaveChangesAsync(token);
 			return user;

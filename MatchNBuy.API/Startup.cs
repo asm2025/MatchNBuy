@@ -193,7 +193,13 @@ namespace MatchNBuy.API
 				//	.AddAspNetIdentity<User>()
 				// Jwt Bearer
 				.AddJwtBearerAuthentication()
-				.AddCookie(options => options.SlidingExpiration = true)
+				.AddCookie(options =>
+				{
+					options.SlidingExpiration = true;
+					options.LoginPath = "/users/login";
+					options.LogoutPath = "/users/logout";
+					options.ExpireTimeSpan = TimeSpan.FromMinutes(_configuration.GetValue("jwt:timeout", 20).NotBelow(5));
+				})
 				.AddJwtBearerOptions(options =>
 				{
 					SecurityKey signingKey = SecurityKeyHelper.CreateSymmetricKey(_configuration.GetValue<string>("jwt:signingKey"), 256);

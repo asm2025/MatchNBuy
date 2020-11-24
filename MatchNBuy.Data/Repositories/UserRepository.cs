@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace MatchNBuy.Data.Repositories
 {
@@ -498,7 +499,7 @@ namespace MatchNBuy.Data.Repositories
 			return new ValueTask<ClaimsPrincipal>(SignInManager.CreateUserPrincipalAsync(user));
 		}
 
-		public async ValueTask<User> SignInAsync(string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
+		public async ValueTask<TokenSignInResult> SignInAsync(string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
 			User user = await FindByNameAsync(userName, token);
 			return user == null
@@ -506,62 +507,61 @@ namespace MatchNBuy.Data.Repositories
 						: await SignInAsync(user, password, lockoutOnFailure, token);
 		}
 
-		public async ValueTask<User> SignInAsync(User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
+		public async ValueTask<TokenSignInResult> SignInAsync(User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			SignInResult result;
 
 			if (string.IsNullOrEmpty(password))
 			{
 				await SignInManager.SignInAsync(user, true);
-				result = SignInResult.Success;
+				token.ThrowIfCancellationRequested();
 			}
 			else
 			{
-				result = await SignInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure);
-			}
-
-			token.ThrowIfCancellationRequested();
-
-			if (!result.Succeeded)
-			{
-				string message = result.RequiresTwoFactor
-									? "User login requires two factors authentication."
-									: result.IsLockedOut
-										? "User is locked out."
-										: "User is not allowed.";
-				throw new UnauthorizedAccessException(message);
+				SignInResult result = await SignInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure);
+				token.ThrowIfCancellationRequested();
+				if (result.RequiresTwoFactor) return TokenSignInResult.TwoFactorRequired;
+				if (result.IsLockedOut) return TokenSignInResult.LockedOut;
+				if (!result.Succeeded) return TokenSignInResult.NotAllowed;
 			}
 
 			string host = SignInManager.Context?.Request.Host.Host;
 			ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
 			token.ThrowIfCancellationRequested();
 
+			IList<string> roles = await UserManager.GetRolesAsync(user);
+			token.ThrowIfCancellationRequested();
+
+			ClaimsIdentity subject = new ClaimsIdentity(principal.Identity, null, JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+			subject.AddClaim(new Claim(ClaimTypes.GivenName, user.KnownAs ?? $"{user.FirstName} {user.LastName}".Trim()));
+			subject.AddClaim(new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty));
+			subject.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+			subject.AddClaim(new Claim(ClaimTypes.Gender, user.Gender.ToString()));
+			subject.AddClaim(new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString(User.DATE_FORMAT)));
+			subject.AddClaim(new Claim(ClaimTypes.Uri, user.PhotoUrl ?? string.Empty));
+			subject.AddClaim(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+			foreach (string role in roles)
+				subject.AddClaim(new Claim(ClaimTypes.Role, role));
+
 			SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
 			{
 				Issuer = host,
 				Audience = host,
-				Subject = new ClaimsIdentity(principal.Identity, new[]
-				{
-					new Claim(ClaimTypes.GivenName, user.KnownAs ?? $"{user.FirstName} {user.LastName}".Trim()),
-					new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
-					new Claim(ClaimTypes.Email, user.Email),
-					new Claim(ClaimTypes.Gender, user.Gender.ToString()),
-					new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString(User.DATE_FORMAT)),
-					new Claim(ClaimTypes.Uri, user.PhotoUrl ?? string.Empty)
-				}, JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role),
+				Subject = subject,
 				Expires = DateTime.UtcNow.AddMinutes(Configuration.GetValue<int>("jwt:timeout").NotBelow(1)),
 				SigningCredentials = new SigningCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:signingKey"), 256), SecurityAlgorithms.HmacSha256Signature),
 				//EncryptingCredentials = new EncryptingCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:encryptionKey"), 256), SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes128CbcHmacSha256)
 			};
 
 			JwtSecurityToken securityToken = SecurityTokenHelper.CreateToken(tokenDescriptor);
-			user.Token = SecurityTokenHelper.Value(securityToken);
+			string accessToken = SecurityTokenHelper.Value(securityToken);
+			// todo string refreshToken = "";
 			user.LastActive = DateTime.UtcNow;
 			Context.Entry(user).State = EntityState.Modified;
 			await Context.SaveChangesAsync(token);
-			return user;
+			return TokenSignInResult.Success(user, accessToken, refreshToken);
 		}
 
 		public bool IsSignedIn(ClaimsPrincipal principal)

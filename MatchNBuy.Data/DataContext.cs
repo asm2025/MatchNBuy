@@ -48,6 +48,7 @@ namespace MatchNBuy.Data
 		{
 		}
 
+		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<Country> Countries { get; set; }
 		public DbSet<City> Cities { get; set; }
 		public DbSet<Photo> Photos { get; set; }
@@ -102,6 +103,39 @@ namespace MatchNBuy.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
+			modelBuilder.Entity<UserRole>(userRole =>
+			{
+				userRole.HasKey(e => new
+				{
+					e.UserId,
+					e.RoleId
+				});
+
+				userRole.HasOne(e => e.User)
+							.WithMany(e => e.UserRoles)
+							.HasForeignKey(e => e.UserId)
+							.OnDelete(DeleteBehavior.Restrict);
+
+				userRole.HasOne(e => e.Role)
+							.WithMany(e => e.UserRoles)
+							.HasForeignKey(e => e.RoleId)
+							.OnDelete(DeleteBehavior.Restrict);
+			});
+
+			modelBuilder.Entity<RefreshToken>(token =>
+			{
+				token.HasOne(e => e.User)
+					.WithMany(e => e.RefreshTokens)
+					.HasForeignKey(e => e.UserId)
+					.OnDelete(DeleteBehavior.Cascade);
+
+				token.HasIndex(e => e.Created);
+				token.HasIndex(e => e.CreatedBy);
+				token.HasIndex(e => e.Expires);
+				token.HasIndex(e => e.Revoked);
+				token.HasIndex(e => e.RevokedBy);
+			});
+
 			modelBuilder.Entity<Country>(country =>
 			{
 				country.Property(e => e.Code)
@@ -124,23 +158,14 @@ namespace MatchNBuy.Data
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 
-			modelBuilder.Entity<UserRole>(userRole =>
+			modelBuilder.Entity<Photo>(photo =>
 			{
-				userRole.HasKey(e => new
-				{
-					e.UserId,
-					e.RoleId
-				});
+				photo.HasOne(e => e.User)
+					.WithMany(e => e.Photos)
+					.HasForeignKey(e => e.UserId)
+					.OnDelete(DeleteBehavior.Cascade);
 
-				userRole.HasOne(e => e.User)
-							.WithMany(e => e.UserRoles)
-							.HasForeignKey(e => e.UserId)
-							.OnDelete(DeleteBehavior.Restrict);
-
-				userRole.HasOne(e => e.Role)
-							.WithMany(e => e.UserRoles)
-							.HasForeignKey(e => e.RoleId)
-							.OnDelete(DeleteBehavior.Restrict);
+				photo.HasIndex(e => e.DateAdded);
 			});
 
 			modelBuilder.Entity<UserInterest>(userInterest =>
@@ -162,16 +187,6 @@ namespace MatchNBuy.Data
 							.OnDelete(DeleteBehavior.Cascade);
 			});
 
-			modelBuilder.Entity<Photo>(photo =>
-			{
-				photo.HasOne(e => e.User)
-					.WithMany(e => e.Photos)
-					.HasForeignKey(e => e.UserId)
-					.OnDelete(DeleteBehavior.Cascade);
-
-				photo.HasIndex(e => e.DateAdded);
-			});
-
 			modelBuilder.Entity<Like>(like =>
 			{
 				like.HasKey(e => new
@@ -189,6 +204,23 @@ namespace MatchNBuy.Data
 					.WithMany(e => e.Likees)
 					.HasForeignKey(e => e.LikerId)
 					.OnDelete(DeleteBehavior.Cascade);
+			});
+
+			modelBuilder.Entity<Message>(message =>
+			{
+				message.HasOne(e => e.Sender)
+						.WithMany(e => e.MessagesSent)
+						.HasForeignKey(e => e.SenderId)
+						.OnDelete(DeleteBehavior.Cascade);
+
+				message.HasOne(u => u.Recipient)
+						.WithMany(m => m.MessagesReceived)
+						.HasForeignKey(e => e.RecipientId)
+						.OnDelete(DeleteBehavior.Cascade);
+
+				message.HasIndex(e => e.MessageSent);
+				message.HasIndex(e => e.DateRead);
+				message.HasIndex(e => e.IsArchived);
 			});
 
 			modelBuilder.Entity<Thread>(thread =>
@@ -210,23 +242,6 @@ namespace MatchNBuy.Data
 
 				thread.HasIndex(e => e.Modified);
 				thread.HasIndex(e => e.IsArchived);
-			});
-
-			modelBuilder.Entity<Message>(message =>
-			{
-				message.HasOne(e => e.Sender)
-						.WithMany(e => e.MessagesSent)
-						.HasForeignKey(e => e.SenderId)
-						.OnDelete(DeleteBehavior.Cascade);
-
-				message.HasOne(u => u.Recipient)
-						.WithMany(m => m.MessagesReceived)
-						.HasForeignKey(e => e.RecipientId)
-						.OnDelete(DeleteBehavior.Cascade);
-
-				message.HasIndex(e => e.MessageSent);
-				message.HasIndex(e => e.DateRead);
-				message.HasIndex(e => e.IsArchived);
 			});
 		}
 

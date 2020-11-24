@@ -204,17 +204,27 @@ namespace MatchNBuy.API.Controllers
 		{
 			token.ThrowIfCancellationRequested();
 			
-			User user = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
+			TokenSignInResult result = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
-			if (user == null || string.IsNullOrEmpty(user.Token)) return Unauthorized(loginParams.UserName);
+			if (!result.Succeeded) return Unauthorized(result);
 			
-			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(user);
-			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(user.Id, user.PhotoUrl).String();
+			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(result.User);
+			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(result.User.Id, result.User.PhotoUrl).String();
 			return Ok(new
 			{
-				token = user.Token,
+				token = result.Token,
+				refreshToken = result.RefreshToken,
 				user = userForLoginDisplay
 			});
+		}
+
+		[AllowAnonymous]
+		[HttpPost("[action]")]
+		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
+		public async Task<IActionResult> RefreshToken(CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested();
+			throw new NotImplementedException();
 		}
 
 		[HttpPost("[action]")]

@@ -59,9 +59,6 @@ namespace MatchNBuy.Model
         
 		[Required]
 		public Guid CityId { get; set; }
-		
-		[StringLength(512)]
-		public string Token { get; set; }
 
 		[NotMapped]
 		public string PhotoUrl => Photos?.FirstOrDefault(e => e.IsDefault)?.Url;
@@ -69,6 +66,8 @@ namespace MatchNBuy.Model
 		public virtual City City { get; set; }
 
 		public virtual ICollection<UserRole> UserRoles { get; set; }
+
+		public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
 		public virtual ICollection<UserInterest> UserInterests { get; set; }
 

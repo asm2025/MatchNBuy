@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,6 +8,7 @@ namespace MatchNBuy.Model
 	{
 		public User User { get; protected set; }
 		public string Token { get; protected set; }
+		[JsonIgnore] // refresh token is returned in http only cookie
 		public string RefreshToken { get; protected set; }
 
 		/// <summary>
@@ -44,7 +46,7 @@ namespace MatchNBuy.Model
 		/// </summary>
 		/// <returns>A <see cref="SignInResult"/> that represents a successful sign-in.</returns>
 		[NotNull]
-		public static TokenSignInResult Success([NotNull] User user, [NotNull] string token, [NotNull] string refreshToken)
+		public static TokenSignInResult SuccessFrom([NotNull] User user, [NotNull] string token, [NotNull] string refreshToken)
 		{
 			return new TokenSignInResult
 			{

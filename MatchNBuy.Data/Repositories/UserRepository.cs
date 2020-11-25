@@ -13,6 +13,7 @@ using MatchNBuy.Model;
 using JetBrains.Annotations;
 using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -526,42 +527,21 @@ namespace MatchNBuy.Data.Repositories
 				if (!result.Succeeded) return TokenSignInResult.NotAllowed;
 			}
 
-			string host = SignInManager.Context?.Request.Host.Host;
-			ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
-			token.ThrowIfCancellationRequested();
+			RefreshToken refreshToken = await GenerateRefreshToken(user, token);
 
-			IList<string> roles = await UserManager.GetRolesAsync(user);
-			token.ThrowIfCancellationRequested();
-
-			ClaimsIdentity subject = new ClaimsIdentity(principal.Identity, null, JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-			subject.AddClaim(new Claim(ClaimTypes.GivenName, user.KnownAs ?? $"{user.FirstName} {user.LastName}".Trim()));
-			subject.AddClaim(new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty));
-			subject.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-			subject.AddClaim(new Claim(ClaimTypes.Gender, user.Gender.ToString()));
-			subject.AddClaim(new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString(User.DATE_FORMAT)));
-			subject.AddClaim(new Claim(ClaimTypes.Uri, user.PhotoUrl ?? string.Empty));
-			subject.AddClaim(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
-			foreach (string role in roles)
-				subject.AddClaim(new Claim(ClaimTypes.Role, role));
-
-			SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+			if (Context.Entry(refreshToken).State == EntityState.Detached)
 			{
-				Issuer = host,
-				Audience = host,
-				Subject = subject,
-				Expires = DateTime.UtcNow.AddMinutes(Configuration.GetValue<int>("jwt:timeout").NotBelow(1)),
-				SigningCredentials = new SigningCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:signingKey"), 256), SecurityAlgorithms.HmacSha256Signature),
-				//EncryptingCredentials = new EncryptingCredentials(SecurityKeyHelper.CreateSymmetricKey(Configuration.GetValue<string>("jwt:encryptionKey"), 256), SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes128CbcHmacSha256)
-			};
+				await Context.RefreshTokens.AddAsync(refreshToken, token);
+				token.ThrowIfCancellationRequested();
+			}
 
-			JwtSecurityToken securityToken = SecurityTokenHelper.CreateToken(tokenDescriptor);
-			string accessToken = SecurityTokenHelper.Value(securityToken);
-			// todo string refreshToken = "";
 			user.LastActive = DateTime.UtcNow;
 			Context.Entry(user).State = EntityState.Modified;
 			await Context.SaveChangesAsync(token);
-			return TokenSignInResult.Success(user, accessToken, refreshToken);
+			token.ThrowIfCancellationRequested();
+
+			string accessToken = await GenerateToken(user, token);
+			return TokenSignInResult.SuccessFrom(user, accessToken, refreshToken.Value);
 		}
 
 		public bool IsSignedIn(ClaimsPrincipal principal)
@@ -748,6 +728,119 @@ namespace MatchNBuy.Data.Repositories
 			}
 
 			return set;
+		}
+
+		private async Task<string> GenerateToken([NotNull] User user, CancellationToken token = default(CancellationToken))
+		{
+			const int TOKEN_MIN = 1;
+			const int TOKEN_MAX = 1440;
+			const int TOKEN_DEF = 20;
+
+			const string AUDIENCE_DEF = "api://default";
+
+			ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
+			token.ThrowIfCancellationRequested();
+
+			IList<string> roles = await UserManager.GetRolesAsync(user);
+			token.ThrowIfCancellationRequested();
+
+			ClaimsIdentity subject = new ClaimsIdentity(principal.Identity, null, JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+			subject.AddClaim(new Claim(ClaimTypes.GivenName, user.KnownAs ?? $"{user.FirstName} {user.LastName}".Trim()));
+			subject.AddClaim(new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty));
+			subject.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+			subject.AddClaim(new Claim(ClaimTypes.Gender, user.Gender.ToString()));
+			subject.AddClaim(new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString(User.DATE_FORMAT)));
+			subject.AddClaim(new Claim(ClaimTypes.Uri, user.PhotoUrl ?? string.Empty));
+			subject.AddClaim(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+			foreach (string role in roles)
+				subject.AddClaim(new Claim(ClaimTypes.Role, role));
+
+			HttpRequest request = SignInManager.Context?.Request;
+			string host = request?.Host.Host;
+			string audience = Configuration.GetValue("jwt:audience", AUDIENCE_DEF);
+			int timeout = Configuration.GetValue<int>("jwt:timeout")
+										.Within(0, TOKEN_MAX)
+										.IfLessThan(TOKEN_MIN, TOKEN_DEF);
+			string signingKey = Configuration.GetValue<string>("jwt:signingKey");
+			string encryptionKey = Configuration.GetValue<string>("jwt:encryptionKey");
+
+			SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+			{
+				Issuer = host,
+				Audience = audience,
+				Subject = subject,
+				IssuedAt = DateTime.UtcNow,
+				Expires = DateTime.UtcNow.AddMinutes(timeout),
+			};
+
+			if (!string.IsNullOrEmpty(signingKey))
+				tokenDescriptor.SigningCredentials = new SigningCredentials(SecurityKeyHelper.CreateSymmetricKey(signingKey, 256), SecurityAlgorithms.HmacSha256Signature);
+
+			// It is not recommended to use this if JS libraries will handle tokens unless they can and will do decryption.
+			if (!string.IsNullOrEmpty(encryptionKey))
+				tokenDescriptor.EncryptingCredentials = new EncryptingCredentials(SecurityKeyHelper.CreateSymmetricKey(encryptionKey, 256), SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes128CbcHmacSha256);
+
+			JwtSecurityToken securityToken = SecurityTokenHelper.CreateToken(tokenDescriptor);
+			return SecurityTokenHelper.Value(securityToken);
+		}
+
+		[ItemNotNull]
+		private async Task<RefreshToken> GenerateRefreshToken([NotNull] User user, CancellationToken token = default(CancellationToken))
+		{
+			const int TOKEN_MIN = 1;
+			const int TOKEN_MAX = 1440;
+			const int TOKEN_DEF = 720;
+
+			HttpRequest request = SignInManager.Context?.Request;
+			string source = request.GetIPAddress();
+			IList<RefreshToken> oldTokens = await Context.RefreshTokens
+										.Where(e => e.UserId == user.Id && e.CreatedBy == source && e.Revoked == null)
+										.OrderByDescending(e => e.Expires)
+										.ToListAsync(token);
+			int offset = 0;
+			RefreshToken refreshToken = null;
+
+			if (oldTokens.Count > 0)
+			{
+				refreshToken = oldTokens[0];
+
+				if ((DateTime.UtcNow - refreshToken.Expires).TotalSeconds < 30.0d) 
+					refreshToken = null;
+				else
+					offset++;
+			}
+
+			if (refreshToken == null)
+			{
+				byte[] buffer = new byte[64];
+				RNGRandomHelper.Default.GetNonZeroBytes(buffer);
+				int timeout = Configuration.GetValue<int>("jwt:refreshInterval")
+											.Within(0, TOKEN_MAX)
+											.IfLessThan(TOKEN_MIN, TOKEN_DEF);
+				refreshToken = new RefreshToken
+				{
+					Value = Convert.ToBase64String(buffer),
+					UserId = user.Id,
+					Expires = DateTime.UtcNow.AddMinutes(timeout),
+					Created = DateTime.UtcNow,
+					CreatedBy = source
+				};
+			}
+
+			if (oldTokens.Count > 0)
+			{
+				for (int i = offset; i < oldTokens.Count; i++)
+				{
+					RefreshToken oldRefreshToken = oldTokens[i];
+					oldRefreshToken.Revoked = DateTime.UtcNow;
+					oldRefreshToken.RevokedBy = refreshToken.CreatedBy;
+					oldRefreshToken.ReplacedBy = refreshToken.Value;
+					Context.Entry(oldRefreshToken).State = EntityState.Modified;
+				}
+			}
+
+			return refreshToken;
 		}
 	}
 }

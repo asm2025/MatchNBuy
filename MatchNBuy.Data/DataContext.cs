@@ -134,6 +134,7 @@ namespace MatchNBuy.Data
 				token.HasIndex(e => e.Expires);
 				token.HasIndex(e => e.Revoked);
 				token.HasIndex(e => e.RevokedBy);
+				token.HasIndex(e => e.ReplacedBy);
 			});
 
 			modelBuilder.Entity<Country>(country =>

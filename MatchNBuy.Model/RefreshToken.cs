@@ -11,7 +11,7 @@ namespace MatchNBuy.Model
 	public class RefreshToken : IEntity
 	{
 		[Key]
-		[StringLength(90, MinimumLength = 80)]
+		[StringLength(90)]
 		public string Value { get; set; }
 		[Required]
 		[StringLength(128, MinimumLength = 128)]
@@ -20,10 +20,13 @@ namespace MatchNBuy.Model
 		public DateTime Created { get; set; }
 		public DateTime Expires { get; set; }
 		[Required]
+		[StringLength(256)]
 		public string CreatedBy { get; set; }
 		public DateTime? Revoked { get; set; }
+		[StringLength(256)]
 		public string RevokedBy { get; set; }
-		public string ReplacedByToken { get; set; }
+		[StringLength(90)]
+		public string ReplacedBy { get; set; }
 
 		[NotMapped]
 		public bool IsExpired => DateTime.UtcNow >= Expires;

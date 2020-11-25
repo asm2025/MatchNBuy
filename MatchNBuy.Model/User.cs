@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json.Serialization;
 using asm.Data.Model;
 using asm.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -67,6 +68,7 @@ namespace MatchNBuy.Model
 
 		public virtual ICollection<UserRole> UserRoles { get; set; }
 
+		[JsonIgnore]
 		public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
 		public virtual ICollection<UserInterest> UserInterests { get; set; }

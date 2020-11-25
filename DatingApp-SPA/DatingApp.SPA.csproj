@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>20.11.24.0</FileVersion>
+		<FileVersion>20.11.25.0</FileVersion>
 		<LangVersion>9.0</LangVersion>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 		<OutputType>Library</OutputType>

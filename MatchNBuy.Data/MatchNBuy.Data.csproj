@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>20.11.24.0</FileVersion>
+		<FileVersion>20.11.25.0</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
@@ -35,6 +35,9 @@
 		</Reference>
 		<Reference Include="asm.Core.Data.Entity">
 			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Data.Entity.dll</HintPath>
+		</Reference>
+		<Reference Include="asm.Core.Web">
+		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Web.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Data">
 			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Data.dll</HintPath>

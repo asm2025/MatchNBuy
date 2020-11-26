@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 import { JwtHelperService } from "@auth0/angular-jwt";
-import { Observable, BehaviorSubject } from "rxjs";
+import { Observable, BehaviorSubject, of } from "rxjs";
 import { map } from "rxjs/operators";
 import querystring from "querystring";
 
@@ -18,21 +19,21 @@ export function getToken(): string | null {
 	return localStorage.getItem("SESSIONID");
 }
 
-function setToken(value: string | null | undefined) {
+function setSession(value: string | null | undefined) {
 	if (!value)
 		localStorage.removeItem("SESSIONID");
 	else
 		localStorage.setItem("SESSIONID", value);
 }
 
-function getUser(): IUser | null | undefined {
+function getSessionUser(): IUser | null | undefined {
 	if (!getToken()) return null;
 	const jsonUser = localStorage.getItem("USER");
 	if (!jsonUser) return null;
 	return JSON.parse(jsonUser) as IUser;
 }
 
-function setUser(value: IUser | null | undefined) {
+function setSessionUser(value: IUser | null | undefined) {
 	if (!value)
 		localStorage.removeItem("USER");
 	else
@@ -48,8 +49,10 @@ export default class UserClient extends ApiClient<HttpClient> {
 	private _token: string | null | undefined = null;
 	private _userSubject = new BehaviorSubject<IUser | null | undefined>(null);
 	private _user = this._userSubject.asObservable();
+	private _refreshTokenTimeout: ReturnType<typeof setTimeout>;
 
-	constructor(client: HttpClient) {
+	constructor(private readonly _router: Router,
+		client: HttpClient) {
 		super(`${config.backend.url}/Users`, client);
 	}
 
@@ -82,11 +85,6 @@ export default class UserClient extends ApiClient<HttpClient> {
 	}
 
 	// #region User
-	init() {
-		this._token = getToken();
-		this._userSubject.next(getUser());
-	}
-
 	list(userList: IUserList): Observable<IPaginated<IUserForList>> {
 		const params = querystring.stringify(<any>userList);
 		return this.client.get<IPaginated<IUserForList>>(`${this.baseUrl}/?${params}`);
@@ -97,26 +95,46 @@ export default class UserClient extends ApiClient<HttpClient> {
 	}
 
 	login(userName: string, password: string): Observable<boolean> {
-		return this.client.post(`${this.baseUrl}/login`, { userName, password })
+		return this.client.post(`${this.baseUrl}/login`, { userName, password }, { withCredentials: true })
 			.pipe(map((res: any) => {
 				const user = res.user as IUser;
 
 				if (!user) {
-					this.logout();
+					this.clearLogin();
 					return false;
 				}
 
-				setToken(res.token);
-				setUser(user);
+				setSession(res.token);
+				setSessionUser(user);
 				this.init();
 				return Boolean(user);
 			}));
 	}
 
-	logout() {
-		setToken(null);
-		setUser(null);
-		this.init();
+	refreshToken(): Observable<any> {
+		return this.client.post(`${this.baseUrl}/refreshToken`, {}, { withCredentials: true })
+			.pipe(map((res: any) => {
+				const user = res.user as IUser;
+
+				if (!user) {
+					this.clearLogin();
+					return false;
+				}
+
+				setSession(res.token);
+				setSessionUser(user);
+				this.init();
+				return Boolean(user);
+			}));
+	}
+
+	logout(): Observable<any> {
+		this.stopRefreshTokenTimer();
+		return this.client.post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
+			.pipe(() => {
+				this.clearLogin();
+				return of(null);
+			});
 	}
 
 	isSignedIn(): boolean {
@@ -144,6 +162,49 @@ export default class UserClient extends ApiClient<HttpClient> {
 
 	delete(id: string): Observable<any> {
 		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(id)}/Delete`);
+	}
+
+	private init() {
+		this._token = getToken();
+
+		const user = getSessionUser();
+		this._userSubject.next(user);
+
+		if (user)
+			this.startRefreshTokenTimer();
+		else
+			this.stopRefreshTokenTimer();
+	}
+
+	private startRefreshTokenTimer() {
+		this.stopRefreshTokenTimer();
+
+		const token = getToken();
+		if (!token) return;
+
+		let expires: Date | null;
+
+		try {
+			expires = this._jwt.getTokenExpirationDate();
+		} catch (e) {
+			return;
+		}
+
+		if (!expires) return;
+
+		const timeout = expires.getTime() - Date.now() - (60 * 1000);
+		if (timeout <= 0) return;
+		this._refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
+	}
+
+	private stopRefreshTokenTimer() {
+		clearTimeout(this._refreshTokenTimeout);
+	}
+
+	private clearLogin() {
+		setSession(null);
+		setSessionUser(null);
+		this.init();
 	}
 	// #endregion
 

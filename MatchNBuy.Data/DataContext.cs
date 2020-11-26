@@ -122,19 +122,22 @@ namespace MatchNBuy.Data
 							.OnDelete(DeleteBehavior.Restrict);
 			});
 
-			modelBuilder.Entity<RefreshToken>(token =>
+			modelBuilder.Entity<User>(user =>
 			{
-				token.HasOne(e => e.User)
-					.WithMany(e => e.RefreshTokens)
-					.HasForeignKey(e => e.UserId)
-					.OnDelete(DeleteBehavior.Cascade);
+				user.OwnsMany(e => e.RefreshTokens, token =>
+				{
+					token.HasOne(e => e.User)
+						.WithMany(e => e.RefreshTokens)
+						.HasForeignKey(e => e.UserId)
+						.OnDelete(DeleteBehavior.Cascade);
 
-				token.HasIndex(e => e.Created);
-				token.HasIndex(e => e.CreatedBy);
-				token.HasIndex(e => e.Expires);
-				token.HasIndex(e => e.Revoked);
-				token.HasIndex(e => e.RevokedBy);
-				token.HasIndex(e => e.ReplacedBy);
+					token.HasIndex(e => e.Created);
+					token.HasIndex(e => e.CreatedBy);
+					token.HasIndex(e => e.Expires);
+					token.HasIndex(e => e.Revoked);
+					token.HasIndex(e => e.RevokedBy);
+					token.HasIndex(e => e.ReplacedBy);
+				});
 			});
 
 			modelBuilder.Entity<Country>(country =>

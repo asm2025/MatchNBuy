@@ -25,6 +25,7 @@ using JetBrains.Annotations;
 using MatchNBuy.API.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,8 @@ namespace MatchNBuy.API.Controllers
 	[Route("[controller]")]
 	public class UsersController : ApiController
 	{
+		private const string REFRESH_TOKEN_NAME = "refreshToken";
+
 		private readonly IUserRepository _repository;
 		private readonly IMapper _mapper;
 
@@ -210,10 +213,10 @@ namespace MatchNBuy.API.Controllers
 			
 			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(result.User);
 			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(result.User.Id, result.User.PhotoUrl).String();
+			SetTokenCookie(result.RefreshToken);
 			return Ok(new
 			{
 				token = result.Token,
-				refreshToken = result.RefreshToken,
 				user = userForLoginDisplay
 			});
 		}
@@ -224,15 +227,36 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> RefreshToken(CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			throw new NotImplementedException();
+
+			string refreshToken = Request.Cookies[REFRESH_TOKEN_NAME];
+			if (string.IsNullOrEmpty(refreshToken)) return BadRequest();
+
+			TokenSignInResult result = await _repository.RefreshTokenAsync(refreshToken, token);
+			token.ThrowIfCancellationRequested();
+			if (!result.Succeeded) return Unauthorized(result);
+			
+			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(result.User);
+			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(result.User.Id, result.User.PhotoUrl).String();
+			SetTokenCookie(result.RefreshToken);
+			return Ok(new
+			{
+				token = result.Token,
+				user = userForLoginDisplay
+			});
 		}
 
+		[AllowAnonymous]
 		[HttpPost("[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Logout(CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			throw new NotImplementedException();
+			if (User.Identity == null || !User.Identity.IsAuthenticated) return NoContent();
+			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(userId)) return NoContent();
+			await _repository.LogoutAsync(userId, false, token);
+			SetTokenCookie(null);
+			return NoContent();
 		}
 
 		[AllowAnonymous]
@@ -748,5 +772,20 @@ namespace MatchNBuy.API.Controllers
 			return Ok(count);
 		}
 		#endregion
+
+		private void SetTokenCookie(string token)
+		{
+			if (string.IsNullOrEmpty(token))
+			{
+				Response.Cookies.Delete(REFRESH_TOKEN_NAME);
+				return;
+			}
+
+			Response.Cookies.Append(REFRESH_TOKEN_NAME, token, new CookieOptions
+			{
+				HttpOnly = true,
+				Expires = DateTime.UtcNow.AddMinutes(_repository.GetRefreshTokenExpirationTime())
+			});
+		}
 	}
 }

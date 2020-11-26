@@ -104,7 +104,7 @@ namespace MatchNBuy.Data.Repositories
 				.ForEach(e =>
 				{
 					e.IsDefault = false;
-					Context.Entry(e).State = EntityState.Modified;
+					Context.Update(e);
 				});
 		}
 
@@ -117,7 +117,7 @@ namespace MatchNBuy.Data.Repositories
 				{
 					if (!e.IsDefault) return;
 					e.IsDefault = false;
-					Context.Entry(e).State = EntityState.Modified;
+					Context.Update(e);
 				}, token));
 		}
 	}

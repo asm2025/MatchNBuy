@@ -69,12 +69,22 @@ namespace MatchNBuy.Data.Repositories
 		ValueTask<IList<User>> GetUsersForClaimAsync([NotNull] Claim claim, CancellationToken token = default(CancellationToken));
 		ValueTask<IList<User>> GetUsersInRoleAsync([NotNull] string roleName, CancellationToken token = default(CancellationToken));
 		ValueTask<ClaimsPrincipal> CreateUserPrincipalAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
+		[ItemNotNull]
 		ValueTask<TokenSignInResult> SignInAsync([NotNull] string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
 		[ItemNotNull]
 		ValueTask<TokenSignInResult> SignInAsync([NotNull] User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
+		ValueTask<TokenSignInResult> RefreshTokenAsync([NotNull] string refreshToken, CancellationToken token = default(CancellationToken));
+		ValueTask<TokenSignInResult> RefreshTokenAsync([NotNull] RefreshToken refreshToken, CancellationToken token = default(CancellationToken));
+		[NotNull]
+		Task LogoutAsync([NotNull] string userId, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken));
+		[NotNull]
+		Task LogoutAsync([NotNull] User user, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken));
+		[NotNull]
+		Task LogoutByTokenAsync([NotNull] string refreshToken, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken));
+		[NotNull]
+		Task LogoutByTokenAsync([NotNull] RefreshToken refreshToken, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken));
 		bool IsSignedIn([NotNull] ClaimsPrincipal principal);
 		ValueTask<bool> CanSignInAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
-		Task RefreshSignInAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
 		ValueTask<User> ValidateSecurityStampAsync([NotNull] ClaimsPrincipal principal, CancellationToken token = default(CancellationToken));
 		ValueTask<bool> ValidateSecurityStampAsync(User user, string securityStamp, CancellationToken token = default(CancellationToken));
 		int Like([NotNull] string userId, [NotNull] string recipientId);
@@ -93,5 +103,7 @@ namespace MatchNBuy.Data.Repositories
 		ISet<string> LikeesFromList([NotNull] string userId, [NotNull] IEnumerable<string> idList);
 		[ItemNotNull]
 		ValueTask<ISet<string>> LikeesFromListAsync([NotNull] string userId, [NotNull] IEnumerable<string> idList, CancellationToken token = default(CancellationToken));
+		int GetTokenExpirationTime();
+		int GetRefreshTokenExpirationTime();
 	}
 }

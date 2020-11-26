@@ -112,11 +112,11 @@ namespace MatchNBuy.Data.Repositories
 				thread = Context.Threads.FirstOrDefault(e => e.Id == message.ThreadId);
 				if (thread == null) return null;
 				thread.IsArchived = false;
-				Context.Entry(thread).State = EntityState.Modified;
+				Context.Update(thread);
 			}
 
 			message.IsArchived = false;
-			Context.Entry(message).State = EntityState.Modified;
+			Context.Update(message);
 
 			Message newMessage = new Message
 			{
@@ -158,11 +158,11 @@ namespace MatchNBuy.Data.Repositories
 				thread = await Context.Threads.FirstOrDefaultAsync(e => e.Id == message.ThreadId, token);
 				if (thread == null) return null;
 				thread.IsArchived = false;
-				Context.Entry(thread).State = EntityState.Modified;
+				Context.Update(thread);
 			}
 
 			message.IsArchived = false;
-			Context.Entry(message).State = EntityState.Modified;
+			Context.Update(message);
 
 			Message newMessage = new Message
 			{
@@ -188,7 +188,7 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			if (message.IsArchived) return;
 			message.IsArchived = true;
-			Context.Entry(message).State = EntityState.Modified;
+			Context.Update(message);
 			Context.SaveChanges();
 		}
 
@@ -199,7 +199,7 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			if (message.IsArchived) return;
 			message.IsArchived = true;
-			Context.Entry(message).State = EntityState.Modified;
+			Context.Update(message);
 			await Context.SaveChangesAsync(token);
 		}
 
@@ -295,12 +295,12 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			if (thread.IsArchived) return;
 			thread.IsArchived = true;
-			Context.Entry(thread).State = EntityState.Modified;
+			Context.Update(thread);
 
 			foreach (Message message in Context.Messages.Where(e => e.ThreadId == thread.Id))
 			{
 				message.IsArchived = true;
-				Context.Entry(message).State = EntityState.Modified;
+				Context.Update(message);
 			}
 
 			Context.SaveChanges();
@@ -313,12 +313,12 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			if (thread.IsArchived) return;
 			thread.IsArchived = true;
-			Context.Entry(thread).State = EntityState.Modified;
+			Context.Update(thread);
 
 			foreach (Message message in Context.Messages.Where(e => e.ThreadId == thread.Id))
 			{
 				message.IsArchived = true;
-				Context.Entry(message).State = EntityState.Modified;
+				Context.Update(message);
 			}
 
 			await Context.SaveChangesAsync(token);

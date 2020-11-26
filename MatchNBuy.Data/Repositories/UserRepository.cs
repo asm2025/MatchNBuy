@@ -502,9 +502,11 @@ namespace MatchNBuy.Data.Repositories
 
 		public async ValueTask<TokenSignInResult> SignInAsync(string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken))
 		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
 			User user = await FindByNameAsync(userName, token);
 			return user == null
-						? null
+						? TokenSignInResult.NotAllowed
 						: await SignInAsync(user, password, lockoutOnFailure, token);
 		}
 
@@ -528,20 +530,110 @@ namespace MatchNBuy.Data.Repositories
 			}
 
 			RefreshToken refreshToken = await GenerateRefreshToken(user, token);
-
-			if (Context.Entry(refreshToken).State == EntityState.Detached)
-			{
-				await Context.RefreshTokens.AddAsync(refreshToken, token);
-				token.ThrowIfCancellationRequested();
-			}
-
+			if (Context.Entry(refreshToken).State == EntityState.Detached) await Context.RefreshTokens.AddAsync(refreshToken, token);
 			user.LastActive = DateTime.UtcNow;
-			Context.Entry(user).State = EntityState.Modified;
+			Context.Update(user);
 			await Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
 
 			string accessToken = await GenerateToken(user, token);
 			return TokenSignInResult.SuccessFrom(user, accessToken, refreshToken.Value);
+		}
+
+		public async ValueTask<TokenSignInResult> RefreshTokenAsync(string refreshToken, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(refreshToken)) return TokenSignInResult.NotAllowed;
+
+			RefreshToken refreshTokenDb = await Context.RefreshTokens
+														.Include(e => e.User)
+														.FirstOrDefaultAsync(e => e.Value == refreshToken, token);
+			return refreshTokenDb == null
+						? TokenSignInResult.NotAllowed
+						: await RefreshTokenAsync(refreshTokenDb, token);
+		}
+
+		public async ValueTask<TokenSignInResult> RefreshTokenAsync(RefreshToken refreshToken, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			if (!refreshToken.IsActive) return TokenSignInResult.NotAllowed;
+
+			User user = refreshToken.User;
+
+			if (user == null)
+			{
+				if (string.IsNullOrEmpty(refreshToken.UserId)) return TokenSignInResult.NotAllowed;
+				user = await DbSet.FindAsync(new object[] { refreshToken.UserId }, token);
+				token.ThrowIfCancellationRequested();
+				if (user == null) return TokenSignInResult.NotAllowed;
+			}
+
+			RefreshToken newRefreshToken = await GenerateRefreshToken(user, true, token);
+			await Context.RefreshTokens.AddAsync(refreshToken, token);
+			user.LastActive = DateTime.UtcNow;
+			Context.Update(user);
+			await Context.SaveChangesAsync(token);
+			await SignInManager.RefreshSignInAsync(user);
+			token.ThrowIfCancellationRequested();
+
+			string accessToken = await GenerateToken(user, token);
+			return TokenSignInResult.SuccessFrom(user, accessToken, newRefreshToken.Value);
+		}
+
+		public async Task LogoutAsync(string userId, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+
+			if (string.IsNullOrEmpty(userId)) throw new ArgumentNullException(nameof(userId));
+
+			User user = await DbSet.FindAsync(userId);
+			if (user == null) return;
+			await LogoutAsync(user, logoutFromAllDevices, token);
+		}
+
+		public async Task LogoutAsync(User user, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+
+			IQueryable<RefreshToken> queryable = Context.RefreshTokens
+														.Where(e => e.UserId == user.Id && e.Revoked == null);
+			HttpRequest request = SignInManager.Context?.Request;
+			string source = request.GetIPAddress()?.ToLowerInvariant();
+			if (!logoutFromAllDevices) queryable = queryable.Where(e => e.CreatedBy == source);
+
+			IList<RefreshToken> tokens = await queryable.ToListAsync(token);
+			if (tokens == null || tokens.Count == 0) return;
+
+			foreach (RefreshToken refreshToken in tokens)
+			{
+				refreshToken.Revoked = DateTime.UtcNow;
+				refreshToken.RevokedBy = source;
+				Context.Update(refreshToken);
+			}
+
+			await Context.SaveChangesAsync(token);
+		}
+
+		public async Task LogoutByTokenAsync(string refreshToken, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			if (string.IsNullOrEmpty(refreshToken)) return;
+
+			RefreshToken refreshTokenDb = await Context.RefreshTokens
+														.Include(e => e.User)
+														.FirstOrDefaultAsync(e => e.Value == refreshToken, token);
+			if (refreshTokenDb == null) return;
+			await LogoutAsync(refreshTokenDb.User, logoutFromAllDevices, token);
+		}
+
+		public Task LogoutByTokenAsync(RefreshToken refreshToken, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken))
+		{
+			return LogoutAsync(refreshToken.User, logoutFromAllDevices, token);
 		}
 
 		public bool IsSignedIn(ClaimsPrincipal principal)
@@ -555,13 +647,6 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 			return new ValueTask<bool>(SignInManager.CanSignInAsync(user));
-		}
-
-		public Task RefreshSignInAsync(User user, CancellationToken token = default(CancellationToken))
-		{
-			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-			return SignInManager.RefreshSignInAsync(user);
 		}
 
 		public ValueTask<User> ValidateSecurityStampAsync(ClaimsPrincipal principal, CancellationToken token = default(CancellationToken))
@@ -622,6 +707,7 @@ namespace MatchNBuy.Data.Repositories
 		public int Dislike(string userId, string recipientId)
 		{
 			ThrowIfDisposed();
+
 			Like like = Context.Likes.FirstOrDefault(e => e.LikerId == userId && e.LikeeId == recipientId);
 
 			if (like != null)
@@ -638,6 +724,7 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
+
 			Like like = await Context.Likes.FirstOrDefaultAsync(e => e.LikerId == userId && e.LikeeId == recipientId, token);
 			token.ThrowIfCancellationRequested();
 
@@ -714,6 +801,7 @@ namespace MatchNBuy.Data.Repositories
 		public async ValueTask<ISet<string>> LikeesFromListAsync(string userId, IEnumerable<string> idList, CancellationToken token = default(CancellationToken))
 		{
 			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
 
 			IList<string> ids = idList as IList<string> ?? idList.ToList();
 			IAsyncEnumerable<string> enumerable = Context.Likes
@@ -730,17 +818,36 @@ namespace MatchNBuy.Data.Repositories
 			return set;
 		}
 
-		private async Task<string> GenerateToken([NotNull] User user, CancellationToken token = default(CancellationToken))
+		public int GetTokenExpirationTime()
 		{
 			const int TOKEN_MIN = 1;
 			const int TOKEN_MAX = 1440;
 			const int TOKEN_DEF = 20;
 
+			return Configuration.GetValue<int>("jwt:timeout")
+								.Within(0, TOKEN_MAX)
+								.IfLessThan(TOKEN_MIN, TOKEN_DEF);
+		}
+
+		public int GetRefreshTokenExpirationTime()
+		{
+			const int TOKEN_MIN = 1;
+			const int TOKEN_MAX = 1440;
+			const int TOKEN_DEF = 720;
+
+			return Configuration.GetValue<int>("jwt:refreshInterval")
+								.Within(0, TOKEN_MAX)
+								.IfLessThan(TOKEN_MIN, TOKEN_DEF);
+		}
+
+		private async Task<string> GenerateToken([NotNull] User user, CancellationToken token = default(CancellationToken))
+		{
 			const string AUDIENCE_DEF = "api://default";
 
-			ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
+			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 
+			ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
 			IList<string> roles = await UserManager.GetRolesAsync(user);
 			token.ThrowIfCancellationRequested();
 
@@ -759,9 +866,6 @@ namespace MatchNBuy.Data.Repositories
 			HttpRequest request = SignInManager.Context?.Request;
 			string host = request?.Host.Host;
 			string audience = Configuration.GetValue("jwt:audience", AUDIENCE_DEF);
-			int timeout = Configuration.GetValue<int>("jwt:timeout")
-										.Within(0, TOKEN_MAX)
-										.IfLessThan(TOKEN_MIN, TOKEN_DEF);
 			string signingKey = Configuration.GetValue<string>("jwt:signingKey");
 			string encryptionKey = Configuration.GetValue<string>("jwt:encryptionKey");
 
@@ -771,7 +875,7 @@ namespace MatchNBuy.Data.Repositories
 				Audience = audience,
 				Subject = subject,
 				IssuedAt = DateTime.UtcNow,
-				Expires = DateTime.UtcNow.AddMinutes(timeout),
+				Expires = DateTime.UtcNow.AddMinutes(GetTokenExpirationTime()),
 			};
 
 			if (!string.IsNullOrEmpty(signingKey))
@@ -785,15 +889,18 @@ namespace MatchNBuy.Data.Repositories
 			return SecurityTokenHelper.Value(securityToken);
 		}
 
+		[NotNull]
 		[ItemNotNull]
-		private async Task<RefreshToken> GenerateRefreshToken([NotNull] User user, CancellationToken token = default(CancellationToken))
+		private Task<RefreshToken> GenerateRefreshToken([NotNull] User user, CancellationToken token = default(CancellationToken)) { return GenerateRefreshToken(user, false, token); }
+
+		[ItemNotNull]
+		private async Task<RefreshToken> GenerateRefreshToken([NotNull] User user, bool forceNew, CancellationToken token = default(CancellationToken))
 		{
-			const int TOKEN_MIN = 1;
-			const int TOKEN_MAX = 1440;
-			const int TOKEN_DEF = 720;
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
 
 			HttpRequest request = SignInManager.Context?.Request;
-			string source = request.GetIPAddress();
+			string source = request.GetIPAddress()?.ToLowerInvariant();
 			IList<RefreshToken> oldTokens = await Context.RefreshTokens
 										.Where(e => e.UserId == user.Id && e.CreatedBy == source && e.Revoked == null)
 										.OrderByDescending(e => e.Expires)
@@ -801,7 +908,7 @@ namespace MatchNBuy.Data.Repositories
 			int offset = 0;
 			RefreshToken refreshToken = null;
 
-			if (oldTokens.Count > 0)
+			if (!forceNew && oldTokens != null && oldTokens.Count > 0)
 			{
 				refreshToken = oldTokens[0];
 
@@ -815,20 +922,17 @@ namespace MatchNBuy.Data.Repositories
 			{
 				byte[] buffer = new byte[64];
 				RNGRandomHelper.Default.GetNonZeroBytes(buffer);
-				int timeout = Configuration.GetValue<int>("jwt:refreshInterval")
-											.Within(0, TOKEN_MAX)
-											.IfLessThan(TOKEN_MIN, TOKEN_DEF);
 				refreshToken = new RefreshToken
 				{
 					Value = Convert.ToBase64String(buffer),
 					UserId = user.Id,
-					Expires = DateTime.UtcNow.AddMinutes(timeout),
+					Expires = DateTime.UtcNow.AddMinutes(GetRefreshTokenExpirationTime()),
 					Created = DateTime.UtcNow,
 					CreatedBy = source
 				};
 			}
 
-			if (oldTokens.Count > 0)
+			if (oldTokens != null && oldTokens.Count > 0)
 			{
 				for (int i = offset; i < oldTokens.Count; i++)
 				{
@@ -836,7 +940,7 @@ namespace MatchNBuy.Data.Repositories
 					oldRefreshToken.Revoked = DateTime.UtcNow;
 					oldRefreshToken.RevokedBy = refreshToken.CreatedBy;
 					oldRefreshToken.ReplacedBy = refreshToken.Value;
-					Context.Entry(oldRefreshToken).State = EntityState.Modified;
+					Context.Update(oldRefreshToken);
 				}
 			}
 

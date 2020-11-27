@@ -1,8 +1,8 @@
-import { NgModule, APP_INITIALIZER } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { BrowserModule, Title } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { HttpClientModule } from "@angular/common/http";
 
 import { JwtModule } from "@auth0/angular-jwt";
 
@@ -50,7 +50,9 @@ import WeatherClient from "@services/web/WeatherClient";
 import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
-import AuthGuard from "@common/guards/auth.guard";
+import AppInitializerProvider from "@/initializers/app.initializer";
+
+import AuthGuard from "@/guards/auth.guard";
 import UnsavedChangesGuard from "@common/guards/unsaved-changes.guard";
 
 import AppComponent from "./app.component";
@@ -135,6 +137,7 @@ import WeatherComponent from "@components/pages/weather/weather.component";
 		WeatherComponent
 	],
 	providers: [
+		AppInitializerProvider,
 		HTTPHeadersInterceptorProvider,
 		ErrorInterceptorProvider,
 		HammerConfigProvider,

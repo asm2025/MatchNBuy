@@ -229,7 +229,7 @@ namespace MatchNBuy.API.Controllers
 			token.ThrowIfCancellationRequested();
 
 			string refreshToken = Request.Cookies[REFRESH_TOKEN_NAME];
-			if (string.IsNullOrEmpty(refreshToken)) return BadRequest();
+			if (string.IsNullOrEmpty(refreshToken)) return Unauthorized();
 
 			TokenSignInResult result = await _repository.RefreshTokenAsync(refreshToken, token);
 			token.ThrowIfCancellationRequested();
@@ -245,12 +245,21 @@ namespace MatchNBuy.API.Controllers
 			});
 		}
 
-		[AllowAnonymous]
 		[HttpPost("[action]")]
 		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
-		public async Task<IActionResult> Logout(CancellationToken token)
+		public async Task<IActionResult> Logout([FromBody] RevokeTokenRequest revokeToken, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
+			
+			string refreshToken = revokeToken?.Token ?? Request.Cookies[REFRESH_TOKEN_NAME];
+
+			if (!string.IsNullOrEmpty(refreshToken))
+			{
+				await _repository.LogoutByTokenAsync(refreshToken, false, token);
+				SetTokenCookie(null);
+				return NoContent();
+			}
+
 			if (User.Identity == null || !User.Identity.IsAuthenticated) return NoContent();
 			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return NoContent();
@@ -781,11 +790,13 @@ namespace MatchNBuy.API.Controllers
 				return;
 			}
 
-			Response.Cookies.Append(REFRESH_TOKEN_NAME, token, new CookieOptions
+			CookieOptions options = new CookieOptions
 			{
 				HttpOnly = true,
+				Secure = true,
 				Expires = DateTime.UtcNow.AddMinutes(_repository.GetRefreshTokenExpirationTime())
-			});
+			};
+			Response.Cookies.Append(REFRESH_TOKEN_NAME, token, options);
 		}
 	}
 }

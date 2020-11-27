@@ -14,8 +14,10 @@
 					<input type="text" id="userName" formControlName="userName" required maxlength="128"
 						   class="form-control" placeholder="User name" autofocus />
 				</div>
-				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('userName'))" [innerHTML]="message">
-				</small>
+				<div *ngIf="submitted && formHelper.isControlInvalid('userName')">
+					<small *ngFor="let message of (formHelper.getControlErrors('userName'))" class="text-danger" [innerHTML]="message">
+					</small>
+				</div>
 			</div>
 			<div class="form-group">
 				<label class="sr-only" for="password">Password</label>
@@ -26,12 +28,14 @@
 					<input type="password" id="password" formControlName="password" required maxlength="128"
 						   class="form-control" placeholder="Password" />
 				</div>
-				<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('password'))" [innerHTML]="message">
-				</small>
+				<div *ngIf="submitted && formHelper.isControlInvalid('password')">
+					<small *ngFor="let message of (formHelper.getControlErrors('password'))" class="text-danger" [innerHTML]="message">
+					</small>
+				</div>
 			</div>
 			<div class="checkbox text-left">
 				<label>
-					<input type="checkbox" formControlName="rememberMe" value="remember-me"/> Remember me
+					<input type="checkbox" formControlName="rememberMe" value="remember-me" /> Remember me
 				</label>
 			</div>
 			<div class="btn-container row flex-row justify-content-around">

@@ -83,7 +83,13 @@ p {
 
 .alert {
 	border-radius: 0 !important;
+	padding: 0 !important;
 	margin-bottom: 2px !important;
+
+	.btn,
+	.close {
+		padding: 0.2rem;
+	}
 }
 
 .pagination {

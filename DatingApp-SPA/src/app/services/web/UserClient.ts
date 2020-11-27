@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnInit, OnDestroy } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { JwtHelperService } from "@auth0/angular-jwt";
-import { Observable, BehaviorSubject, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable, BehaviorSubject, ReplaySubject, of } from "rxjs";
+import { takeUntil, map } from "rxjs/operators";
 import querystring from "querystring";
 
 import ApiClient from "@common/web/ApiClient";
@@ -26,13 +26,6 @@ function setSession(value: string | null | undefined) {
 		localStorage.setItem("SESSIONID", value);
 }
 
-function getSessionUser(): IUser | null | undefined {
-	if (!getToken()) return null;
-	const jsonUser = localStorage.getItem("USER");
-	if (!jsonUser) return null;
-	return JSON.parse(jsonUser) as IUser;
-}
-
 function setSessionUser(value: IUser | null | undefined) {
 	if (!value)
 		localStorage.removeItem("USER");
@@ -43,13 +36,15 @@ function setSessionUser(value: IUser | null | undefined) {
 @Injectable({
 	providedIn: "root"
 })
-export default class UserClient extends ApiClient<HttpClient> {
+export default class UserClient extends ApiClient<HttpClient> implements OnInit, OnDestroy {
 	private readonly _jwt = new JwtHelperService();
 
 	private _token: string | null | undefined = null;
 	private _userSubject = new BehaviorSubject<IUser | null | undefined>(null);
 	private _user = this._userSubject.asObservable();
 	private _refreshTokenTimeout: ReturnType<typeof setTimeout>;
+
+	disposed$ = new ReplaySubject<boolean>();
 
 	constructor(private readonly _router: Router,
 		client: HttpClient) {
@@ -71,10 +66,10 @@ export default class UserClient extends ApiClient<HttpClient> {
 
 	get photoUrl(): string {
 		const user = this._userSubject.value as IUser;
-		return user.photoUrl || config.users.defaultImage;
+		return (user && user.photoUrl) || config.users.defaultImage;
 	}
 
-	setPhotoUrl(url: string | null | undefined) {
+	set photoUrl(url: string) {
 		const oldUser = this._userSubject.value as IUser;
 		if (!oldUser) return;
 		const user: IUser = {
@@ -82,6 +77,25 @@ export default class UserClient extends ApiClient<HttpClient> {
 			photoUrl: url || config.users.defaultImage
 		}
 		this._userSubject.next(user);
+	}
+
+	ngOnInit(): void {
+		this._user
+			.pipe(takeUntil(this.disposed$))
+			.subscribe(user => {
+				setSessionUser(user);
+				this._token = getToken();
+
+				if (user)
+					this.startRefreshTokenTimer();
+				else
+					this.stopRefreshTokenTimer();
+			});
+	}
+
+	ngOnDestroy(): void {
+		this.disposed$.next(true);
+		this.disposed$.complete();
 	}
 
 	// #region User
@@ -95,46 +109,46 @@ export default class UserClient extends ApiClient<HttpClient> {
 	}
 
 	login(userName: string, password: string): Observable<boolean> {
-		return this.client.post(`${this.baseUrl}/login`, { userName, password }, { withCredentials: true })
+		this.stopRefreshTokenTimer();
+		return this.client.post(`${this.baseUrl}/login`, { userName, password })
 			.pipe(map((res: any) => {
-				const user = res.user as IUser;
-
-				if (!user) {
-					this.clearLogin();
-					return false;
+				if (res && res.token && res.user) {
+					setSession(res.token);
+					this._userSubject.next(res.user);
+					return true;
 				}
 
-				setSession(res.token);
-				setSessionUser(user);
-				this.init();
-				return Boolean(user);
+				this.clearLogin();
+				return false;
 			}));
 	}
 
 	refreshToken(): Observable<any> {
-		return this.client.post(`${this.baseUrl}/refreshToken`, {}, { withCredentials: true })
+		this.stopRefreshTokenTimer();
+		if (!getToken()) return of(null);
+		return this.client.post(`${this.baseUrl}/refreshToken`, {})
 			.pipe(map((res: any) => {
-				const user = res.user as IUser;
-
-				if (!user) {
-					this.clearLogin();
-					return false;
+				if (res && res.token && res.user) {
+					setSession(res.token);
+					this._userSubject.next(res.user);
+					return true;
 				}
 
-				setSession(res.token);
-				setSessionUser(user);
-				this.init();
-				return Boolean(user);
+				this.clearLogin();
+				return false;
 			}));
 	}
 
-	logout(): Observable<any> {
+	logout() {
 		this.stopRefreshTokenTimer();
-		return this.client.post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
-			.pipe(() => {
-				this.clearLogin();
-				return of(null);
-			});
+		this.client.post(`${this.baseUrl}/logout`, {}).subscribe();
+		this.clearLogin();
+		this._router.navigate(["/"]);
+	}
+
+	clearLogin() {
+		setSession(null);
+		this._userSubject.next(null);
 	}
 
 	isSignedIn(): boolean {
@@ -164,18 +178,6 @@ export default class UserClient extends ApiClient<HttpClient> {
 		return this.client.delete(`${this.baseUrl}/${encodeURIComponent(id)}/Delete`);
 	}
 
-	private init() {
-		this._token = getToken();
-
-		const user = getSessionUser();
-		this._userSubject.next(user);
-
-		if (user)
-			this.startRefreshTokenTimer();
-		else
-			this.stopRefreshTokenTimer();
-	}
-
 	private startRefreshTokenTimer() {
 		this.stopRefreshTokenTimer();
 
@@ -199,12 +201,6 @@ export default class UserClient extends ApiClient<HttpClient> {
 
 	private stopRefreshTokenTimer() {
 		clearTimeout(this._refreshTokenTimeout);
-	}
-
-	private clearLogin() {
-		setSession(null);
-		setSessionUser(null);
-		this.init();
 	}
 	// #endregion
 

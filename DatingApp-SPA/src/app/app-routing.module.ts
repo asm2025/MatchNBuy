@@ -1,6 +1,6 @@
 import { RouterModule, Routes } from "@angular/router";
 
-import AuthGuard from "@common/guards/auth.guard";
+import AuthGuard from "@/guards/auth.guard";
 import UnsavedChangesGuard from "@common/guards/unsaved-changes.guard";
 
 import HomeComponent from "@components/pages/home/home.component";

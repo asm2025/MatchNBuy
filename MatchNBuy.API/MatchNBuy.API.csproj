@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>20.11.26.1</FileVersion>
+		<FileVersion>20.11.27.35</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
@@ -63,7 +63,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.0" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.5" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.6" />
 		<PackageReference Include="System.Management" Version="5.0.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
 	</ItemGroup>
@@ -75,7 +75,7 @@
 
 	<ItemGroup>
 		<Reference Include="asm">
-		  <HintPath>..\..\..\..\..\Libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
+		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
 		</Reference>
 		<Reference Include="asm.Core.Authentication.JwtBearer">
 			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Authentication.JwtBearer.dll</HintPath>

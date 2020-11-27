@@ -48,7 +48,6 @@ namespace MatchNBuy.Data
 		{
 		}
 
-		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<Country> Countries { get; set; }
 		public DbSet<City> Cities { get; set; }
 		public DbSet<Photo> Photos { get; set; }
@@ -131,6 +130,7 @@ namespace MatchNBuy.Data
 						.HasForeignKey(e => e.UserId)
 						.OnDelete(DeleteBehavior.Cascade);
 
+					token.HasIndex(e => e.Created);
 					token.HasIndex(e => e.Created);
 					token.HasIndex(e => e.CreatedBy);
 					token.HasIndex(e => e.Expires);

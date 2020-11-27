@@ -259,7 +259,7 @@ namespace MatchNBuy.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshTokens",
+                name: "RefreshToken",
                 columns: table => new
                 {
                     Value = table.Column<string>(type: "TEXT", maxLength: 90, nullable: false),
@@ -273,9 +273,9 @@ namespace MatchNBuy.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Value);
+                    table.PrimaryKey("PK_RefreshToken", x => x.Value);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        name: "FK_RefreshToken_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -466,38 +466,38 @@ namespace MatchNBuy.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_Created",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_Created",
+                table: "RefreshToken",
                 column: "Created");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_CreatedBy",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_CreatedBy",
+                table: "RefreshToken",
                 column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_Expires",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_Expires",
+                table: "RefreshToken",
                 column: "Expires");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_ReplacedBy",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_ReplacedBy",
+                table: "RefreshToken",
                 column: "ReplacedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_Revoked",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_Revoked",
+                table: "RefreshToken",
                 column: "Revoked");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_RevokedBy",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_RevokedBy",
+                table: "RefreshToken",
                 column: "RevokedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -553,7 +553,7 @@ namespace MatchNBuy.Data.Migrations
                 name: "Photos");
 
             migrationBuilder.DropTable(
-                name: "RefreshTokens");
+                name: "RefreshToken");
 
             migrationBuilder.DropTable(
                 name: "UserInterests");

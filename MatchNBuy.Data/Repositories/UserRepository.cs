@@ -529,13 +529,10 @@ namespace MatchNBuy.Data.Repositories
 				if (!result.Succeeded) return TokenSignInResult.NotAllowed;
 			}
 
-			RefreshToken refreshToken = await GenerateRefreshToken(user, token);
-			if (Context.Entry(refreshToken).State == EntityState.Detached) await Context.RefreshTokens.AddAsync(refreshToken, token);
+			RefreshToken refreshToken = GenerateRefreshToken(user);
 			user.LastActive = DateTime.UtcNow;
 			Context.Update(user);
 			await Context.SaveChangesAsync(token);
-			token.ThrowIfCancellationRequested();
-
 			string accessToken = await GenerateToken(user, token);
 			return TokenSignInResult.SuccessFrom(user, accessToken, refreshToken.Value);
 		}
@@ -546,12 +543,11 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(refreshToken)) return TokenSignInResult.NotAllowed;
 
-			RefreshToken refreshTokenDb = await Context.RefreshTokens
-														.Include(e => e.User)
-														.FirstOrDefaultAsync(e => e.Value == refreshToken, token);
-			return refreshTokenDb == null
+			User user = await Context.Users.Include(e => e.RefreshTokens)
+									.FirstOrDefaultAsync(e => e.RefreshTokens.Any(r => r.Value == refreshToken), token);
+			return user == null
 						? TokenSignInResult.NotAllowed
-						: await RefreshTokenAsync(refreshTokenDb, token);
+						: await RefreshTokenAsync(user, token);
 		}
 
 		public async ValueTask<TokenSignInResult> RefreshTokenAsync(RefreshToken refreshToken, CancellationToken token = default(CancellationToken))
@@ -565,19 +561,24 @@ namespace MatchNBuy.Data.Repositories
 			if (user == null)
 			{
 				if (string.IsNullOrEmpty(refreshToken.UserId)) return TokenSignInResult.NotAllowed;
-				user = await DbSet.FindAsync(new object[] { refreshToken.UserId }, token);
+				user = await DbSet.FindAsync(refreshToken.UserId);
 				token.ThrowIfCancellationRequested();
 				if (user == null) return TokenSignInResult.NotAllowed;
 			}
 
-			RefreshToken newRefreshToken = await GenerateRefreshToken(user, true, token);
-			await Context.RefreshTokens.AddAsync(refreshToken, token);
+			return await RefreshTokenAsync(user, token);
+		}
+
+		public async ValueTask<TokenSignInResult> RefreshTokenAsync(User user, CancellationToken token = default(CancellationToken))
+		{
+			ThrowIfDisposed();
+			token.ThrowIfCancellationRequested();
+			await SignInManager.RefreshSignInAsync(user);
+
+			RefreshToken newRefreshToken = GenerateRefreshToken(user, true);
 			user.LastActive = DateTime.UtcNow;
 			Context.Update(user);
 			await Context.SaveChangesAsync(token);
-			await SignInManager.RefreshSignInAsync(user);
-			token.ThrowIfCancellationRequested();
-
 			string accessToken = await GenerateToken(user, token);
 			return TokenSignInResult.SuccessFrom(user, accessToken, newRefreshToken.Value);
 		}
@@ -586,7 +587,6 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-
 			if (string.IsNullOrEmpty(userId)) throw new ArgumentNullException(nameof(userId));
 
 			User user = await DbSet.FindAsync(userId);
@@ -599,14 +599,12 @@ namespace MatchNBuy.Data.Repositories
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
 
-			IQueryable<RefreshToken> queryable = Context.RefreshTokens
-														.Where(e => e.UserId == user.Id && e.Revoked == null);
 			HttpRequest request = SignInManager.Context?.Request;
 			string source = request.GetIPAddress()?.ToLowerInvariant();
-			if (!logoutFromAllDevices) queryable = queryable.Where(e => e.CreatedBy == source);
-
-			IList<RefreshToken> tokens = await queryable.ToListAsync(token);
-			if (tokens == null || tokens.Count == 0) return;
+			IList<RefreshToken> tokens = user.RefreshTokens
+												.Where(e => e.Revoked == null && (!logoutFromAllDevices || e.CreatedBy == source))
+												.ToList();
+			if (tokens.Count == 0) return;
 
 			foreach (RefreshToken refreshToken in tokens)
 			{
@@ -624,11 +622,11 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrEmpty(refreshToken)) return;
 
-			RefreshToken refreshTokenDb = await Context.RefreshTokens
-														.Include(e => e.User)
-														.FirstOrDefaultAsync(e => e.Value == refreshToken, token);
-			if (refreshTokenDb == null) return;
-			await LogoutAsync(refreshTokenDb.User, logoutFromAllDevices, token);
+			User user = await Context.Users
+									.Include(e => e.RefreshTokens)
+									.FirstOrDefaultAsync(e => e.RefreshTokens.Any(t => t.Value == refreshToken), token);
+			if (user == null) return;
+			await LogoutAsync(user, logoutFromAllDevices, token);
 		}
 
 		public Task LogoutByTokenAsync(RefreshToken refreshToken, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken))
@@ -890,29 +888,22 @@ namespace MatchNBuy.Data.Repositories
 		}
 
 		[NotNull]
-		[ItemNotNull]
-		private Task<RefreshToken> GenerateRefreshToken([NotNull] User user, CancellationToken token = default(CancellationToken)) { return GenerateRefreshToken(user, false, token); }
-
-		[ItemNotNull]
-		private async Task<RefreshToken> GenerateRefreshToken([NotNull] User user, bool forceNew, CancellationToken token = default(CancellationToken))
+		private RefreshToken GenerateRefreshToken([NotNull] User user, bool forceNew = false)
 		{
-			ThrowIfDisposed();
-			token.ThrowIfCancellationRequested();
-
 			HttpRequest request = SignInManager.Context?.Request;
 			string source = request.GetIPAddress()?.ToLowerInvariant();
-			IList<RefreshToken> oldTokens = await Context.RefreshTokens
-										.Where(e => e.UserId == user.Id && e.CreatedBy == source && e.Revoked == null)
+			IList<RefreshToken> openTokens = user.RefreshTokens
+										.Where(e => e.CreatedBy == source && e.Revoked == null)
 										.OrderByDescending(e => e.Expires)
-										.ToListAsync(token);
+										.ToList();
 			int offset = 0;
 			RefreshToken refreshToken = null;
 
-			if (!forceNew && oldTokens != null && oldTokens.Count > 0)
+			if (!forceNew && openTokens.Count > 0)
 			{
-				refreshToken = oldTokens[0];
+				refreshToken = openTokens[0];
 
-				if ((DateTime.UtcNow - refreshToken.Expires).TotalSeconds < 30.0d) 
+				if ((refreshToken.Expires - DateTime.UtcNow).TotalSeconds < 5.0d) 
 					refreshToken = null;
 				else
 					offset++;
@@ -930,20 +921,20 @@ namespace MatchNBuy.Data.Repositories
 					Created = DateTime.UtcNow,
 					CreatedBy = source
 				};
+
+				user.RefreshTokens.Add(refreshToken);
+				offset++;
 			}
 
-			if (oldTokens != null && oldTokens.Count > 0)
+			for (int i = offset; i < openTokens.Count; i++)
 			{
-				for (int i = offset; i < oldTokens.Count; i++)
-				{
-					RefreshToken oldRefreshToken = oldTokens[i];
-					oldRefreshToken.Revoked = DateTime.UtcNow;
-					oldRefreshToken.RevokedBy = refreshToken.CreatedBy;
-					oldRefreshToken.ReplacedBy = refreshToken.Value;
-					Context.Update(oldRefreshToken);
-				}
+				RefreshToken oldRefreshToken = openTokens[i];
+				oldRefreshToken.Revoked = DateTime.UtcNow;
+				oldRefreshToken.RevokedBy = refreshToken.CreatedBy;
+				oldRefreshToken.ReplacedBy = refreshToken.Value;
 			}
 
+			if (offset > 0) Context.Update(user);
 			return refreshToken;
 		}
 	}

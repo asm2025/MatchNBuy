@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MatchNBuy.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201126142937_Initial")]
+    [Migration("20201127200103_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -620,7 +620,7 @@ namespace MatchNBuy.Data.Migrations
 
                             b1.HasIndex("UserId");
 
-                            b1.ToTable("RefreshTokens");
+                            b1.ToTable("RefreshToken");
 
                             b1.WithOwner("User")
                                 .HasForeignKey("UserId");

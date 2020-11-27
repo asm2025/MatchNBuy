@@ -73,8 +73,12 @@ namespace MatchNBuy.Data.Repositories
 		ValueTask<TokenSignInResult> SignInAsync([NotNull] string userName, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
 		[ItemNotNull]
 		ValueTask<TokenSignInResult> SignInAsync([NotNull] User user, string password, bool lockoutOnFailure, CancellationToken token = default(CancellationToken));
+		[ItemNotNull]
 		ValueTask<TokenSignInResult> RefreshTokenAsync([NotNull] string refreshToken, CancellationToken token = default(CancellationToken));
+		[ItemNotNull]
 		ValueTask<TokenSignInResult> RefreshTokenAsync([NotNull] RefreshToken refreshToken, CancellationToken token = default(CancellationToken));
+		[ItemNotNull]
+		ValueTask<TokenSignInResult> RefreshTokenAsync([NotNull] User user, CancellationToken token = default(CancellationToken));
 		[NotNull]
 		Task LogoutAsync([NotNull] string userId, bool logoutFromAllDevices = false, CancellationToken token = default(CancellationToken));
 		[NotNull]

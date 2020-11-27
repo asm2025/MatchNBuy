@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import {
 	FormBuilder,
 	FormGroup,
@@ -33,16 +33,20 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 	form$: FormGroup;
 	countries: Observable<ICountry[]>;
 	cities = this._citiesSubject.asObservable();
-
-	get formHelper(): FormHelper {
-		return this._formHelper;
-	}
+	submitted = false;
+	returnUrl: string;
 
 	constructor(private readonly _router: Router,
+		private readonly _route: ActivatedRoute,
 		private readonly _fb: FormBuilder,
 		private readonly _userClient: UserClient,
 		private readonly _countriesClient: CountriesClient,
 		private readonly _alertService: AlertService) {
+		this.returnUrl = this._route.snapshot.queryParams["returnUrl"] || "/";
+	}
+
+	get formHelper(): FormHelper {
+		return this._formHelper;
 	}
 
 	ngOnInit(): void {
@@ -103,7 +107,6 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 					}))
 					.subscribe((response: ICity[]) => this._citiesSubject.next(response));
 			});
-
 		this.countries = this._countriesClient.list();
 	}
 
@@ -143,6 +146,7 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 	}
 
 	register(registrationInfo: IUserToRegister) {
+		this.submitted = true;
 		if (FormHelper.isFormInvalid(this.form$)) return;
 		this._userClient.register(registrationInfo)
 			.pipe(catchError(error => {
@@ -151,7 +155,7 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 			}))
 			.subscribe((res: any) => {
 				if (!res) return;
-				this._router.navigate(["/members"]);
+				this._router.navigate([this.returnUrl]);
 			});
 	}
 }

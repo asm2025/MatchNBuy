@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -18,11 +18,16 @@ export default class SignInComponent implements OnInit {
 	private _formHelper: FormHelper;
 
 	form$: FormGroup;
+	submitted = false;
+	returnUrl: string;
 
 	constructor(private readonly _router: Router,
+		private readonly _route: ActivatedRoute,
 		private readonly _userClient: UserClient,
 		private readonly _fb: FormBuilder,
 		private readonly _alertService: AlertService) {
+		this.returnUrl = this._route.snapshot.queryParams["returnUrl"] || "/";
+		if (this._userClient.isSignedIn()) this._router.navigate([this.returnUrl]);
 	}
 
 	get formHelper(): FormHelper {
@@ -50,6 +55,7 @@ export default class SignInComponent implements OnInit {
 	}
 
 	login(loginInfo: IUserForLogin) {
+		this.submitted = true;
 		if (FormHelper.isFormInvalid(this.form$)) return;
 		this._userClient.login(loginInfo.userName, loginInfo.password)
 			.pipe(catchError(error => {
@@ -58,7 +64,7 @@ export default class SignInComponent implements OnInit {
 			}))
 			.subscribe((response: boolean) => {
 				if (!response) return;
-				this._router.navigate(["/members"]);
+				this._router.navigate([this.returnUrl]);
 			});
 	}
 }

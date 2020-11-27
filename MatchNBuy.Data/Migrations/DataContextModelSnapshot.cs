@@ -618,7 +618,7 @@ namespace MatchNBuy.Data.Migrations
 
                             b1.HasIndex("UserId");
 
-                            b1.ToTable("RefreshTokens");
+                            b1.ToTable("RefreshToken");
 
                             b1.WithOwner("User")
                                 .HasForeignKey("UserId");

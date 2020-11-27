@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <FileVersion>20.11.26.1</FileVersion>
+    <FileVersion>20.11.27.20</FileVersion>
 	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 

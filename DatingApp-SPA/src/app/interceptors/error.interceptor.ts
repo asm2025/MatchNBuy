@@ -10,17 +10,25 @@ import {
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 
+import UserClient from "@services/web/UserClient";
+
 @Injectable({
 	providedIn: "root"
 })
 export class ErrorInterceptor implements HttpInterceptor {
+	constructor(private readonly _userClient: UserClient) {
+	}
+
 	intercept(
 		req: HttpRequest<any>,
 		next: HttpHandler
 	): Observable<HttpEvent<any>> {
 		return next.handle(req).pipe(
 			catchError(error => {
-				if (error.status === 401) return throwError(error.statusText);
+				if (error && (error.status === 401 || error.status === 403)) {
+					// auto logout if 401 or 403 response returned from api
+					if (this._userClient.isSignedIn()) this._userClient.logout();
+				}
 
 				if (error instanceof HttpErrorResponse) {
 					const applicationError = error.headers.get("Application-Error");
@@ -40,10 +48,16 @@ export class ErrorInterceptor implements HttpInterceptor {
 						}
 					}
 
-					return throwError(modalStateErrors || serverError || "Server Error.");
+					const httpErrorMessage = modalStateErrors ||
+						serverError ||
+						(error && error.error && error.error.message) ||
+						error.statusText;
+					return throwError(httpErrorMessage);
 				}
 
-				return throwError("Unknown Error.");
+				const errorMessage = (error && error.error && error.error.message) ||
+					error.statusText || "Unknown Error.";
+				return throwError(errorMessage);
 			})
 		);
 	}

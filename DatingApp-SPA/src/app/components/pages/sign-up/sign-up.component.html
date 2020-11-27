@@ -17,28 +17,36 @@
 							<div class="form-group col-lg-6">
 								<input type="text" id="userName" formControlName="userName" required maxlength="128"
 									   class="form-control my-1" placeholder="User name" autofocus />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('userName'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('userName')">
+									<small *ngFor="let message of (formHelper.getControlErrors('userName'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="email" id="email" formControlName="email" required maxlength="2048"
 									   class="form-control my-1" placeholder="E-mail" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('email'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('email')">
+									<small *ngFor="let message of (formHelper.getControlErrors('email'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<input type="password" id="password" formControlName="password" required maxlength="128"
 									   class="form-control my-1" placeholder="Password" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('password'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('password')">
+									<small *ngFor="let message of (formHelper.getControlErrors('password'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="password" id="confirmPassword" formControlName="confirmPassword" required maxlength="128"
 									   class="form-control my-1" placeholder="Confirm Password" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('confirmPassword'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('confirmPassword')">
+									<small *ngFor="let message of (formHelper.getControlErrors('confirmPassword'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 						</div>
 						<div class="form-row">
@@ -46,29 +54,37 @@
 								<input type="text" id="firstName" formControlName="firstName" required maxlength="128"
 									   class="form-control my-1" placeholder="First name" required
 									   (ngModelChange)="setKnownAs($event, 'firstName')" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('firstName'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('firstName')">
+									<small *ngFor="let message of (formHelper.getControlErrors('firstName'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="text" id="lastName" formControlName="lastName" maxlength="128"
 									   class="form-control my-1" placeholder="Last name"
 									   (ngModelChange)="setKnownAs($event, 'lastName')" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('lastName'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('lastName')">
+									<small *ngFor="let message of (formHelper.getControlErrors('lastName'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<input type="text" id="knownAs" formControlName="knownAs" maxlength="128"
 									   class="form-control my-1" placeholder="Known as" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('knownAs'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('knownAs')">
+									<small *ngFor="let message of (formHelper.getControlErrors('knownAs'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="date" id="dateOfBirth" formControlName="dateOfBirth" required
 									   class="form-control my-1" placeholder="Date of Birth" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('dateOfBirth'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('dateOfBirth')">
+									<small *ngFor="let message of (formHelper.getControlErrors('dateOfBirth'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 						</div>
 						<div class="form-row">
@@ -79,33 +95,41 @@
 									<option value="1">Male</option>
 									<option value="2">Female</option>
 								</select>
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('gender'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('gender')">
+									<small *ngFor="let message of (formHelper.getControlErrors('gender'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<input type="tel" id="phoneNumber" formControlName="phoneNumber" maxlength="10"
 									   class="form-control my-1" placeholder="Phone Number" />
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('phoneNumber'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('phoneNumber')">
+									<small *ngFor="let message of (formHelper.getControlErrors('phoneNumber'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-lg-6">
 								<ng-select id="countryCode" formControlName="countryCode" required
-											[selectOnTab]="true" placeholder="Country" [items]="countries | async"
-											bindLabel="name" bindValue="code" [virtualScroll]="true" (change)="selectCountry($event)">
+										   [selectOnTab]="true" placeholder="Country" [items]="countries | async"
+										   bindLabel="name" bindValue="code" [virtualScroll]="true" (change)="selectCountry($event)">
 								</ng-select>
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('countryCode'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('countryCode')">
+									<small *ngFor="let message of (formHelper.getControlErrors('countryCode'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 							<div class="form-group col-lg-6">
 								<ng-select id="cityId" formControlName="cityId" required
-											placeholder="City" [items]="cities | async"
-											bindLabel="name" bindValue="id"
-											[virtualScroll]="true">
+										   placeholder="City" [items]="cities | async"
+										   bindLabel="name" bindValue="id"
+										   [virtualScroll]="true">
 								</ng-select>
-								<small class="text-danger" *ngFor="let message of (formHelper.getControlErrors('cityId'))" [innerHTML]="message">
-								</small>
+								<div *ngIf="submitted && formHelper.isControlInvalid('cityId')">
+									<small *ngFor="let message of (formHelper.getControlErrors('cityId'))" class="text-danger" [innerHTML]="message">
+									</small>
+								</div>
 							</div>
 						</div>
 						<div class="btn-container row flex-row justify-content-around">

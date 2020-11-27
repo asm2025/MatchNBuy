@@ -80,6 +80,6 @@ export default class MemberEditComponent implements OnInit, AfterViewInit, OnDes
 	}
 
 	updateUserPhoto(url: string | null | undefined) {
-		this._userClient.setPhotoUrl(url);
+		this._userClient.photoUrl = url || "";
 	}
 }

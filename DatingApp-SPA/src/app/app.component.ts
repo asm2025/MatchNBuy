@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import {
 	Router,
@@ -20,8 +20,6 @@ import {
 } from "@ng-bootstrap/ng-bootstrap";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
-import UserClient from "@services/web/UserClient";
-
 import config from "@/config.json";
 
 @Component({
@@ -30,7 +28,7 @@ import config from "@/config.json";
 	styleUrls: ["./app.component.scss"],
 	host: { '[class.ngb-toasts]': "true" }
 })
-export default class AppComponent implements OnInit, OnDestroy {
+export default class AppComponent implements OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();
 	title = config.title;
 	jwtHelper = new JwtHelperService();
@@ -43,8 +41,7 @@ export default class AppComponent implements OnInit, OnDestroy {
 		modalConfig: NgbModalConfig,
 		progressBarConfig: NgbProgressbarConfig,
 		private readonly _titleService: Title,
-		private readonly _router: Router,
-		private readonly _userClient: UserClient) {
+		private readonly _router: Router) {
 
 		// customize default values used by this component tree
 		alertConfig.type = "info";
@@ -80,10 +77,6 @@ export default class AppComponent implements OnInit, OnDestroy {
 					this.loading = false;
 				}
 			});
-	}
-
-	ngOnInit() {
-		this._userClient.init();
 	}
 
 	ngOnDestroy(): void {

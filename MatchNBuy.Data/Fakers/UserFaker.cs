@@ -48,5 +48,36 @@ namespace MatchNBuy.Data.Fakers
 			base.RuleFor(e => e.EmailConfirmed, true);
 			base.RuleFor(e => e.PhoneNumberConfirmed, true);
 		}
+
+		public int MaxSpecifiedGender { get; set; }
+
+		/// <inheritdoc />
+		[NotNull]
+		public override List<User> Generate(int count, string ruleSets = null)
+		{
+			List<User> users = base.Generate(count, ruleSets);
+			int maxGender = MaxSpecifiedGender;
+			if (maxGender <= 0 || users.Count <= maxGender) return users;
+	
+			int males = 0;
+			int females = 0;
+
+			foreach (User user in users)
+			{
+				switch (user.Gender)
+				{
+					case Genders.Male:
+						if (males == maxGender) user.Gender = Genders.NotSpecified;
+						else males++;
+						break;
+					case Genders.Female:
+						if (females == maxGender) user.Gender = Genders.NotSpecified;
+						else females++;
+						break;
+				}
+			}
+
+			return users;
+		}
 	}
 }

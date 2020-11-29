@@ -110,7 +110,7 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 
 	login(userName: string, password: string): Observable<boolean> {
 		this.stopRefreshTokenTimer();
-		return this.client.post(`${this.baseUrl}/login`, { userName, password })
+		return this.client.post(`${this.baseUrl}/login`, { userName, password }, { withCredentials: true })
 			.pipe(map((res: any) => {
 				if (res && res.token && res.user) {
 					setSession(res.token);
@@ -126,7 +126,7 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 	refreshToken(): Observable<any> {
 		this.stopRefreshTokenTimer();
 		if (!getToken()) return of(null);
-		return this.client.post(`${this.baseUrl}/refreshToken`, {})
+		return this.client.post(`${this.baseUrl}/refreshToken`, {}, { withCredentials: true })
 			.pipe(map((res: any) => {
 				if (res && res.token && res.user) {
 					setSession(res.token);
@@ -141,7 +141,7 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 
 	logout() {
 		this.stopRefreshTokenTimer();
-		this.client.post(`${this.baseUrl}/logout`, {}).subscribe();
+		this.client.post(`${this.baseUrl}/logout`, {}, { withCredentials: true }).subscribe();
 		this.clearLogin();
 		this._router.navigate(["/"]);
 	}

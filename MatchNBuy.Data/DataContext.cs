@@ -351,9 +351,13 @@ namespace MatchNBuy.Data
 
 			static async Task<IList<User>> SeedUsers(DataContext context, UserManager<User> userManager, string defaultPassword, IList<City> cities, IConfiguration configuration, IHostEnvironment environment, ILogger logger)
 			{
-				UserFaker usersFaker = new UserFaker(cities);
+				UserFaker usersFaker = new UserFaker(cities)
+				{
+					// random specified genders cannot exceed 100 because the max random number for user image is 99
+					MaxSpecifiedGender = 100
+				};
 				IList<User> users = usersFaker.Generate(USERS_COUNT);
-				IDictionary<Genders, Queue<string>> images = await DownloadUserImages(users, configuration, environment, logger);
+				IDictionary<Genders, IDictionary<string, string>> images = await DownloadUserImages(users, configuration, environment, logger);
 				User admin = users[0];
 				admin.UserName = "administrator";
 				admin.Email = "admin@example.com";
@@ -413,12 +417,15 @@ namespace MatchNBuy.Data
 					}
 
 					logger?.LogInformation($"Added '{user.UserName}' to roles.");
-					if (images == null || user.Gender == Genders.NotSpecified || !images.TryGetValue(user.Gender, out Queue<string> files)) continue;
+					if (images == null 
+						|| user.Gender == Genders.NotSpecified 
+						|| !images.TryGetValue(user.Gender, out IDictionary<string, string> files)
+						|| !files.TryGetValue(user.Id, out string photoUrl)) continue;
 
 					Photo photo = new Photo
 					{
 						UserId = user.Id,
-						Url = files.Dequeue(),
+						Url = photoUrl,
 						IsDefault = true,
 						DateAdded = user.Created
 					};
@@ -432,7 +439,7 @@ namespace MatchNBuy.Data
 				return users;
 			}
 
-			static async Task<IDictionary<Genders, Queue<string>>> DownloadUserImages(IList<User> users, IConfiguration configuration, IHostEnvironment environment, ILogger logger)
+			static async Task<IDictionary<Genders, IDictionary<string, string>>> DownloadUserImages(IList<User> users, IConfiguration configuration, IHostEnvironment environment, ILogger logger)
 			{
 				if (users.Count == 0) return null;
 
@@ -448,17 +455,17 @@ namespace MatchNBuy.Data
 					return null;
 				}
 
-				Queue<string> femalesNeeded = new Queue<string>();
-				Queue<string> malesNeeded = new Queue<string>();
-				Queue<string> females = new Queue<string>();
-				Queue<string> males = new Queue<string>();
+				IDictionary<string, string> femalesNeeded = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+				IDictionary<string, string> malesNeeded = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+				IDictionary<string, string> females = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+				IDictionary<string, string> males = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 				string femalePattern = $"{IMAGES_PREFIX_FEMALE}??.jpg";
 				string malePattern = $"{IMAGES_PREFIX_MALE}??.jpg";
 
 				foreach (User user in users.Where(e => e.Gender == Genders.Female || e.Gender == Genders.Male))
 				{
 					string pattern;
-					Queue<string> needed, queue;
+					IDictionary<string, string> needed, queue;
 
 					if (user.Gender == Genders.Female)
 					{
@@ -477,7 +484,7 @@ namespace MatchNBuy.Data
 
 					if (!Directory.Exists(path))
 					{
-						needed.Enqueue(user.Id);
+						needed[user.Id] = null;
 						continue;
 					}
 
@@ -486,14 +493,14 @@ namespace MatchNBuy.Data
 
 					if (string.IsNullOrEmpty(file))
 					{
-						needed.Enqueue(user.Id);
+						needed[user.Id] = null;
 						continue;
 					}
 
-					queue.Enqueue(file);
+					queue[user.Id] = file;
 				}
 
-				IDictionary<Genders, Queue<string>> result = new Dictionary<Genders, Queue<string>>
+				IDictionary<Genders, IDictionary<string, string>> result = new Dictionary<Genders, IDictionary<string, string>>
 				{
 					[Genders.Female] = females,
 					[Genders.Male] = males
@@ -505,14 +512,14 @@ namespace MatchNBuy.Data
 				Regex regex = new Regex("auto_[fm]_(?<x>\\d+)\\.jpg$", RegexHelper.OPTIONS_I);
 				HashSet<int> usedFemales = new HashSet<int>(females.Select(e =>
 				{
-					Match match = regex.Match(e);
+					Match match = regex.Match(e.Value);
 					return !match.Success
 								? -1
 								: int.Parse(match.Groups["x"].Value);
 				}).Where(e => e > -1));
 				HashSet<int> usedMales = new HashSet<int>(males.Select(e =>
 				{
-					Match match = regex.Match(e);
+					Match match = regex.Match(e.Value);
 					return !match.Success
 								? -1
 								: int.Parse(match.Groups["x"].Value);
@@ -543,10 +550,10 @@ namespace MatchNBuy.Data
 					using (IProducerConsumer<(string Id, Genders Gender, int Number)> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, new ProducerConsumerThreadQueueOptions<(string Id, Genders Gender, int Number)>(threads, e =>
 					{
 						// copy to local vars for threading issues
-						string path = Path.Combine(imagesPath, e.Id!);
-						Queue<string> queue = result[e.Gender!];
+						(string id, Genders gender, int number) = e;
+						IDictionary<string, string> queue = result[gender!];
 						CancellationToken tkn = token;
-						return DownloadUserImage(path, e.Gender, e.Number, queue, downloadSettings, logger, tkn);
+						return DownloadUserImage(imagesPath, id, gender, number, queue, downloadSettings, logger, tkn);
 					}), token))
 					{
 						requests.WorkStarted += (sender, args) => logger?.LogInformation($"Download started using {threads} threads...");
@@ -554,7 +561,7 @@ namespace MatchNBuy.Data
 
 						int number;
 
-						while (femalesNeeded.Count > 0)
+						foreach (string id in femalesNeeded.Keys)
 						{
 							do
 							{
@@ -562,10 +569,11 @@ namespace MatchNBuy.Data
 							}
 							while (usedFemales.Contains(number));
 
-							requests.Enqueue((femalesNeeded.Dequeue(), Genders.Female, number));
+							usedFemales.Add(number);
+							requests.Enqueue((id, Genders.Female, number));
 						}
 
-						while (malesNeeded.Count > 0)
+						foreach (string id in malesNeeded.Keys)
 						{
 							do
 							{
@@ -573,7 +581,8 @@ namespace MatchNBuy.Data
 							}
 							while (usedMales.Contains(number));
 
-							requests.Enqueue((malesNeeded.Dequeue(), Genders.Male, number));
+							usedMales.Add(number);
+							requests.Enqueue((id, Genders.Male, number));
 						}
 
 						requests.Complete();
@@ -584,7 +593,7 @@ namespace MatchNBuy.Data
 				return result;
 			}
 
-			static TaskResult DownloadUserImage(string sourcePath, Genders gender, int number, Queue<string> files, IOHttpDownloadFileWebRequestSettings settings, ILogger logger, CancellationToken token)
+			static TaskResult DownloadUserImage(string sourcePath, string userId, Genders gender, int number, IDictionary<string, string> files, IOHttpDownloadFileWebRequestSettings settings, ILogger logger, CancellationToken token)
 			{
 				if (token.IsCancellationRequested) return TaskResult.Canceled;
 
@@ -592,7 +601,7 @@ namespace MatchNBuy.Data
 															? IMAGES_GENDER_FEMALE
 															: IMAGES_GENDER_MALE, number);
 				FileStream stream = null;
-				string fileName = Path.Combine(sourcePath, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{number:D2}.jpg");
+				string fileName = Path.Combine(sourcePath, userId, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{number:D2}.jpg");
 
 				try
 				{
@@ -600,12 +609,7 @@ namespace MatchNBuy.Data
 					// This will automatically retry to download the file. I love my library!!
 					stream = UriHelper.DownloadFile(url, fileName, settings);
 					if (token.IsCancellationRequested) return TaskResult.Canceled;
-
-					lock (files)
-					{
-						files.Enqueue(Path.GetFileName(fileName));
-					}
-
+					files[userId] = Path.GetFileName(fileName);
 					return TaskResult.Success;
 				}
 				catch (Exception e)

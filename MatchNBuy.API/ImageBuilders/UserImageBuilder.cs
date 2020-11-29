@@ -35,7 +35,7 @@ namespace MatchNBuy.API.ImageBuilders
 			Uri relUrl = BuildRelative(id, imageName, imageSize);
 			return relUrl == null
 						? null
-						: UriHelper.ToUri($"{request.Scheme}://{request.Host}/{relUrl.String().TrimStart('/')}");
+						: UriHelper.ToUri($"{request.Scheme}://{request.Host}{relUrl.String()}");
 		}
 
 		public Uri BuildRelative(string id, string imageName, ImageSize imageSize = ImageSize.Default)

@@ -26,7 +26,7 @@ export default class SignInComponent implements OnInit {
 		private readonly _userClient: UserClient,
 		private readonly _fb: FormBuilder,
 		private readonly _alertService: AlertService) {
-		this.returnUrl = this._route.snapshot.queryParams["returnUrl"] || "/";
+		this.returnUrl = this._route.snapshot.queryParams["returnUrl"] || "/members";
 		if (this._userClient.isSignedIn()) this._router.navigate([this.returnUrl]);
 	}
 

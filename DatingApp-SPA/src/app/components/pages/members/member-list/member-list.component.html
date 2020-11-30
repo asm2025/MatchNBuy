@@ -1,10 +1,30 @@
-<div class="row m-0">
-	<div class="checkbox mx-1">
-		<label><input type="checkbox" name="likers" [(ngModel)]="pagination.likers" (ngModelChange)="loadUsers()" /> Who likes me</label>
+<div class="form-row align-items-center">
+	<div class="col-sm-2">
+		<div class="form-check">
+			<input type="checkbox" name="likers" class="form-check-input" [(ngModel)]="pagination.likers" />
+			<label>Who likes me</label>
+		</div>
 	</div>
-	<div class="checkbox mx-1">
-		<label><input type="checkbox" name="likees" [(ngModel)]="pagination.likees" (ngModelChange)="loadUsers()" /> Whom I like</label>
+	<div class="col-sm-2">
+		<div class="form-check">
+			<input type="checkbox" name="likees" class="form-check-input" [(ngModel)]="pagination.likees" />
+			<label>Whom I like</label>
+		</div>
 	</div>
+	<div class="col-sm-2">
+		<select class="form-control" title="Gender" [(ngModel)]="pagination.gender">
+			<option *ngFor="let gender of genders()" [value]="gender.value" [selected]="gender.selected">{{ gender.text }}</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="number" name="minAge" class="form-control" title="Minimum age" [(ngModel)]="pagination.minAge" min="0" max="99" />
+	</div>
+	<div class="col-sm-2">
+		<input type="number" name="maxAge" class="form-control" title="Maximum age" [(ngModel)]="pagination.maxAge" min="0" max="99" />
+	</div>
+	<button type="button" class="btn btn-primary py-1" (click)="loadUsers()">
+		Apply
+	</button>
 </div>
 <div *ngIf="pagination.count">
 	<hr />

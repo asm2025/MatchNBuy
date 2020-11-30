@@ -5,6 +5,7 @@ import { catchError } from "rxjs/operators";
 import { SortType } from "@common/sorting/SortType";
 import { IPaginated } from "@common/pagination/Paginated";
 import { Genders } from "@data/common/Genders";
+import { IOptionItem } from "@common/data/option-item"
 import { IUserForList, IUserList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
@@ -20,7 +21,7 @@ export default class MemberListComponent implements OnInit, OnDestroy {
 	pagination: IUserList = {
 		page: 1,
 		pageSize: 12,
-		gender: Genders.NotSpecified,
+		gender: 0,
 		minAge: 16,
 		maxAge: 99,
 		likees: false,
@@ -49,6 +50,11 @@ export default class MemberListComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this.disposed$.next(true);
 		this.disposed$.complete();
+	}
+
+	pageChanged(page: number): void {
+		this.pagination.page = page;
+		this.loadUsers();
 	}
 
 	loadUsers() {
@@ -95,8 +101,15 @@ export default class MemberListComponent implements OnInit, OnDestroy {
 		};
 	}
 
-	pageChanged(page: number): void {
-		this.pagination.page = page;
-		this.loadUsers();
+	genders(): IOptionItem<number>[] {
+		return Object.keys(Genders)
+			.filter(e => isNaN(Number(e)))
+			.map(e => {
+				return {
+					text: e,
+					value: Genders[e],
+					selected: this.pagination.gender === Genders[e]
+				}
+			});
 	}
 }

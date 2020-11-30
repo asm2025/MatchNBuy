@@ -15,8 +15,8 @@ namespace MatchNBuy.Model
 	[Serializable]
 	public class User : IdentityUser<string>, IEntity
     {
-		public const int AGE_MIN = 16;
-		public const int AGE_MAX = 70;
+		public const int AGE_MIN = 0;
+		public const int AGE_MAX = 99;
 		public const string DATE_FORMAT = "yyyy-MM-dd";
 
 		private string _firstName;

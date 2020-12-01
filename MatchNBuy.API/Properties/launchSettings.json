@@ -4,8 +4,9 @@
 		"windowsAuthentication": false,
 		"anonymousAuthentication": true,
 		"iisExpress": {
-			"applicationUrl": "http://localhost:8000",
-			"sslPort": 0
+			"applicationUrl": "http://localhost:5000",
+			//https://docs.microsoft.com/en-us/iis/extensions/using-iis-express/handling-url-binding-failures-in-iis-express#using-a-custom-ssl-port
+			"sslPort": 44300
 		}
 	},
 	"profiles": {
@@ -19,7 +20,7 @@
 		"MatchNBuy.API": {
 			"commandName": "Project",
 			"launchBrowser": true,
-			"applicationUrl": "http://localhost:8000",
+			"applicationUrl": "https://localhost:44300;http://localhost:5000",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development"
 			}

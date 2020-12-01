@@ -5,7 +5,7 @@
 	"email": "asm2025@outlook.com",
 	"website": "https://github.com/asm2025/",
 	"backend": {
-		"url": "http://localhost:8000"
+		"url": "https://localhost:44300"
 	},
 	"users": {
 		"defaultImage": "assets/images/user.jpg"

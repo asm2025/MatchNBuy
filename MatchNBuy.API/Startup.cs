@@ -252,8 +252,12 @@ namespace MatchNBuy.API
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			app.UseDefaultExceptionDelegate(_logger);
-			if (!env.IsDevelopment()) app.UseHsts();
+			if (env.IsDevelopment())
+				app.UseDefaultExceptionDelegate(_logger);
+			else if (env.IsProduction() || env.IsStaging())
+				app.UseExceptionHandler("/Error");
+
+			if (!env.IsDevelopment() || _configuration.GetValue<bool>("useSSL")) app.UseHsts();
 
 			app.UseHttpsRedirection()
 				.UseForwardedHeaders()

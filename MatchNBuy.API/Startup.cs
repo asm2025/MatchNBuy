@@ -231,7 +231,7 @@ namespace MatchNBuy.API
 					});
 				})
 				// MVC
-				.AddDefaultCors(allowedClients)
+				.AddDefaultCorsPolicy(builder => builder.WithExposedHeaders("Set-Cookie"), allowedClients)
 				.AddForwardedHeaders()
 				// Filters
 				.AddScoped<LogUserActivity>()

@@ -60,7 +60,8 @@ namespace MatchNBuy.API
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices([NotNull] IServiceCollection services)
 		{
-			string[] allowedClients = _configuration.GetValue("AllowedClients", "*").Split(';', StringSplitOptions.RemoveEmptyEntries);
+			string[] allowedClients = _configuration.GetSection("allowedClients")
+													.Get<string[]>();
 			services
 				// config
 				.AddSingleton(_configuration)

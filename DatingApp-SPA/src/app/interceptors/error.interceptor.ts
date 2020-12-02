@@ -41,7 +41,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 					const serverError = error.error;
 					let modalStateErrors = "";
 
-					if (serverError.errors && typeof serverError.errors === "object") {
+					if (serverError && serverError.errors && typeof serverError.errors === "object") {
 						for (const key in serverError.errors) {
 							if (!Object.prototype.hasOwnProperty.call(serverError.errors, key)) continue;
 							if (serverError.errors[key]) modalStateErrors += serverError.errors[key] + "\n";
@@ -51,11 +51,13 @@ export class ErrorInterceptor implements HttpInterceptor {
 					const httpErrorMessage = modalStateErrors ||
 						serverError ||
 						(error && error.error && error.error.message) ||
+						(error && error.message) ||
 						error.statusText;
 					return throwError(httpErrorMessage);
 				}
 
 				const errorMessage = (error && error.error && error.error.message) ||
+					(error && error.message) ||
 					error.statusText || "Unknown Error.";
 				return throwError(errorMessage);
 			})

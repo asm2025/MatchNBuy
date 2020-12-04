@@ -80,7 +80,9 @@
 					"builder": "@angular-devkit/build-angular:dev-server",
 					"options": {
 						"browserTarget": "dating-app:build",
-						"ssl": true
+						"ssl": true,
+						"sslCert": "ssl/localhost.crt",
+						"sslKey": "ssl/localhost.key"
 					},
 					"configurations": {
 						"production": {

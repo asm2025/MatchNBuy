@@ -25,7 +25,9 @@ export class ErrorInterceptor implements HttpInterceptor {
 	): Observable<HttpEvent<any>> {
 		return next.handle(req).pipe(
 			catchError(error => {
-				if (error && (error.status === 401 || error.status === 403)) {
+				if (!error) return throwError("Unknown Error.");
+
+				if (error.status === 401 || error.status === 403) {
 					// auto logout if 401 or 403 response returned from api
 					if (this._userClient.isSignedIn()) this._userClient.logout();
 				}
@@ -42,23 +44,22 @@ export class ErrorInterceptor implements HttpInterceptor {
 					let modalStateErrors = "";
 
 					if (serverError && serverError.errors && typeof serverError.errors === "object") {
-						for (const key in serverError.errors) {
-							if (!Object.prototype.hasOwnProperty.call(serverError.errors, key)) continue;
-							if (serverError.errors[key]) modalStateErrors += serverError.errors[key] + "\n";
+						for (const key of Object.keys(serverError.errors)) {
+							if (!serverError.errors[key]) continue;
+							modalStateErrors += serverError.errors[key] + "\n";
 						}
 					}
 
 					const httpErrorMessage = modalStateErrors ||
 						serverError ||
-						(error && error.error && error.error.message) ||
-						(error && error.message) ||
-						error.statusText;
+						(error.error && error.error.message) ||
+						error.message || error.statusText;
 					return throwError(httpErrorMessage);
 				}
 
 				const errorMessage = (error && error.error && error.error.message) ||
 					(error && error.message) ||
-					error.statusText || "Unknown Error.";
+					error.statusText;
 				return throwError(errorMessage);
 			})
 		);

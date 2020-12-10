@@ -2,7 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
+<<<<<<< Updated upstream
 		<FileVersion>20.12.10.1</FileVersion>
+=======
+		<FileVersion>20.12.1.18</FileVersion>
+>>>>>>> Stashed changes
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 

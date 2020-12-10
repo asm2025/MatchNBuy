@@ -61,7 +61,7 @@ export default class SignInComponent implements OnInit {
 			.pipe(catchError(error => {
 				this._alertService.toasts.error(error.toString());
 				return of(false);
-			}))
+			})) 
 			.subscribe((response: boolean) => {
 				if (!response) return;
 				this._router.navigate([this.returnUrl]);

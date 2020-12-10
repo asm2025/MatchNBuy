@@ -222,17 +222,17 @@ namespace MatchNBuy.API.Controllers
 
 		[AllowAnonymous]
 		[HttpPost("[action]")]
-		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> RefreshToken(CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
+			if (User.Identity == null || !User.Identity.IsAuthenticated) return NoContent();
 
 			string refreshToken = Request.Cookies[REFRESH_TOKEN_NAME];
-			if (string.IsNullOrEmpty(refreshToken)) return Unauthorized();
+			if (string.IsNullOrEmpty(refreshToken)) return NoContent();
 
 			TokenSignInResult result = await _repository.RefreshTokenAsync(refreshToken, token);
 			token.ThrowIfCancellationRequested();
-			if (!result.Succeeded) return Unauthorized(result);
+			if (!result.Succeeded) return NoContent();
 			
 			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(result.User);
 			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(result.User.Id, result.User.PhotoUrl).String();
@@ -244,11 +244,12 @@ namespace MatchNBuy.API.Controllers
 			});
 		}
 
+		[AllowAnonymous]
 		[HttpPost("[action]")]
-		[SwaggerResponse((int)HttpStatusCode.Unauthorized)]
 		public async Task<IActionResult> Logout([FromBody] RevokeTokenRequest revokeToken, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
+			if (User.Identity == null || !User.Identity.IsAuthenticated) return NoContent();
 			
 			string refreshToken = revokeToken?.Token ?? Request.Cookies[REFRESH_TOKEN_NAME];
 

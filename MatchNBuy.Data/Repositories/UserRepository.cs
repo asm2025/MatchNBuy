@@ -573,8 +573,6 @@ namespace MatchNBuy.Data.Repositories
 		{
 			ThrowIfDisposed();
 			token.ThrowIfCancellationRequested();
-			await SignInManager.RefreshSignInAsync(user);
-
 			RefreshToken newRefreshToken = GenerateRefreshToken(user, true);
 			user.LastActive = DateTime.UtcNow;
 			Context.Update(user);

@@ -31,7 +31,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.API.Controllers
 {
@@ -536,13 +535,13 @@ namespace MatchNBuy.API.Controllers
 			if (string.IsNullOrEmpty(userId) || !userId.IsSame(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)) return Unauthorized(userId);
 			pagination ??= new MessageList();
 			
-			IQueryable<Thread> queryable = _repository.Messages.Threads(userId, pagination);
+			IQueryable<Model.Thread> queryable = _repository.Messages.Threads(userId, pagination);
 			pagination.Count = await queryable.CountAsync(token);
 			token.ThrowIfCancellationRequested();
 
 			IList<MessageThread> messageThreads = new List<MessageThread>(pagination.PageSize);
 
-			await foreach (Thread thread in queryable.Paginate(pagination).AsAsyncEnumerable().WithCancellation(token))
+			await foreach (Model.Thread thread in queryable.Paginate(pagination).AsAsyncEnumerable().WithCancellation(token))
 			{
 				MessageThread messageThread = _mapper.Map<MessageThread>(thread);
 				messageThread.Participant = _mapper.Map<UserForLoginDisplay>(thread.RecipientId == userId

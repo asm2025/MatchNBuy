@@ -15,9 +15,9 @@
 			</dl>
 		</div>
 		<div *ngIf="!isCurrentUser" class="btn-group">
-			<button *ngIf="user.canBeLiked" type="button" class="btn" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
-			<button *ngIf="user.canBeDisliked" type="button" class="btn" (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
-			<button type="button" class="btn" (click)="selectTab(3)"><fa-icon icon="envelope"></fa-icon></button>
+			<button *ngIf="user.canBeLiked" type="button" class="btn" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon> Like</button>
+			<button *ngIf="user.canBeDisliked" type="button" class="btn" (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon> Dislike</button>
+			<button type="button" class="btn" (click)="selectTab(3)"><fa-icon icon="envelope"></fa-icon> Message</button>
 		</div>
 	</div>
 	<div class="details col-md-8 col-sm-12">
@@ -32,6 +32,16 @@
 					<ng-template ngbNavContent>
 						<div>
 							<dl>
+								<dt>Name</dt>
+								<dd>{{user.firstName}} {{user.lastName}}</dd>
+								<dt>Known as</dt>
+								<dd>{{user.knownAs}}</dd>
+								<dt>Gender</dt>
+								<dd>{{user.gender}}</dd>
+								<dt>E-mail</dt>
+								<dd>{{user.email}}</dd>
+								<dt>Phone Number</dt>
+								<dd>{{user.phoneNumber}}</dd>
 								<dt>Date of birth</dt>
 								<dd>{{user.dateOfBirth | customDate:'shortDate'}}, {{user.age | number:'1.0-0'}} years old</dd>
 								<dt>Member since</dt>

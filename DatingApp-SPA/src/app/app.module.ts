@@ -93,8 +93,14 @@ import WeatherComponent from "@components/pages/weather/weather.component";
 		JwtModule.forRoot({
 			config: {
 				tokenGetter: getToken,
-				allowedDomains: ["localhost:8000"],
-				disallowedRoutes: ["localhost:8000/Users/Login"]
+				allowedDomains: [
+					"localhost:5000",
+					"localhost:44300"
+				],
+				disallowedRoutes: [
+					"localhost:5000/Users/Login",
+					"localhost:44300/Users/Login"
+				]
 			}
 		}),
 		FontAwesomeModule,

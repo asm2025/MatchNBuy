@@ -19,14 +19,14 @@ export function getToken(): string | null {
 	return localStorage.getItem("SESSIONID");
 }
 
-function setSession(value: string | null | undefined) {
+function setToken(value: string | null | undefined) {
 	if (!value)
 		localStorage.removeItem("SESSIONID");
 	else
 		localStorage.setItem("SESSIONID", value);
 }
 
-function setSessionUser(value: IUser | null | undefined) {
+function setUser(value: IUser | null | undefined) {
 	if (!value)
 		localStorage.removeItem("USER");
 	else
@@ -83,7 +83,7 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 		this._user
 			.pipe(takeUntil(this.disposed$))
 			.subscribe(user => {
-				setSessionUser(user);
+				setUser(user);
 				this._token = getToken();
 
 				if (user)
@@ -110,10 +110,10 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 
 	login(userName: string, password: string): Observable<boolean> {
 		this.stopRefreshTokenTimer();
-		return this.client.post(`${this.baseUrl}/login`, { userName, password }, { withCredentials: true })
+		return this.client.post(`${this.baseUrl}/login`, { userName, password })
 			.pipe(map((res: any) => {
 				if (res && res.token && res.user) {
-					setSession(res.token);
+					setToken(res.token);
 					this._userSubject.next(res.user);
 					return true;
 				}
@@ -126,10 +126,10 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 	refreshToken(): Observable<any> {
 		this.stopRefreshTokenTimer();
 		if (!getToken()) return of(null);
-		return this.client.post(`${this.baseUrl}/refreshToken`, {}, { withCredentials: true })
+		return this.client.post(`${this.baseUrl}/refreshToken`, {})
 			.pipe(map((res: any) => {
 				if (res && res.token && res.user) {
-					setSession(res.token);
+					setToken(res.token);
 					this._userSubject.next(res.user);
 					return true;
 				}
@@ -141,13 +141,13 @@ export default class UserClient extends ApiClient<HttpClient> implements OnInit,
 
 	logout() {
 		this.stopRefreshTokenTimer();
-		this.client.post(`${this.baseUrl}/logout`, {}, { withCredentials: true }).subscribe();
+		this.client.post(`${this.baseUrl}/logout`, {}).subscribe();
 		this.clearLogin();
 		this._router.navigate(["/"]);
 	}
 
 	clearLogin() {
-		setSession(null);
+		setToken(null);
 		this._userSubject.next(null);
 	}
 

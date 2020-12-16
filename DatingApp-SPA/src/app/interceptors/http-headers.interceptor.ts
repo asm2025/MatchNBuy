@@ -24,7 +24,8 @@ export class HTTPHeadersInterceptor implements HttpInterceptor {
 				.set("Access-Control-Allow-Origin", config.backend.url || "*")
 				.set("Access-Control-Allow-Headers", "*")
 				.set("Access-Control-Allow-Methods", "*")
-				.set("Access-Control-Max-Age", "86400")
+				.set("Access-Control-Max-Age", "86400"),
+			withCredentials: true
 		});
 		return next.handle(modifiedRequest);
 	}

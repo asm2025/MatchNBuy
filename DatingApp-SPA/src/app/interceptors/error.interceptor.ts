@@ -23,7 +23,6 @@ export class ErrorInterceptor implements HttpInterceptor {
 		req: HttpRequest<any>,
 		next: HttpHandler
 	): Observable<HttpEvent<any>> {
-		console.log(req);
 		return next.handle(req).pipe(
 			catchError(error => {
 				if (!error) return throwError("Unknown Error.");

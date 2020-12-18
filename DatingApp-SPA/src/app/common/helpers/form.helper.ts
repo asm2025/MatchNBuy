@@ -64,10 +64,7 @@ export default class FormHelper {
 
 		for (const key of keys) {
 			const message = ValidationMessages.getMessage(key, name, errors[key]);
-			if (!message) {
-				console.log(key, errors[key]);
-				continue;
-			}
+			if (!message) continue;
 			messages.push(message);
 		}
 

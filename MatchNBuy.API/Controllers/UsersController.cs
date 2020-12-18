@@ -114,7 +114,7 @@ namespace MatchNBuy.API.Controllers
 
 				StringBuilder filter = new StringBuilder();
 				filter.Append($"{nameof(Model.User.Id)} != \"{userId}\"");
-				if (pagination.Gender.HasValue && pagination.Gender != Genders.NotSpecified) filter.Append($" && {nameof(Model.User.Gender)} == {(int)pagination.Gender.Value}");
+				if (pagination.Gender.HasValue && pagination.Gender != Genders.Unspecified) filter.Append($" && {nameof(Model.User.Gender)} == {(int)pagination.Gender.Value}");
 
 				DateTime today = DateTime.Today;
 				bool hasMinAge = pagination.MinAge.HasValue && pagination.MinAge > 0;
@@ -208,7 +208,13 @@ namespace MatchNBuy.API.Controllers
 			
 			TokenSignInResult result = await _repository.SignInAsync(loginParams.UserName, loginParams.Password, true, token);
 			token.ThrowIfCancellationRequested();
-			if (!result.Succeeded) return Unauthorized(result);
+
+			if (!result.Succeeded)
+			{
+				if (result.IsLockedOut) return Unauthorized("Locked out");
+				if (result.RequiresTwoFactor) return Unauthorized("Requires two factors");
+				return Unauthorized();
+			}
 			
 			UserForLoginDisplay userForLoginDisplay = _mapper.Map<UserForLoginDisplay>(result.User);
 			userForLoginDisplay.PhotoUrl = _repository.ImageBuilder.Build(result.User.Id, result.User.PhotoUrl).String();

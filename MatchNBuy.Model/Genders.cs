@@ -1,11 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace MatchNBuy.Model
 {
 	public enum Genders
 	{
-		[Display(Name = "Not Specified")]
-		NotSpecified,
+		Unspecified,
 		Male,
 		Female
 	}

@@ -65,7 +65,7 @@ export default class MemberListComponent implements OnInit, OnDestroy {
 					result: [],
 					pagination: {
 						...this.pagination,
-						gender: Genders.NotSpecified,
+						gender: Genders.Unspecified,
 						likees: false,
 						likers: false,
 						page: 1,

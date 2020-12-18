@@ -82,7 +82,7 @@ export default class SignUpComponent implements OnInit, OnDestroy {
 			lastName: [null, Validators.maxLength(128)],
 			knownAs: [null, Validators.maxLength(128)],
 			dateOfBirth: [null, Validators.required],
-			gender: [Genders.NotSpecified, Validators.required],
+			gender: [Genders.Unspecified, Validators.required],
 			countryCode: [null, Validators.required],
 			cityId: [null, Validators.required],
 			introduction: [null],

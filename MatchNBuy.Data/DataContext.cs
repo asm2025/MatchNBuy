@@ -418,7 +418,7 @@ namespace MatchNBuy.Data
 
 					logger?.LogInformation($"Added '{user.UserName}' to roles.");
 					if (images == null 
-						|| user.Gender == Genders.NotSpecified 
+						|| user.Gender == Genders.Unspecified 
 						|| !images.TryGetValue(user.Gender, out IDictionary<string, string> files)
 						|| !files.TryGetValue(user.Id, out string photoUrl)) continue;
 

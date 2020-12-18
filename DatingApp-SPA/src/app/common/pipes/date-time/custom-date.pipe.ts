@@ -26,7 +26,16 @@ export default class CustomDatePipe extends DatePipe implements PipeTransform {
 		super(_locale);
 	}
 
-	transform(value: Date | string | number | null | undefined, format = "short", timezone: string | undefined = undefined, locale: string | undefined = undefined): string | null {
-		return super.transform(value, this._customFormats[format] || format, timezone, locale || this._locale);
+	transform(value: Date | string | number, format?: string, timezone?: string, locale?: string): string | null;
+	transform(value: null | undefined, format?: string, timezone?: string, locale?: string): null;
+	transform(value: Date | string | number | null | undefined,
+		format?: string,
+		timezone?: string,
+		locale?: string): string | null;
+	transform(value: Date | string | number | null | undefined,
+		format: string | undefined,
+		timezone: string | undefined,
+		locale: string | undefined): string | null {
+		return super.transform(value, this._customFormats[format || "iso8601"] || format, timezone, locale || this._locale);
 	}
 }

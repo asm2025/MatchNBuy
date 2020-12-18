@@ -67,11 +67,11 @@ namespace MatchNBuy.Data.Fakers
 				switch (user.Gender)
 				{
 					case Genders.Male:
-						if (males == maxGender) user.Gender = Genders.NotSpecified;
+						if (males == maxGender) user.Gender = Genders.Unspecified;
 						else males++;
 						break;
 					case Genders.Female:
-						if (females == maxGender) user.Gender = Genders.NotSpecified;
+						if (females == maxGender) user.Gender = Genders.Unspecified;
 						else females++;
 						break;
 				}

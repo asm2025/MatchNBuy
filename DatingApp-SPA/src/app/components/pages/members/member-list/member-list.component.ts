@@ -1,6 +1,10 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ReplaySubject, of } from "rxjs";
 import { catchError } from "rxjs/operators";
+import {
+	fadeInRightOnEnterAnimation,
+	fadeOutLeftOnLeaveAnimation,
+} from "angular-animations";
 
 import { SortType } from "@common/sorting/SortType";
 import { IPaginated } from "@common/pagination/Paginated";
@@ -13,7 +17,11 @@ import AlertService from "@services/alert.service";
 @Component({
 	selector: "app-member-list",
 	templateUrl: "./member-list.component.html",
-	styleUrls: ["./member-list.component.scss"]
+	styleUrls: ["./member-list.component.scss"],
+	animations: [
+		fadeInRightOnEnterAnimation(),
+		fadeOutLeftOnLeaveAnimation()
+	]
 })
 export default class MemberListComponent implements OnInit, OnDestroy {
 	disposed$ = new ReplaySubject<boolean>();
@@ -38,6 +46,7 @@ export default class MemberListComponent implements OnInit, OnDestroy {
 			name: "knownAs"
 		}]
 	};
+	filterShown = false;
 
 	constructor(private readonly _userClient: UserClient,
 		private readonly _alertService: AlertService) {

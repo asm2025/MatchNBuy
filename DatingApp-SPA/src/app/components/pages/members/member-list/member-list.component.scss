@@ -1,1 +1,12 @@
-﻿
+@import "~bootstrap/scss/_mixins";
+@import "_variables.scss";
+@import "_mixins.scss";
+
+.filter-panel
+{
+	position: fixed;
+	padding: 0;
+	width: 25%;
+	z-index: 1000;
+	transition: 0.5s;
+}

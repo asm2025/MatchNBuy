@@ -5,7 +5,6 @@
 		"anonymousAuthentication": true,
 		"iisExpress": {
 			"applicationUrl": "http://localhost:5000",
-			//https://docs.microsoft.com/en-us/iis/extensions/using-iis-express/handling-url-binding-failures-in-iis-express#using-a-custom-ssl-port
 			"sslPort": 44300
 		}
 	},

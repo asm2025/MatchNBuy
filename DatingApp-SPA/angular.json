@@ -81,7 +81,7 @@
 					"options": {
 						"browserTarget": "dating-app:build",
 						"ssl": true,
-						"sslCert": "ssl/localhost.crt",
+						"sslCert": "ssl/localhost.csr",
 						"sslKey": "ssl/localhost.key"
 					},
 					"configurations": {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading;
-using asm.Core.Data.Entity.Patterns.Repository;
+using essentialMix.Core.Data.Entity.Patterns.Repository;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;

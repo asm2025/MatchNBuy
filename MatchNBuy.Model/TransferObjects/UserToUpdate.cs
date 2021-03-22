@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using asm.Extensions;
+using essentialMix.Extensions;
 
 namespace MatchNBuy.Model.TransferObjects
 {

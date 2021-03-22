@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using asm.ComponentModel.DataAnnotations;
+using essentialMix.ComponentModel.DataAnnotations;
 
 namespace MatchNBuy.Model.TransferObjects
 {

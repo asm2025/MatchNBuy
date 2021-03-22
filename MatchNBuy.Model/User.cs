@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json.Serialization;
-using asm.Data.Model;
-using asm.Extensions;
+using essentialMix.Data.Model;
+using essentialMix.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 namespace MatchNBuy.Model

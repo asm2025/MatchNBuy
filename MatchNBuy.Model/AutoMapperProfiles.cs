@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using asm.Data.Patterns.Parameters;
-using asm.Extensions;
-using asm.Patterns.Pagination;
+using essentialMix.Data.Patterns.Parameters;
+using essentialMix.Extensions;
+using essentialMix.Patterns.Pagination;
 using AutoMapper;
 using MatchNBuy.Model.Parameters;
 using MatchNBuy.Model.TransferObjects;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using asm.Data.Patterns.Repository;
+using essentialMix.Data.Patterns.Repository;
 using MatchNBuy.Model;
 
 namespace MatchNBuy.Data.Repositories

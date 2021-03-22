@@ -1,5 +1,5 @@
 ﻿using System;
-using asm.Patterns.Imaging;
+using essentialMix.Patterns.Imaging;
 using JetBrains.Annotations;
 
 namespace MatchNBuy.Model.ImageBuilders

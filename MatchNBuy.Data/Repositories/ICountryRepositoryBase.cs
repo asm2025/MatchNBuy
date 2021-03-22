@@ -1,4 +1,4 @@
-﻿using asm.Core.Data.Entity.Patterns.Repository;
+﻿using essentialMix.Core.Data.Entity.Patterns.Repository;
 using MatchNBuy.Model;
 
 namespace MatchNBuy.Data.Repositories

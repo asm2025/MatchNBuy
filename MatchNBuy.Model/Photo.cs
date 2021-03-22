@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using asm.Data.Model;
+using essentialMix.Data.Model;
 
 namespace MatchNBuy.Model
 {

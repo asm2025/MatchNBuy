@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using asm.Data.Model;
+using essentialMix.Data.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace MatchNBuy.Model

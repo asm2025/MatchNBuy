@@ -2,18 +2,9 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>21.1.28.2</FileVersion>
+		<FileVersion>21.3.22.2</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="Controllers\ImagesController.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Remove="Files\images\users\user.jpg" />
-		<None Remove="Files\images\users\user.png" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="Files\images\users\user.jpg">
@@ -23,19 +14,29 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="essentialMix" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Swagger" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Web" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Data" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Drawing" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Logging" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Newtonsoft" Version="12.24.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.2" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.8.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.9.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.2">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -46,24 +47,24 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
 		<PackageReference Include="MimeTypesMap" Version="1.0.8" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Scrutor" Version="3.3.0" />
 		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="4.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.2.0" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
 		<PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
 		<PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-		<PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageReference Include="Serilog.Sinks.Email" Version="2.4.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
-		<PackageReference Include="System.Drawing.Common" Version="5.0.0" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.7" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0" />
+		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.8" />
 		<PackageReference Include="System.Management" Version="5.0.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
 	</ItemGroup>
@@ -71,39 +72,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MatchNBuy.Data\MatchNBuy.Data.csproj" />
 		<ProjectReference Include="..\MatchNBuy.Model\MatchNBuy.Model.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="asm">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Authentication.JwtBearer">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Authentication.JwtBearer.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Data.Entity">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Data.Entity.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Swagger">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Swagger.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Web">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Web.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Data">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Data.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Drawing">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Drawing.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Extensions.Configuration">
-			<HintPath>..\..\..\..\..\Libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Extensions.Configuration.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Logging">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Logging.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Newtonsoft">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Newtonsoft.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 
 </Project>

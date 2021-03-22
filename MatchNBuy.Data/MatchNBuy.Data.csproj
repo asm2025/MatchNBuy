@@ -2,60 +2,37 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>21.1.28.1</FileVersion>
+		<FileVersion>21.3.22.1</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Bogus" Version="32.0.2" />
+		<PackageReference Include="Bogus" Version="33.0.2" />
+		<PackageReference Include="essentialMix" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Core.Web" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Data" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Identity" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Logging" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Newtonsoft" Version="12.24.0" />
+		<PackageReference Include="essentialMix.Threading" Version="12.24.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.7" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.9.0" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.8" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\MatchNBuy.Model\MatchNBuy.Model.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="asm">
-		  <HintPath>..\..\..\..\..\Libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Authentication.JwtBearer">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Authentication.JwtBearer.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Data.Entity">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Data.Entity.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Core.Web">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\net5.0\asm.Core.Web.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Data">
-			<HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Data.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Extensions.Configuration">
-		  <HintPath>..\..\..\..\..\Libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Extensions.Configuration.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Identity">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Identity.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Logging">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Logging.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Newtonsoft">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Newtonsoft.dll</HintPath>
-		</Reference>
-		<Reference Include="asm.Threading">
-		  <HintPath>..\..\..\..\..\libraries\asm\asm\bin\Debug\AnyCPU\netstandard2.0\asm.Threading.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 </Project>

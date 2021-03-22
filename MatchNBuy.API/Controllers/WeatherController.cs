@@ -4,7 +4,7 @@ using MatchNBuy.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using asm.Core.Web.Controllers;
+using essentialMix.Core.Web.Controllers;
 using MatchNBuy.Data.Repositories;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;

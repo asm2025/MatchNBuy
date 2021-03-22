@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using asm.Collections;
-using asm.Helpers;
+using essentialMix.Collections;
+using essentialMix.Helpers;
 using Bogus;
 using MatchNBuy.Model;
 

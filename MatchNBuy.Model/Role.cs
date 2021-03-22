@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using asm.Data.Model;
+using essentialMix.Data.Model;
 using Microsoft.AspNetCore.Identity;
 
 namespace MatchNBuy.Model

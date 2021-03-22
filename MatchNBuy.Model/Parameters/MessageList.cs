@@ -1,5 +1,5 @@
 using System;
-using asm.Patterns.Pagination;
+using essentialMix.Patterns.Pagination;
 
 namespace MatchNBuy.Model.Parameters
 {

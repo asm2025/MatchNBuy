@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using asm.Data.Model;
-using asm.Extensions;
+using essentialMix.Data.Model;
+using essentialMix.Extensions;
 
 namespace MatchNBuy.Model
 {

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using asm.Core.Data.Entity.Patterns.Repository;
+using essentialMix.Core.Data.Entity.Patterns.Repository;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
 

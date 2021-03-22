@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using asm.Extensions;
-using asm.Helpers;
-using asm.Patterns.Imaging;
+using essentialMix.Extensions;
+using essentialMix.Helpers;
+using essentialMix.Patterns.Imaging;
 using JetBrains.Annotations;
 using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Http;

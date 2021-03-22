@@ -8,13 +8,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using asm.Core.Web.Controllers;
-using asm.Data.Patterns.Parameters;
-using asm.Drawing.Helpers;
-using asm.Extensions;
-using asm.Helpers;
-using asm.Patterns.Pagination;
-using asm.Patterns.Sorting;
+using essentialMix.Core.Web.Controllers;
+using essentialMix.Data.Patterns.Parameters;
+using essentialMix.Drawing.Helpers;
+using essentialMix.Extensions;
+using essentialMix.Helpers;
+using essentialMix.Patterns.Pagination;
+using essentialMix.Patterns.Sorting;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MatchNBuy.Data.Repositories;
@@ -414,10 +414,10 @@ namespace MatchNBuy.API.Controllers
 			try
 			{
 				string imagesPath = Path.Combine(Environment.ContentRootPath, _repository.ImageBuilder.BaseUri.Replace('/', '\\'), userId);
-				fileName = Path.Combine(imagesPath, PathHelper.Extenstion(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
+				fileName = Path.Combine(imagesPath, PathHelper.Extension(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
-				(int x, int y) = asm.Numeric.Math.AspectRatio(image.Width, image.Height, Configuration.GetValue("images:users:size", 128));
+				(int x, int y) = essentialMix.Numeric.Math.AspectRatio(image.Width, image.Height, Configuration.GetValue("images:users:size", 128));
 				resizedImage = ImageHelper.Resize(image, x, y);
 				fileName = ImageHelper.Save(resizedImage, fileName);
 			}

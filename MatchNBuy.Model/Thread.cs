@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using asm.Data.Model;
+using essentialMix.Data.Model;
 
 namespace MatchNBuy.Model
 {

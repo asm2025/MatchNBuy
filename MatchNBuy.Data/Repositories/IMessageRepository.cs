@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using asm.Core.Data.Entity.Patterns.Repository;
-using asm.Patterns.Pagination;
+using essentialMix.Core.Data.Entity.Patterns.Repository;
+using essentialMix.Patterns.Pagination;
 using MatchNBuy.Model;
 using JetBrains.Annotations;
 using MatchNBuy.Model.TransferObjects;

@@ -8,16 +8,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="33.0.2" />
-		<PackageReference Include="essentialMix" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Core.Web" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Data" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Identity" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Logging" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Newtonsoft" Version="12.24.0" />
-		<PackageReference Include="essentialMix.Threading" Version="12.24.0" />
+		<PackageReference Include="essentialMix" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Core.Web" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Data" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Identity" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Logging" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Newtonsoft" Version="12.25.0" />
+		<PackageReference Include="essentialMix.Threading" Version="12.25.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />

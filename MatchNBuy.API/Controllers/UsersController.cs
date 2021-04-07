@@ -30,7 +30,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.Swagger.Annotations;
 
 namespace MatchNBuy.API.Controllers
 {

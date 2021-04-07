@@ -19,7 +19,7 @@ using MatchNBuy.Model.TransferObjects;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.Swagger.Annotations;
 
 namespace MatchNBuy.API.Controllers
 {

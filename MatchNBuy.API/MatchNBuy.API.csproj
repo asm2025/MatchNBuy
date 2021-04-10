@@ -15,16 +15,16 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-		<PackageReference Include="essentialMix" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Core.Swagger" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Core.Web" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Data" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Drawing" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Logging" Version="12.27.1" />
-		<PackageReference Include="essentialMix.Newtonsoft" Version="12.27.1" />
+		<PackageReference Include="essentialMix" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Core.Swagger" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Core.Web" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Data" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Drawing" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Logging" Version="12.27.2" />
+		<PackageReference Include="essentialMix.Newtonsoft" Version="12.27.2" />
 		<PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
@@ -61,7 +61,7 @@
 		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageReference Include="Serilog.Sinks.Email" Version="2.4.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
 		<PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />

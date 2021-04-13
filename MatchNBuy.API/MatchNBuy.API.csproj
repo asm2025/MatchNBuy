@@ -15,16 +15,16 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-		<PackageReference Include="essentialMix" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Core.Swagger" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Core.Web" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Data" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Drawing" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Logging" Version="12.27.3" />
-		<PackageReference Include="essentialMix.Newtonsoft" Version="12.27.3" />
+		<PackageReference Include="essentialMix" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Core.Swagger" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Core.Web" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Data" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Drawing" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Extensions.Configuration" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Logging" Version="12.28.0" />
+		<PackageReference Include="essentialMix.Newtonsoft" Version="12.28.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />

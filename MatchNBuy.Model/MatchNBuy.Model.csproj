@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="essentialMix" Version="12.30.0" />
-    <PackageReference Include="essentialMix.Data" Version="12.30.0" />
+    <PackageReference Include="essentialMix" Version="12.31.0" />
+    <PackageReference Include="essentialMix.Data" Version="12.31.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.5" />

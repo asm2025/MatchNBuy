@@ -8,12 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="essentialMix" Version="12.31.0" />
-    <PackageReference Include="essentialMix.Data" Version="12.31.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
+    <PackageReference Include="essentialMix" Version="12.32.0" />
+    <PackageReference Include="essentialMix.Data" Version="12.32.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 

@@ -17,6 +17,7 @@ using essentialMix.Patterns.Pagination;
 using essentialMix.Patterns.Sorting;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using essentialMix.Numeric;
 using MatchNBuy.Data.Repositories;
 using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
@@ -30,7 +31,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger.Annotations;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MatchNBuy.API.Controllers
 {
@@ -417,7 +418,7 @@ namespace MatchNBuy.API.Controllers
 				fileName = Path.Combine(imagesPath, PathHelper.Extension(Path.GetFileName(photoParams.File.FileName), _repository.ImageBuilder.FileExtension));
 				stream = photoParams.File.OpenReadStream();
 				image = Image.FromStream(stream, true, true);
-				(int x, int y) = essentialMix.Numeric.Math.AspectRatio(image.Width, image.Height, Configuration.GetValue("images:users:size", 128));
+				(int x, int y) = Math2.AspectRatio(image.Width, image.Height, Configuration.GetValue("images:users:size", 128));
 				resizedImage = ImageHelper.Resize(image, x, y);
 				fileName = ImageHelper.Save(resizedImage, fileName);
 			}

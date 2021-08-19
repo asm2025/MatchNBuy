@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using essentialMix.Extensions;
 using essentialMix.Helpers;
 using AutoMapper;
+using essentialMix.Core.Web.Helpers;
 using JetBrains.Annotations;
 using MatchNBuy.Data;
 using MatchNBuy.Model;

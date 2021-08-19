@@ -7,13 +7,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using asm.Helpers;
 using essentialMix;
-using essentialMix.Threading.Collections.ProducerConsumer;
 using essentialMix.Extensions;
 using essentialMix.Helpers;
 using essentialMix.IO;
 using essentialMix.Newtonsoft.Helpers;
-using essentialMix.Threading.Helpers;
 using AutoMapper;
 using MatchNBuy.Data.Fakers;
 using MatchNBuy.Model;
@@ -29,6 +28,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using essentialMix.Logging.Helpers;
+using essentialMix.Threading.Patterns.ProducerConsumer;
 using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.Data
@@ -37,6 +37,13 @@ namespace MatchNBuy.Data
 		IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>,
 		IdentityRoleClaim<string>, IdentityUserToken<string>>
 	{
+		private struct PersonDownloadData
+		{
+			public string Id;
+			public Genders Gender;
+			public int Number;
+		}
+
 		/// <inheritdoc />
 		public DataContext()
 		{
@@ -546,19 +553,20 @@ namespace MatchNBuy.Data
 #else
 					int threads = TaskHelper.ProcessMaximum;
 #endif
-					// Imagine doing this from scratch!! I love my library!!
-					using (IProducerConsumer<(string Id, Genders Gender, int Number)> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, new ProducerConsumerThreadQueueOptions<(string Id, Genders Gender, int Number)>(threads, e =>
+
+					ProducerConsumerThreadQueueOptions<PersonDownloadData> options = new ProducerConsumerThreadQueueOptions<PersonDownloadData>(threads, (_, pdd) =>
 					{
 						// copy to local vars for threading issues
-						(string id, Genders gender, int number) = e;
-						IDictionary<string, string> queue = result[gender!];
-						CancellationToken tkn = token;
-						return DownloadUserImage(imagesPath, id, gender, number, queue, downloadSettings, logger, tkn);
-					}), token))
+						IDictionary<string, string> queue = result[pdd.Gender];
+						return DownloadUserImage(imagesPath, pdd, queue, downloadSettings, logger, token);
+					})
 					{
-						requests.WorkStarted += (sender, args) => logger?.LogInformation($"Download started using {threads} threads...");
-						requests.WorkCompleted += (sender, args) => logger?.LogInformation("Download completed.");
-
+						WorkStartedCallback = _ => logger?.LogInformation($"Download started using {threads} threads..."),
+						WorkCompletedCallback = _ => logger?.LogInformation("Download completed.")
+					};
+					
+					using (IProducerConsumer<PersonDownloadData> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, options, token))
+					{
 						int number;
 
 						foreach (string id in femalesNeeded.Keys)
@@ -570,7 +578,12 @@ namespace MatchNBuy.Data
 							while (usedFemales.Contains(number));
 
 							usedFemales.Add(number);
-							requests.Enqueue((id, Genders.Female, number));
+							requests.Enqueue(new PersonDownloadData
+							{
+								Id = id,
+								Gender = Genders.Female,
+								Number = number
+							});
 						}
 
 						foreach (string id in malesNeeded.Keys)
@@ -582,7 +595,12 @@ namespace MatchNBuy.Data
 							while (usedMales.Contains(number));
 
 							usedMales.Add(number);
-							requests.Enqueue((id, Genders.Male, number));
+							requests.Enqueue(new PersonDownloadData
+							{
+								Id = id,
+								Gender = Genders.Male,
+								Number = number
+							});
 						}
 
 						requests.Complete();
@@ -593,15 +611,15 @@ namespace MatchNBuy.Data
 				return result;
 			}
 
-			static TaskResult DownloadUserImage(string sourcePath, string userId, Genders gender, int number, IDictionary<string, string> files, IOHttpDownloadFileWebRequestSettings settings, ILogger logger, CancellationToken token)
+			static TaskResult DownloadUserImage(string sourcePath, PersonDownloadData downloadData, IDictionary<string, string> files, IOHttpDownloadFileWebRequestSettings settings, ILogger logger, CancellationToken token)
 			{
 				if (token.IsCancellationRequested) return TaskResult.Canceled;
 
-				string url = string.Format(IMAGES_URL, gender == Genders.Female
+				string url = string.Format(IMAGES_URL, downloadData.Gender == Genders.Female
 															? IMAGES_GENDER_FEMALE
-															: IMAGES_GENDER_MALE, number);
+															: IMAGES_GENDER_MALE, downloadData.Number);
 				FileStream stream = null;
-				string fileName = Path.Combine(sourcePath, userId, $"{(gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{number:D2}.jpg");
+				string fileName = Path.Combine(sourcePath, downloadData.Id, $"{(downloadData.Gender == Genders.Female ? IMAGES_PREFIX_FEMALE : IMAGES_PREFIX_MALE)}{downloadData.Number:D2}.jpg");
 
 				try
 				{
@@ -609,7 +627,7 @@ namespace MatchNBuy.Data
 					// This will automatically retry to download the file. I love my library!!
 					stream = UriHelper.DownloadFile(url, fileName, settings);
 					if (token.IsCancellationRequested) return TaskResult.Canceled;
-					files[userId] = Path.GetFileName(fileName);
+					files[downloadData.Id] = Path.GetFileName(fileName);
 					return TaskResult.Success;
 				}
 				catch (Exception e)

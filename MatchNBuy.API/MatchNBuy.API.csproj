@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<FileVersion>21.4.7.2</FileVersion>
+		<FileVersion>21.8.19.6</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
@@ -62,8 +62,8 @@
 		<PackageReference Include="Serilog.Sinks.Email" Version="2.4.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.5" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
-		<PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
 		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.12" />
 		<PackageReference Include="System.Management" Version="5.0.0" />

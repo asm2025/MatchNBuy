@@ -6,6 +6,12 @@
 
 $ng-select-padding-right: add(add($input-line-height * .5em, $input-padding-y), 0.25rem) !default;
 
+@media (min-width: 1200px) {
+	.container, .container-sm, .container-md, .container-lg, .container-xl {
+		max-width: 80%;
+	}
+}
+
 .ng-select {
 	&:hover {
 		box-shadow: 0 1px 0 lighten($input-border-color, 5);

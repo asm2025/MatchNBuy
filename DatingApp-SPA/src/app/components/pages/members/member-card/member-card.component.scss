@@ -4,11 +4,13 @@
 
 	.card-img-wrapper {
 		overflow: hidden;
+		cursor: pointer;
 		position: relative;
 
 		.overlay {
 			display: flex;
 			flex-direction: column;
+			font-size: smaller;
 			align-items: center;
 			justify-content: flex-end;
 			position: absolute;

@@ -1,5 +1,5 @@
 <div *ngIf="user; else notFound" class="row h-100">
-	<div class="summary col-md-4 col-sm-12 border-sm-right-none border-right">
+	<div class="summary col-md-3 col-sm-4 border-sm-right-none border-right">
 		<h2 class="name">{{user.knownAs}}</h2>
 		<app-lazy-image [src]="userImage" [cssClass]="'img-fluid w-100 mx-auto d-block'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="info">
@@ -20,7 +20,7 @@
 			<button type="button" class="btn" (click)="selectTab(3)"><fa-icon icon="envelope"></fa-icon> Message</button>
 		</div>
 	</div>
-	<div class="details col-md-8 col-sm-12">
+	<div class="details col-md-9 col-sm-8">
 		<div class="header">
 			<h3 class="title">User information</h3>
 		</div>

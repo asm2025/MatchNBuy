@@ -39,6 +39,9 @@ import TrimRightPipe from "@common/pipes/string/trim-right.pipe";
 import CustomDatePipe from "@common/pipes/date-time/custom-date.pipe";
 
 import { NgControlStatus } from "@common/directives/ng_control_status";
+import { SortableHeader } from "@common/directives/sortable.directive";
+import { StopPropagation } from "@common/directives/stop-propagation.directive";
+import { PreventDefaults } from "@common/directives/prevent-defaults.directive";
 
 import HammerConfigProvider from "@/config/hammer.config";
 
@@ -122,6 +125,9 @@ import WeatherComponent from "@components/pages/weather/weather.component";
 		TrimRightPipe,
 		CustomDatePipe,
 		NgControlStatus,
+		SortableHeader,
+		StopPropagation,
+		PreventDefaults,
 		AppComponent,
 		SpinnerComponent,
 		AlertsComponent,

@@ -1,5 +1,5 @@
 <div class="card mb-4">
-	<div class="card-img-wrapper">
+	<div class="card-img-wrapper" [routerLink]="['/members/', user.id]">
 		<app-lazy-image [src]="getUserImage(user)" [cssClass]="'card-img-top'" alt="{{ user.knownAs }}" [responsive]="true"></app-lazy-image>
 		<div class="overlay">
 			<div class="info">
@@ -10,10 +10,9 @@
 				<div *ngIf="user.introduction" [innerHtml]="user.introduction"></div>
 			</div>
 			<div class="btn-group text-center" role="group" aria-label="Member actions">
-				<button type="button" class="btn" [routerLink]="['/members/', user.id]"><fa-icon icon="user"></fa-icon></button>
-				<button *ngIf="user.canBeLiked" type="button" class="btn" (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
-				<button *ngIf="user.canBeDisliked" type="button" class="btn" (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
-				<button type="button" class="btn" [routerLink]="['/members/', user.id]" [queryParams]="{tab: 3}"><fa-icon icon="envelope"></fa-icon></button>
+				<button *ngIf="user.canBeLiked" type="button" class="btn" [stop-propagation] (click)="like(user.id)"><fa-icon icon="heart"></fa-icon></button>
+				<button *ngIf="user.canBeDisliked" type="button" class="btn" [stop-propagation] (click)="dislike(user.id)"><fa-icon icon="heart-broken"></fa-icon></button>
+				<button type="button" class="btn" [stop-propagation] [routerLink]="['/members/', user.id]" [queryParams]="{tab: 3}"><fa-icon icon="envelope"></fa-icon></button>
 			</div>
 		</div>
 	</div>

@@ -3,7 +3,7 @@
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
 		"outDir": "./out-tsc/spec",
-		"composite": true,
+		//"composite": true,
 		"types": [
 			"node",
 			"jasmine"

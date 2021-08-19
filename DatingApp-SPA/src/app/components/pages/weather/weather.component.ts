@@ -45,7 +45,7 @@ export default class WeatherComponent implements OnInit, OnDestroy {
 	}
 
 	onDateChanged($event: any): void {
-		this.list(this.key($event));
+		this.list($event);
 	}
 
 	list(date: Date | string): void {

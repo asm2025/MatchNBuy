@@ -7,7 +7,7 @@
 {
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
-		"composite": true
+		//"composite": true
 	},
 	"references": [
 		{

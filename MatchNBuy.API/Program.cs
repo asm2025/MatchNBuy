@@ -38,7 +38,7 @@ namespace MatchNBuy.API
 
 			// Logging
 			LoggerConfiguration loggerConfiguration = new LoggerConfiguration();
-			if (configuration.GetValue<bool>("Logging:Enabled")) loggerConfiguration.ReadFrom.Configuration(configuration);
+			if (configuration.GetValue<bool>("LoggingEnabled")) loggerConfiguration.ReadFrom.Configuration(configuration);
 			Log.Logger = loggerConfiguration.CreateLogger();
 			
 			IWebHost host = CreateHostBuilder(args).Build();

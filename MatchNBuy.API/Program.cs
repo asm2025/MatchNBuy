@@ -61,7 +61,7 @@ namespace MatchNBuy.API
 					RoleManager<Role> roleManager = services.GetRequiredService<RoleManager<Role>>();
 					IMapper mapper = services.GetRequiredService<IMapper>();
 					IWebHostEnvironment environment = services.GetRequiredService<IWebHostEnvironment>();
-					ILogger seedDataLogger = host.Services.GetRequiredService<ILogger<DataContext>>();
+					ILogger seedDataLogger = services.GetRequiredService<ILogger<DataContext>>();
 					dbContext.SeedData(userManager, roleManager, "#A1s9m73!`", mapper, configuration, environment, seedDataLogger).GetAwaiter().GetResult();
 				}
 

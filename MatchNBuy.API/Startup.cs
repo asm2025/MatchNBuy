@@ -18,7 +18,6 @@ using essentialMix.Helpers;
 using essentialMix.Logging.Helpers;
 using essentialMix.Newtonsoft.Serialization;
 using essentialMix.Patterns.Imaging;
-using AutoMapper;
 using MatchNBuy.API.Filters;
 using MatchNBuy.API.ImageBuilders;
 using MatchNBuy.Data.Repositories;
@@ -88,7 +87,7 @@ namespace MatchNBuy.API
 				.Configure<CookiePolicyOptions>(options =>
 				{
 					// This lambda determines whether user consent for non-essential cookies is needed for a given request.
-					options.CheckConsentNeeded = context => true;
+					options.CheckConsentNeeded = _ => true;
 					options.MinimumSameSitePolicy = SameSiteMode.None;
 				})
 				// FormOptions
@@ -103,7 +102,7 @@ namespace MatchNBuy.API
 				// Image Builders
 				.AddSingleton<IUserImageBuilder, UserImageBuilder>()
 				// Mapper
-				.AddAutoMapper((provider, builder) => builder.AddProfile(new AutoMapperProfiles()),
+				.AddAutoMapper((_, builder) => builder.AddProfile(new AutoMapperProfiles()),
 								new [] { typeof(AutoMapperProfiles).Assembly },
 								ServiceLifetime.Singleton)
 				// Database

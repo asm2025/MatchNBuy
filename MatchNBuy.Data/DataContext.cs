@@ -256,7 +256,7 @@ namespace MatchNBuy.Data
 			});
 		}
 
-		public async Task SeedData([NotNull] UserManager<User> userManager, [NotNull] RoleManager<Role> roleManager, [NotNull] string defaultPassword, [NotNull] IMapper mapper, [NotNull] IConfiguration configuration, [NotNull] IHostEnvironment environment, ILogger logger)
+		public async Task SeedDataAsync([NotNull] UserManager<User> userManager, [NotNull] RoleManager<Role> roleManager, [NotNull] string defaultPassword, [NotNull] IMapper mapper, [NotNull] IConfiguration configuration, [NotNull] IHostEnvironment environment, ILogger logger)
 		{
 			const string USER_SYNC_DATA = "UserSyncData.json";
 			const int USERS_COUNT = 51;

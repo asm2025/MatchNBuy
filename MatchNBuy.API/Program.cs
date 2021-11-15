@@ -62,7 +62,8 @@ namespace MatchNBuy.API
 					IMapper mapper = services.GetRequiredService<IMapper>();
 					IWebHostEnvironment environment = services.GetRequiredService<IWebHostEnvironment>();
 					ILogger seedDataLogger = services.GetRequiredService<ILogger<DataContext>>();
-					dbContext.SeedData(userManager, roleManager, "#A1s9m73!`", mapper, configuration, environment, seedDataLogger).GetAwaiter().GetResult();
+					// We're not waiting for data to be created. We could if needed.
+					dbContext.SeedDataAsync(userManager, roleManager, "#A1s9m73!`", mapper, configuration, environment, seedDataLogger);
 				}
 
 				host.Run();

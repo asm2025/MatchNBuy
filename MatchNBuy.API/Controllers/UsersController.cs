@@ -256,7 +256,7 @@ namespace MatchNBuy.API.Controllers
 		public async Task<IActionResult> Logout([FromBody] RevokeTokenRequest revokeToken, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
-			if (User.Identity == null || !User.Identity.IsAuthenticated) return NoContent();
+			if (User.Identity is not {IsAuthenticated: true}) return NoContent();
 			
 			string refreshToken = revokeToken?.Token ?? Request.Cookies[REFRESH_TOKEN_NAME];
 
@@ -267,7 +267,7 @@ namespace MatchNBuy.API.Controllers
 				return NoContent();
 			}
 
-			if (User.Identity == null || !User.Identity.IsAuthenticated) return NoContent();
+			if (User.Identity is not {IsAuthenticated: true}) return NoContent();
 			string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (string.IsNullOrEmpty(userId)) return NoContent();
 			await _repository.LogoutAsync(userId, false, token);

@@ -23,7 +23,7 @@ namespace MatchNBuy.Model
 		[StringLength(256)]
 		public string CreatedBy { get; set; }
 		public DateTime? Revoked { get; set; }
-		[StringLength(256)]
+		[StringLength(128, MinimumLength = 128)]
 		public string RevokedBy { get; set; }
 		[StringLength(90)]
 		public string ReplacedBy { get; set; }

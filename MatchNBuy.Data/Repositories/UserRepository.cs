@@ -25,6 +25,9 @@ namespace MatchNBuy.Data.Repositories
 {
 	public class UserRepository : Repository<DataContext, User>, IUserRepository
 	{
+		private const int TOKEN_MIN = 1;
+		private const int TOKEN_MAX = 1440;
+
 		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(User).GetProperty(nameof(User.Id)) }, LazyThreadSafetyMode.PublicationOnly);
 
 		/// <inheritdoc />
@@ -816,8 +819,6 @@ namespace MatchNBuy.Data.Repositories
 
 		public int GetTokenExpirationTime()
 		{
-			const int TOKEN_MIN = 1;
-			const int TOKEN_MAX = 1440;
 			const int TOKEN_DEF = 20;
 
 			return Configuration.GetValue<int>("jwt:timeout")
@@ -827,8 +828,6 @@ namespace MatchNBuy.Data.Repositories
 
 		public int GetRefreshTokenExpirationTime()
 		{
-			const int TOKEN_MIN = 1;
-			const int TOKEN_MAX = 1440;
 			const int TOKEN_DEF = 720;
 
 			return Configuration.GetValue<int>("jwt:refreshInterval")

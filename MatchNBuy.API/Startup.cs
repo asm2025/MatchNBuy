@@ -73,16 +73,23 @@ namespace MatchNBuy.API
 						.AddConsole()
 						.AddSerilog();
 				})
-				.AddSingleton(typeof(ILogger<>), typeof(Logger<>))
-				// Swagger
-				.AddSwaggerGen(options =>
-				{
-					options.Setup(_configuration, _environment)
-							.AddJwtBearerSecurity();
-					//options.OperationFilter<FormFileFilter>();
-					options.ExampleFilters();
-				})
-				.AddSwaggerExamplesFromAssemblyOf<Startup>()
+				.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+
+			if (_environment.IsDevelopment())
+			{
+				services
+					// Swagger
+					.AddSwaggerGen(options =>
+					{
+						options.Setup(_configuration, _environment)
+								.AddJwtBearerSecurity();
+						//options.OperationFilter<FormFileFilter>();
+						options.ExampleFilters();
+					})
+					.AddSwaggerExamplesFromAssemblyOf<Startup>();
+			}
+
+			services
 				// Cookies
 				.Configure<CookiePolicyOptions>(options =>
 				{
@@ -117,7 +124,7 @@ namespace MatchNBuy.API
 					if (enableLogging)
 					{
 						builder.UseLoggerFactory(LogFactoryHelper.ConsoleLoggerFactory)
-							.EnableSensitiveDataLogging();
+								.EnableSensitiveDataLogging();
 					}
 
 					builder.UseLazyLoadingProxies();
@@ -181,8 +188,9 @@ namespace MatchNBuy.API
 				.AddRoleManager<RoleManager<Role>>()
 				.AddRoleValidator<RoleValidator<Role>>()
 				.AddSignInManager<SignInManager<User>>()
-				.AddDefaultTokenProviders()
-				.Services
+				.AddDefaultTokenProviders();
+			
+			services
 				// IdentityServer
 				//.AddIdentityServer()
 				//	.AddDeveloperSigningCredential()
@@ -262,14 +270,19 @@ namespace MatchNBuy.API
 			app.UseHttpsRedirection()
 				.UseForwardedHeaders()
 				.UseCultureHandler()
-				.UseSerilogRequestLogging()
-				.UseSwagger(config => config.RouteTemplate = _configuration.GetValue<string>("swagger:template"))
-				.UseSwaggerUI(config =>
-				{
-					config.SwaggerEndpoint(_configuration.GetValue<string>("swagger:ui"), _configuration.GetValue("title", _environment.ApplicationName));
-					config.AsStartPage();
-				})
-				.UseDefaultFiles()
+				.UseSerilogRequestLogging();
+
+			if (env.IsDevelopment())
+			{
+				app.UseSwagger(config => config.RouteTemplate = _configuration.GetValue<string>("swagger:template"))
+					.UseSwaggerUI(config =>
+					{
+						config.SwaggerEndpoint(_configuration.GetValue<string>("swagger:ui"), _configuration.GetValue("title", _environment.ApplicationName));
+						config.AsStartPage();
+					});
+			}
+
+			app.UseDefaultFiles()
 				.UseStaticFiles(new StaticFileOptions
 				{
 					FileProvider = new PhysicalFileProvider(AssemblyHelper.GetEntryAssembly().GetDirectoryPath())

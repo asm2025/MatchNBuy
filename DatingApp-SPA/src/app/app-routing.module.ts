@@ -4,6 +4,8 @@ import AuthGuard from "@/guards/auth.guard";
 import UnsavedChangesGuard from "@common/guards/unsaved-changes.guard";
 
 import HomeComponent from "@components/pages/home/home.component";
+import AboutComponent from "@components/pages/about/about.component";
+import ContactComponent from "@components/pages/contact/contact.component";
 
 import MemberListComponent from "@components/pages/members/member-list/member-list.component";
 import MemberDetailComponent from "@components/pages/members/member-detail/member-detail.component";
@@ -28,6 +30,14 @@ export const routes: Routes = [{
 	path: "",
 	component: HomeComponent,
 	pathMatch: "full"
+},
+{
+	path: "about",
+	component: AboutComponent
+},
+{
+	path: "contact",
+	component: ContactComponent
 },
 {
 	path: "login",

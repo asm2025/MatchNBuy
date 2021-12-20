@@ -29,18 +29,9 @@
 						],
 						"styles": [
 							"node_modules/bootstrap/dist/css/bootstrap.min.css",
-							// bootswatch theme
-							"node_modules/bootswatch/dist/lux/bootstrap.min.css",
-							//"node_modules/bootswatch/dist/journal/bootstrap.min.css",
-							//"node_modules/bootswatch/dist/simplex/bootstrap.min.css",
-							//"node_modules/bootswatch/dist/slate/bootstrap.min.css",
-							//"node_modules/bootswatch/dist/sketchy/bootstrap.min.css",
 							"node_modules/material-design-icons/iconfont/material-icons.css",
-							//"node_modules/@ng-select/ng-select/themes/default.theme.css",
 							"src/styles/bootstrap.scss",
-							"src/styles/bootswatch/lux.scss",
 							"src/styles/ng-bootstrap/ng-bootstrap.scss",
-							"src/styles/ng-bootstrap/bootswatch/lux/ng-bootstrap.scss",
 							"src/styles/styles.scss"
 						],
 						"scripts": [],
@@ -114,7 +105,8 @@
 							"src/assets"
 						],
 						"styles": [
-							"src/styles.scss"
+							"src/styles.scss",
+							"node_modules/typeface-raleway/index.css"
 						],
 						"scripts": []
 					}

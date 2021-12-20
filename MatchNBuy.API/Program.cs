@@ -23,7 +23,7 @@ namespace MatchNBuy.API
 {
 	public class Program
 	{
-		public static int Main(string[] args)
+		public static async Task<int> Main(string[] args)
 		{
 			Console.OutputEncoding = Encoding.UTF8;
 			Directory.SetCurrentDirectory(AssemblyHelper.GetEntryAssembly().GetDirectoryPath());
@@ -54,19 +54,18 @@ namespace MatchNBuy.API
 				
 				DataContext dbContext = services.GetRequiredService<DataContext>();
 				
-				if (dbContext.Database.GetPendingMigrations().Any())
+				if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
 				{
-					dbContext.Database.Migrate();
+					await dbContext.Database.MigrateAsync();
 					UserManager<User> userManager = services.GetRequiredService<UserManager<User>>();
 					RoleManager<Role> roleManager = services.GetRequiredService<RoleManager<Role>>();
 					IMapper mapper = services.GetRequiredService<IMapper>();
 					IWebHostEnvironment environment = services.GetRequiredService<IWebHostEnvironment>();
-					ILogger seedDataLogger = services.GetRequiredService<ILogger<DataContext>>();
-					// We're not waiting for data to be created. We could if needed.
-					dbContext.SeedDataAsync(userManager, roleManager, "#A1s9m73!`", mapper, configuration, environment, seedDataLogger);
+					ILogger seedDataLogger = host.Services.GetRequiredService<ILogger<DataContext>>();
+					await dbContext.SeedData(userManager, roleManager, "#A1s9m73!`", mapper, configuration, environment, seedDataLogger);
 				}
 
-				host.Run();
+				await host.RunAsync();
 				return 0;
 			}
 			catch (Exception e)
@@ -82,7 +81,7 @@ namespace MatchNBuy.API
 		}
 
 		[NotNull]
-		public static IWebHostBuilder CreateHostBuilder([NotNull] string[] args)
+		public static IWebHostBuilder CreateHostBuilder(string[] args)
 		{
 			return WebHost.CreateDefaultBuilder(args)
 						.UseSerilog()
@@ -92,8 +91,8 @@ namespace MatchNBuy.API
 							configurationBuilder.Setup(context.HostingEnvironment)
 												.AddConfigurationFiles(context.HostingEnvironment)
 												.AddEnvironmentVariables()
-												.AddUserSecrets()
-												.AddArguments(args);
+												.AddUserSecrets();
+							if (args is { Length: > 0 }) configurationBuilder.AddArguments(args);
 						})
 						.UseStartup<Startup>();
 		}

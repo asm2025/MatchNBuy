@@ -18,10 +18,10 @@
 	</div>
 	<div class="card-body">
 		<h6 class="card-title">
+			<small class="status"><fa-icon icon="check-circle"></fa-icon><!--{{user.status}}--></small>
 			{{ user.knownAs }}
 		</h6>
 		<small *ngIf="user.likes">{{ user.likes }}<fa-icon icon="heart"></fa-icon></small>
-		<small class="status"><fa-icon icon="check-circle"></fa-icon> <!--{{user.status}}--></small>
 		<p>{{ user.city }}, {{ user.country }}</p>
 	</div>
 </div>

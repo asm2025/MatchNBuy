@@ -1,44 +1,49 @@
 <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
-	<a class="navbar-brand" [routerLink]="['/']">
-		<svg viewBox="0 0 100 100" width="32">
-			<use xlink:href="assets/images/logo.svg#Layer_1" fill="white" />
-		</svg>
-		<span class="px-2">{{ title }}</span>
-	</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<ul class="navbar-nav">
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-item nav-link" [routerLink]="['/weather']" routerLinkActive="active">Weather</a>
-			</li>
-		</ul>
-		<ul class="navbar-nav" *ngIf="isSignedIn()">
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/members']">Matches</a>
-			</li>
-		</ul>
-		<ul class="navbar-nav ml-auto" *ngIf="isSignedIn(); else loginTemplate">
-			<li class="nav-item" routerLinkActive="active" ngbDropdown>
-				<a id="userMenu" class="nav-link" tabindex="0" ngbDropdownToggle role="button">
-					<img src="{{ photoUrl || 'assets/images/user.jpg'}}" class="rounded-circle border-0 mr-1" alt="">
-					{{ _userClient.user.knownAs }}
-				</a>
-				<div ngbDropdownMenu aria-labelledby="userMenu" class="dropdown-menu">
-					<a ngbDropdownItem [routerLink]="['/members/', _userClient.user.id]"><fa-icon icon="user"></fa-icon>Profile</a>
-					<hr />
-					<a ngbDropdownItem (click)="logout()"><fa-icon icon="sign-out-alt"></fa-icon>Sign out</a>
-				</div>
-			</li>
-		</ul>
-		<ng-template #loginTemplate>
-				<ul class="navbar-nav ml-auto">
+	<div class="container">
+		<a class="navbar-brand" [routerLink]="['/']">
+			<svg viewBox="0 0 100 100" width="32">
+				<use xlink:href="assets/images/logo.svg#Layer_1" fill="white" />
+			</svg>
+			<span class="px-2">{{ title }}</span>
+		</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item" routerLinkActive="active">
+					<a class="nav-item nav-link" [routerLink]="['/']" routerLinkActive="active">Home</a>
+				</li>
+				<li class="nav-item" routerLinkActive="active">
+					<a class="nav-item nav-link" [routerLink]="['/about']" routerLinkActive="active">About</a>
+				</li>
+				<li class="nav-item" routerLinkActive="active" *ngIf="isSignedIn()">
+					<a class="nav-link" [routerLink]="['/members']">Members</a>
+				</li>
+				<li class="nav-item" routerLinkActive="active">
+					<a class="nav-item nav-link" [routerLink]="['/weather']" routerLinkActive="active">Weather</a>
+				</li>
+				<li class="nav-item" routerLinkActive="active">
+					<a class="nav-item nav-link" [routerLink]="['/contact']" routerLinkActive="active">Contact</a>
+				</li>
+				<li class="nav-item" routerLinkActive="active" ngbDropdown *ngIf="isSignedIn(); else loginTemplate">
+					<a id="userMenu" class="nav-link" tabindex="0" ngbDropdownToggle role="button">
+						<img src="{{ photoUrl || 'assets/images/user.jpg'}}" class="rounded-circle border-0 mr-1" alt="">
+						{{ _userClient.user.knownAs }}
+					</a>
+					<div ngbDropdownMenu aria-labelledby="userMenu" class="dropdown-menu">
+						<a ngbDropdownItem [routerLink]="['/members/', _userClient.user.id]"><fa-icon icon="user"></fa-icon>Profile</a>
+						<hr />
+						<a ngbDropdownItem (click)="logout()"><fa-icon icon="sign-out-alt"></fa-icon>Sign out</a>
+					</div>
+				</li>
+				<ng-template #loginTemplate>
 					<li class="nav-item" routerLinkActive="active">
 						<a class="nav-item nav-link" [routerLink]="['/login']" routerLinkActive="active"><fa-icon icon="key" [spin]="true"></fa-icon>Sign in</a>
 					</li>
-				</ul>
-			</ng-template>
+				</ng-template>
+			</ul>
+		</div>
 	</div>
 </nav>

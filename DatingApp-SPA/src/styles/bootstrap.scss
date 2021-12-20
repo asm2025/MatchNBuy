@@ -12,47 +12,34 @@
 	outline: 0 solid transparent !important;
 }
 
-html {
-	width: 100%;
-	height: 100%;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
-body {
-	width: 100%;
-	height: 100%;
-}
-
 .h1, .h2, .h3, .h4, .h5, .h6,
 h1, h2, h3, h4, h5, h6 {
 	display: block;
-	font-weight: bold;
-	line-height: 1;
+	font-weight: $font-weight-bold;
 }
 
 h6 {
-	font-size: 1rem;
+	font-size: $h6;
 }
 
 h5 {
-	font-size: 1.25rem;
+	font-size: $h5;
 }
 
 h4 {
-	font-size: 1.5rem;
+	font-size: $h4;
 }
 
 h3 {
-	font-size: 1.75rem;
+	font-size: $h3;
 }
 
 h2 {
-	font-size: 2rem;
+	font-size: $h2;
 }
 
 h1 {
-	font-size: 2.25rem;
+	font-size: $h1;
 }
 
 ol, ul, dl {
@@ -79,7 +66,31 @@ select {
 }
 
 p {
-	margin: 2px 4px;
+	margin: $p-margin-x $p-margin-y;
+	&:last-child {
+		margin-bottom: 0;
+	}
+	.lead {
+		font-size: $h3;
+	}
+}
+
+blockquote {
+	padding-top: 0;
+	padding-bottom: 0;
+	border-color: $link-secondary-color;
+	small {
+		color: inherit;
+	}
+}
+
+pre {
+	background-color: rgba($color: $white, $alpha: 0.5);
+	border-color: rgba($color: $black, $alpha: 0.1);
+}
+
+img {
+	max-width: 100%;
 }
 
 @each $state, $data in $form-validation-states {
@@ -134,6 +145,8 @@ p {
 }
 
 .alert {
+	color: $white;
+	border: none;
 	border-radius: 0 !important;
 	padding: 0 !important;
 	margin-bottom: 2px !important;
@@ -144,8 +157,16 @@ p {
 	}
 }
 
+[class^="alert-"] .alert-link,
+[class*=" alert-"] .alert-link {
+	color: $white;
+	font-weight: $font-weight-normal;
+	text-decoration: underline;
+}
+
 .pagination {
 	justify-content: center;
+	background: transparent;
 }
 
 .badge {
@@ -205,14 +226,6 @@ select.form-control {
 	margin-bottom: 0 !important;
 }
 
-.btn {
-	text-transform: none !important;
-
-	&:hover {
-		box-shadow: inset 0em 0em 0em 10em rgba(0, 0, 0, 0.1);
-	}
-}
-
 .btn-container {
 	width: 100%;
 	margin: 1rem 0 0 !important;
@@ -224,12 +237,51 @@ select.form-control {
 	}
 }
 
-.picsum-img-wrapper {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
+.label {
+	text-transform: none !important;
+	border-radius: 0;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-moz-transition: all .2s;
+	-o-transition: all .2s;
+	-webkit-transition: all .2s;
+	transition: all .2s;
+}
+
+.btn {
+	font-weight: $font-weight-bold;
+	font-size: .8rem;
+	letter-spacing: 3px;
+	text-transform: none !important;
+	border-radius: 0;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-moz-transition: all .2s;
+	-o-transition: all .2s;
+	-webkit-transition: all .2s;
+	transition: all .2s;
+}
+
+@each $color, $value in $theme-colors {
+	.btn-#{$color} {
+		@include button-variant($value, $value);
+	}
+}
+
+.label-success,
+.alert-success {
+	color: color-yiq($success);
+	background-color: $success;
+	border-color: $success;
+}
+
+.btn-link {
+	color: $link-secondary-color;
+
+	&:hover,
+	&:focus {
+		color: $link-secondary-hover-color;
+	}
 }
 
 .card {
@@ -237,6 +289,14 @@ select.form-control {
 	h1, h2, h3, h4, h5, h6 {
 		margin: 2px 4px;
 	}
+}
+
+.picsum-img-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
 }
 
 .tooltip {

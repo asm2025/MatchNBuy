@@ -1,10 +1,47 @@
+@import "~bootstrap/scss/_functions";
+@import "~bootstrap/scss/_variables";
+@import "~bootstrap/scss/_mixins";
+@import "_variables.scss";
+
+html {
+	width: 100%;
+	height: 100%;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	color: $primary;
+	background: $white;
+	font: normal 16px Raleway,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: $font-weight-normal;
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	line-height: 1.5;
+}
+
 a {
+	color: $link-color;
+	cursor: pointer;
 	text-decoration: none;
+	-moz-transition: all .2s;
+	-o-transition: all .2s;
+	-webkit-transition: all .2s;
+	transition: all .2s;
+	&:hover,
+	&:focus {
+		color: $link-hover-color;
+		outline: none;
+		text-decoration: none;
+	}
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6,
 h1, h2, h3, h4, h5, h6 {
-	text-transform: none !important;
+	font-family: Raleway,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	margin-bottom: 15px;
+	margin-top: 0;
 }
 
 .fa,
@@ -67,14 +104,26 @@ h1, h2, h3, h4, h5, h6 {
 app-root {
 	display: flex;
 	flex-flow: column;
-	min-width: 100%;
-	min-height: 100%;
-	width: 100%;
-	height: 100%;
 	margin: 0;
 	padding: 0;
 }
 
 app-lazy-image {
 	height: 100%;
+}
+
+.active-section {
+	top: 0;
+}
+
+.navbar {
+	.active-section {
+		top: 0 !important;
+	}
+}
+
+.section-title {
+	text-transform: uppercase;
+	font-size: 1.75rem;
+	letter-spacing: 5px;
 }

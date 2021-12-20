@@ -29,6 +29,8 @@ import { FontAwesomeModule, FaIconLibrary } from "@fortawesome/angular-fontaweso
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 
+import { ParallaxModule } from "ngx-parallax";
+
 import { TimeAgoPipe } from "time-ago-pipe";
 
 import AppRoutingModule from "./app-routing.module";
@@ -109,6 +111,7 @@ import WeatherComponent from "@components/pages/weather/weather.component";
 		FontAwesomeModule,
 		LazyLoadImageModule,
 		//MatIconModule,
+		ParallaxModule,
 		NgSelectModule,
 		NgOptionHighlightModule,
 		FileUploadModule,

@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<FileVersion>21.11.12.1</FileVersion>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Bogus" Version="33.0.2" />
+		<PackageReference Include="Bogus" Version="34.0.1" />
 		<PackageReference Include="essentialMix" Version="12.32.0" />
 		<PackageReference Include="essentialMix.Core.Authentication.JwtBearer" Version="12.32.0" />
 		<PackageReference Include="essentialMix.Core.Data.Entity" Version="12.32.0" />
@@ -18,18 +18,18 @@
 		<PackageReference Include="essentialMix.Logging" Version="12.32.0" />
 		<PackageReference Include="essentialMix.Newtonsoft" Version="12.32.0" />
 		<PackageReference Include="essentialMix.Threading" Version="12.32.0" />
-		<PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.9" />
+		<PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.1" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.12" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.15" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -8,16 +8,18 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using asm.Helpers;
+using AutoMapper;
 using essentialMix;
 using essentialMix.Extensions;
 using essentialMix.Helpers;
 using essentialMix.IO;
+using essentialMix.Logging.Helpers;
 using essentialMix.Newtonsoft.Helpers;
-using AutoMapper;
+using essentialMix.Threading.Patterns.ProducerConsumer;
+using JetBrains.Annotations;
 using MatchNBuy.Data.Fakers;
 using MatchNBuy.Model;
 using MatchNBuy.Model.TransferObjects;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +29,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using essentialMix.Logging.Helpers;
-using essentialMix.Threading.Patterns.ProducerConsumer;
 using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.Data
@@ -99,7 +99,7 @@ namespace MatchNBuy.Data
 							.EnableSensitiveDataLogging();
 			}
 
-			optionsBuilder.UseLazyLoadingProxies();
+			//optionsBuilder.UseLazyLoadingProxies();
 			optionsBuilder.UseSqlite(dataSection.GetConnectionString("DefaultConnection"), e => e.MigrationsAssembly(typeof(DataContext).Assembly.GetName().Name));
 			optionsBuilder.EnableDetailedErrors(environment.IsDevelopment());
 		}
@@ -424,8 +424,8 @@ namespace MatchNBuy.Data
 					}
 
 					logger?.LogInformation($"Added '{user.UserName}' to roles.");
-					if (images == null 
-						|| user.Gender == Genders.Unspecified 
+					if (images == null
+						|| user.Gender == Genders.Unspecified
 						|| !images.TryGetValue(user.Gender, out IDictionary<string, string> files)
 						|| !files.TryGetValue(user.Id, out string photoUrl)) continue;
 
@@ -564,7 +564,7 @@ namespace MatchNBuy.Data
 						WorkStartedCallback = _ => logger?.LogInformation($"Download started using {threads} threads..."),
 						WorkCompletedCallback = _ => logger?.LogInformation("Download completed.")
 					};
-					
+
 					using (IProducerConsumer<PersonDownloadData> requests = ProducerConsumerQueue.Create(ThreadQueueMode.Task, options, token))
 					{
 						int number;

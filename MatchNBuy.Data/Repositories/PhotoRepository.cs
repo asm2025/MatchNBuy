@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
 using essentialMix.Extensions;
 using essentialMix.Threading.Helpers;
-using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public class PhotoRepository : Repository<DataContext, Photo>, IPhotoRepository
+	public class PhotoRepository : Repository<DataContext, Photo, Guid>, IPhotoRepository
 	{
-		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(Photo).GetProperty(nameof(Photo.Id))}, LazyThreadSafetyMode.PublicationOnly);
-
 		/// <inheritdoc />
 		public PhotoRepository([NotNull] DataContext context, [NotNull] IConfiguration configuration, ILogger<PhotoRepository> logger)
 			: base(context, configuration, logger)
 		{
 		}
-
-		/// <inheritdoc />
-		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
 
 		/// <inheritdoc />
 		public Photo GetDefault(string userId)

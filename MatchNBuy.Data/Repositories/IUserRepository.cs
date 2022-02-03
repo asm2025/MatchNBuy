@@ -4,24 +4,24 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
-using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Model;
 using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Identity;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public interface IUserRepository : IRepository<DataContext, User>
+	public interface IUserRepository : IRepository<DataContext, User, string>
 	{
 		[NotNull]
 		public IPhotoRepository Photos { get; }
-		
+
 		[NotNull]
 		public IMessageRepository Messages { get; }
-		
+
 		[NotNull]
 		public IUserImageBuilder ImageBuilder { get; }
-		
+
 		string NormalizeName([NotNull] string name);
 		string NormalizeEmail([NotNull] string email);
 		string GetUserId([NotNull] ClaimsPrincipal principal);

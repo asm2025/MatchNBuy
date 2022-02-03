@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using essentialMix.ComponentModel.DataAnnotations;
 
 namespace MatchNBuy.Model.TransferObjects
 {
@@ -8,7 +7,6 @@ namespace MatchNBuy.Model.TransferObjects
 	public class UserForLogin
 	{
 		[Required]
-		[UserName]
 		[StringLength(128)]
 		public string UserName { get; set; }
 

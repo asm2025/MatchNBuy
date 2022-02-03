@@ -3,7 +3,7 @@ using MatchNBuy.Model;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public interface ICountryRepositoryBase : IRepositoryBase<DataContext, Country>
+	public interface ICountryRepositoryBase : IRepositoryBase<DataContext, Country, string>
 	{
 	}
 }

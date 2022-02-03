@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
 using essentialMix.Patterns.Pagination;
-using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Model;
 using MatchNBuy.Model.TransferObjects;
 using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public interface IMessageRepository : IRepository<DataContext, Message>
+	public interface IMessageRepository : IRepository<DataContext, Message, Guid>
 	{
 		[NotNull]
 		IQueryable<Message> List([NotNull] string userId, IPagination settings = null);

@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
-using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Model;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public interface ICityRepositoryBase : IRepositoryBase<DataContext, City>
+	public interface ICityRepositoryBase : IRepositoryBase<DataContext, City, Guid>
 	{
 		IQueryable<City> List([NotNull] string countryCode);
 		[NotNull]

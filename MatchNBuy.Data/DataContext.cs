@@ -65,7 +65,7 @@ namespace MatchNBuy.Data
 		public DbSet<Message> Messages { get; set; }
 
 		/// <inheritdoc />
-		protected override void OnConfiguring([NotNull] DbContextOptionsBuilder optionsBuilder)
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			if (optionsBuilder.IsConfigured)
 			{

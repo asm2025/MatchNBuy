@@ -2,19 +2,14 @@
 {
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
-		"outDir": "./out-tsc/spec",
-		"composite": true,
+		"outDir": "./dist/spec",
 		"types": [
 			"node",
 			"jasmine"
 		]
 	},
-	"files": [
-		"src/test.ts",
-		"src/polyfills.ts"
-	],
 	"include": [
-		"src/**/*.spec.ts",
-		"src/**/*.d.ts"
+		"src/**/*.ts",
+		"src/**/*.json"
 	]
 }

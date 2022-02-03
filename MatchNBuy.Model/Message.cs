@@ -5,7 +5,7 @@ using essentialMix.Data.Model;
 namespace MatchNBuy.Model
 {
 	[Serializable]
-    public class Message : IEntity
+	public class Message : IEntity
 	{
 		[Key]
 		public Guid Id { get; set; }
@@ -28,17 +28,17 @@ namespace MatchNBuy.Model
 		public virtual User Recipient { get; set; }
 
 		[Required]
-        [StringLength(128)]
-        public string Subject { get; set; }
+		[StringLength(128)]
+		public string Subject { get; set; }
 
 		[Required]
-        [StringLength(512)]
-        public string Content { get; set; }
+		[StringLength(512)]
+		public string Content { get; set; }
 
-        public DateTime? DateRead { get; set; }
-        public DateTime MessageSent { get; set; }
-        public bool SenderDeleted { get; set; }
-        public bool RecipientDeleted { get; set; }
-        public bool IsArchived { get; set; }
-    }
+		public DateTime? DateRead { get; set; }
+		public DateTime MessageSent { get; set; }
+		public bool SenderDeleted { get; set; }
+		public bool RecipientDeleted { get; set; }
+		public bool IsArchived { get; set; }
+	}
 }

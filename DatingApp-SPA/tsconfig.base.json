@@ -3,7 +3,6 @@
 	"compileOnSave": false,
 	"compilerOptions": {
 		"baseUrl": "./",
-		"rootDir": "./",
 		"outDir": "./dist/out-tsc",
 		"sourceMap": true,
 		"allowJs": true,
@@ -33,7 +32,7 @@
 		"forceConsistentCasingInFileNames": false,
 		"strictNullChecks": true,
 		"typeRoots": [
-			"./node_modules/@types",
+			"node_modules/@types",
 			"./typings"
 		],
 		"lib": [
@@ -76,14 +75,15 @@
 		"strictTemplates": true,
 		"strictInjectionParameters": true
 	},
+	"files": [], 
 	"include": [
-		"./typings",
-		"./src/**/*",
-		"./src/**/*.json"
+		"./typings"
 	],
 	"exclude": [
-		"./node_modules",
+		"node_modules",
 		"dist",
-		"public"
+		"out-tsc",
+		"public",
+		"**/*.d.ts"
 	]
 }

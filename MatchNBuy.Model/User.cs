@@ -14,7 +14,7 @@ namespace MatchNBuy.Model
 	[DebuggerDisplay("User: {UserName}, E-mail:{Email}")]
 	[Serializable]
 	public class User : IdentityUser<string>, IEntity
-    {
+	{
 		public const int AGE_MIN = 0;
 		public const int AGE_MAX = 99;
 		public const string DATE_FORMAT = "yyyy-MM-dd";
@@ -35,29 +35,29 @@ namespace MatchNBuy.Model
 		[StringLength(255)]
 		public string LastName
 		{
-			get => _lastName; 
+			get => _lastName;
 			set => _lastName = value.ToNullIfEmpty();
 		}
 
 		[StringLength(255)]
 		public string KnownAs
 		{
-			get => _knownAs ?? FirstName; 
+			get => _knownAs ?? FirstName;
 			set => _knownAs = value.ToNullIfEmpty();
 		}
 
 		public Genders Gender { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Modified { get; set; }
-        public DateTime LastActive { get; set; }
+		public DateTime DateOfBirth { get; set; }
+		public DateTime Created { get; set; }
+		public DateTime Modified { get; set; }
+		public DateTime LastActive { get; set; }
 
 		[StringLength(255)]
 		public string Introduction { get; set; }
-   
+
 		[StringLength(255)]
 		public string LookingFor { get; set; }
-        
+
 		[Required]
 		public Guid CityId { get; set; }
 
@@ -73,18 +73,18 @@ namespace MatchNBuy.Model
 
 		public virtual ICollection<UserInterest> UserInterests { get; set; }
 
-        public virtual ICollection<Photo> Photos { get; set; }
+		public virtual ICollection<Photo> Photos { get; set; }
 
-        public virtual ICollection<Like> Likers { get; set; }
+		public virtual ICollection<Like> Likers { get; set; }
 
-        public virtual ICollection<Like> Likees { get; set; }
+		public virtual ICollection<Like> Likees { get; set; }
 
-        public virtual ICollection<Thread> ThreadsSent { get; set; }
+		public virtual ICollection<Thread> ThreadsSent { get; set; }
 
-        public virtual ICollection<Thread> ThreadsReceived { get; set; }
+		public virtual ICollection<Thread> ThreadsReceived { get; set; }
 
-        public virtual ICollection<Message> MessagesSent { get; set; }
+		public virtual ICollection<Message> MessagesSent { get; set; }
 
-        public virtual ICollection<Message> MessagesReceived { get; set; }
+		public virtual ICollection<Message> MessagesReceived { get; set; }
 	}
 }

@@ -4,21 +4,21 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using MatchNBuy.Model;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using essentialMix.Core.Web.Controllers;
 using essentialMix.Data.Patterns.Parameters;
 using essentialMix.Extensions;
 using essentialMix.Patterns.Sorting;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MatchNBuy.Data.Repositories;
-using MatchNBuy.Model.TransferObjects;
 using JetBrains.Annotations;
+using MatchNBuy.Data.Repositories;
+using MatchNBuy.Model;
+using MatchNBuy.Model.TransferObjects;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MatchNBuy.API.Controllers
@@ -46,6 +46,7 @@ namespace MatchNBuy.API.Controllers
 		}
 
 		[HttpGet]
+		[ItemNotNull]
 		public async Task<IActionResult> List(CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
@@ -59,11 +60,12 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet("{code}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		[ItemNotNull]
 		public async Task<IActionResult> Get([FromRoute] string code, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (string.IsNullOrWhiteSpace(code)) return BadRequest(code);
-			Country country = await _countryRepository.GetAsync(token, code.ToUpperInvariant());
+			Country country = await _countryRepository.GetAsync(code.ToUpperInvariant(), token);
 			token.ThrowIfCancellationRequested();
 			if (country == null) return NotFound(code);
 			CountryForList countryForList = _mapper.Map<CountryForList>(country);
@@ -73,6 +75,7 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet("{code}/[action]")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		[ItemNotNull]
 		public async Task<IActionResult> Cities([FromRoute] string code, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
@@ -94,11 +97,12 @@ namespace MatchNBuy.API.Controllers
 		[HttpGet("[action]/{id}")]
 		[SwaggerResponse((int)HttpStatusCode.BadRequest)]
 		[SwaggerResponse((int)HttpStatusCode.NotFound)]
+		[ItemNotNull]
 		public async Task<IActionResult> Cities(Guid id, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested();
 			if (id.IsEmpty()) return NotFound();
-			City city = await _cityRepository.GetAsync(token, id);
+			City city = await _cityRepository.GetAsync(id, token);
 			token.ThrowIfCancellationRequested();
 			if (city == null) return NotFound(id);
 			CityForList cityForList = _mapper.Map<CityForList>(city);

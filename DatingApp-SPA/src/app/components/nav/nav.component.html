@@ -1,5 +1,5 @@
 <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
-	<div class="container">
+	<div class="container-fluid">
 		<a class="navbar-brand" [routerLink]="['/']">
 			<svg viewBox="0 0 100 100" width="32">
 				<use xlink:href="assets/images/logo.svg#Layer_1" fill="white" />
@@ -11,22 +11,24 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			<ul class="navbar-nav ml-auto">
+			<ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
 				<li class="nav-item" routerLinkActive="active">
-					<a class="nav-item nav-link" [routerLink]="['/']" routerLinkActive="active">Home</a>
+					<a class="nav-link nav-link" [routerLink]="['/']" routerLinkActive="active">Home</a>
 				</li>
 				<li class="nav-item" routerLinkActive="active">
-					<a class="nav-item nav-link" [routerLink]="['/about']" routerLinkActive="active">About</a>
+					<a class="nav-link nav-link" [routerLink]="['/about']" routerLinkActive="active">About</a>
 				</li>
 				<li class="nav-item" routerLinkActive="active" *ngIf="isSignedIn()">
 					<a class="nav-link" [routerLink]="['/members']">Members</a>
 				</li>
 				<li class="nav-item" routerLinkActive="active">
-					<a class="nav-item nav-link" [routerLink]="['/weather']" routerLinkActive="active">Weather</a>
+					<a class="nav-link nav-link" [routerLink]="['/weather']" routerLinkActive="active">Weather</a>
 				</li>
 				<li class="nav-item" routerLinkActive="active">
-					<a class="nav-item nav-link" [routerLink]="['/contact']" routerLinkActive="active">Contact</a>
+					<a class="nav-link nav-link" [routerLink]="['/contact']" routerLinkActive="active">Contact</a>
 				</li>
+			</ul>
+			<ul class="navbar-nav flex-row flex-wrap ms-md-auto">
 				<li class="nav-item" routerLinkActive="active" ngbDropdown *ngIf="isSignedIn(); else loginTemplate">
 					<a id="userMenu" class="nav-link" tabindex="0" ngbDropdownToggle role="button">
 						<img src="{{ photoUrl || 'assets/images/user.jpg'}}" class="rounded-circle border-0 mr-1" alt="">
@@ -40,7 +42,7 @@
 				</li>
 				<ng-template #loginTemplate>
 					<li class="nav-item" routerLinkActive="active">
-						<a class="nav-item nav-link" [routerLink]="['/login']" routerLinkActive="active"><fa-icon icon="key" [spin]="true"></fa-icon>Sign in</a>
+						<a class="nav-link nav-link" [routerLink]="['/login']" routerLinkActive="active"><fa-icon icon="key" [spin]="true"></fa-icon>Sign in</a>
 					</li>
 				</ng-template>
 			</ul>

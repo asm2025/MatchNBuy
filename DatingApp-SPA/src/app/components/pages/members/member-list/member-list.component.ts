@@ -61,6 +61,18 @@ export default class MemberListComponent implements OnInit, OnDestroy {
 		this.disposed$.complete();
 	}
 
+	toggleFilter(): void {
+		this.filterShown = !this.filterShown;
+	}
+
+	showFilter(): void {
+		this.filterShown = true;
+	}
+
+	hideFilter(): void {
+		this.filterShown = false;
+	}
+
 	pageChanged(page: number): void {
 		this.pagination.page = page;
 		this.loadUsers();

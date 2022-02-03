@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
 using essentialMix.Extensions;
 using essentialMix.Helpers;
-using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Model;
 using MatchNBuy.Model.ImageBuilders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -23,12 +22,10 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public class UserRepository : Repository<DataContext, User>, IUserRepository
+	public class UserRepository : Repository<DataContext, User, string>, IUserRepository
 	{
 		private const int TOKEN_MIN = 1;
 		private const int TOKEN_MAX = 1440;
-
-		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(User).GetProperty(nameof(User.Id)) }, LazyThreadSafetyMode.PublicationOnly);
 
 		/// <inheritdoc />
 		public UserRepository([NotNull] DataContext context, [NotNull] SignInManager<User> signInManager, [NotNull] IPhotoRepository photosRepository, [NotNull] IMessageRepository messageRepository, [NotNull] IUserImageBuilder userImageBuilder, [NotNull] IConfiguration configuration, ILogger<UserRepository> logger)
@@ -40,9 +37,6 @@ namespace MatchNBuy.Data.Repositories
 			Messages = messageRepository;
 			ImageBuilder = userImageBuilder;
 		}
-
-		/// <inheritdoc />
-		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
 
 		public IPhotoRepository Photos { get; }
 
@@ -57,16 +51,16 @@ namespace MatchNBuy.Data.Repositories
 		protected SignInManager<User> SignInManager { get; }
 
 		/// <inheritdoc />
-		protected override User GetInternal([NotNull] params object[] keys)
+		protected override User GetInternal([NotNull] string key)
 		{
-			return UserManager.FindByIdAsync((string)keys[0]).GetAwaiter().GetResult();
+			return UserManager.FindByIdAsync(key).GetAwaiter().GetResult();
 		}
 
 		/// <inheritdoc />
-		protected override ValueTask<User> GetAsyncInternal([NotNull] object[] keys, CancellationToken token = default(CancellationToken))
+		protected override ValueTask<User> GetAsyncInternal([NotNull] string key, CancellationToken token = default(CancellationToken))
 		{
 			token.ThrowIfCancellationRequested();
-			return new ValueTask<User>(UserManager.FindByIdAsync((string)keys[0]));
+			return new ValueTask<User>(UserManager.FindByIdAsync(key));
 		}
 
 		public User Get(ClaimsPrincipal principal)
@@ -159,49 +153,10 @@ namespace MatchNBuy.Data.Repositories
 		{
 			token.ThrowIfCancellationRequested();
 
-			bool changed = false;
-
-			if (entity.UserRoles?.Count > 0)
-			{
-				Context.UserRoles.RemoveRange(entity.UserRoles);
-				changed = true;
-			}
-
-			if (entity.UserInterests?.Count > 0)
-			{
-				Context.UserInterests.RemoveRange(entity.UserInterests);
-				changed = true;
-			}
-
-			if (entity.Photos?.Count > 0)
-			{
-				Context.Photos.RemoveRange(entity.Photos);
-				changed = true;
-			}
-
-			if (entity.Likers?.Count > 0)
-			{
-				Context.Likes.RemoveRange(entity.Likers);
-				changed = true;
-			}
-
-			if (entity.Likees?.Count > 0)
-			{
-				Context.Likes.RemoveRange(entity.Likees);
-				changed = true;
-			}
-
-			if (entity.MessagesSent?.Count > 0)
-			{
-				Context.Messages.RemoveRange(entity.MessagesSent);
-				changed = true;
-			}
-
-			if (entity.MessagesReceived?.Count > 0)
-			{
-				Context.Messages.RemoveRange(entity.MessagesReceived);
-				changed = true;
-			}
+			bool changed = RemoveRoles(Context, entity);
+			changed |= RemovePhotos(Context, entity);
+			changed |= RemoveLikes(Context, entity);
+			changed |= RemoveMessages(Context, entity);
 
 			if (changed) await Context.SaveChangesAsync(token);
 			token.ThrowIfCancellationRequested();
@@ -222,6 +177,58 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			if (result.Succeeded) return entity;
 			throw new Exception(result.Errors.CollectMessages($"Unable to delete user '{entity.UserName}'."));
+
+			static bool RemoveRoles(DataContext context, User entity)
+			{
+				if (entity.UserRoles == null || entity.UserRoles.Count == 0) return false;
+				context.UserRoles.RemoveRange(entity.UserRoles);
+				return true;
+			}
+
+			static bool RemovePhotos(DataContext context, User entity)
+			{
+				if (entity.Photos == null || entity.Photos.Count == 0) return false;
+				context.Photos.RemoveRange(entity.Photos);
+				return true;
+			}
+
+			static bool RemoveLikes(DataContext context, User entity)
+			{
+				bool result = false;
+
+				if (entity.Likers?.Count > 0)
+				{
+					context.Likes.RemoveRange(entity.Likers);
+					result = true;
+				}
+
+				if (entity.Likees?.Count > 0)
+				{
+					context.Likes.RemoveRange(entity.Likees);
+					result = true;
+				}
+
+				return result;
+			}
+
+			static bool RemoveMessages(DataContext context, User entity)
+			{
+				bool result = false;
+
+				if (entity.MessagesSent?.Count > 0)
+				{
+					context.Messages.RemoveRange(entity.MessagesSent);
+					result = true;
+				}
+
+				if (entity.MessagesReceived?.Count > 0)
+				{
+					context.Messages.RemoveRange(entity.MessagesReceived);
+					result = true;
+				}
+
+				return result;
+			}
 		}
 
 		public ValueTask<bool> CheckPasswordAsync(User entity, string password, CancellationToken token = default(CancellationToken))
@@ -900,7 +907,7 @@ namespace MatchNBuy.Data.Repositories
 			{
 				refreshToken = openTokens[0];
 
-				if ((refreshToken.Expires - DateTime.UtcNow).TotalSeconds < 5.0d) 
+				if ((refreshToken.Expires - DateTime.UtcNow).TotalSeconds < 5.0d)
 					refreshToken = null;
 				else
 					offset++;

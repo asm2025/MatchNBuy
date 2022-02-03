@@ -2,7 +2,7 @@
 {
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
-		"composite": true,
+		"outDir": "./dist/out-tsc",
 		"types": [
 			"node",
 			"lodash"
@@ -12,9 +12,12 @@
 		"src/main.ts",
 		"src/polyfills.ts"
 	],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.json"
+	],
 	"exclude": [
-		"src/test.ts",
 		"**/*.test.ts",
-		"src/**/*.spec.ts"
+		"**/*.spec.ts"
 	]
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
@@ -11,9 +10,9 @@ using essentialMix.Helpers;
 using essentialMix.Patterns.DateTime;
 using essentialMix.Patterns.Pagination;
 using essentialMix.Patterns.Sorting;
+using JetBrains.Annotations;
 using MatchNBuy.Model;
 using MatchNBuy.Model.Parameters;
-using JetBrains.Annotations;
 using MatchNBuy.Model.TransferObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,18 +21,13 @@ using Thread = MatchNBuy.Model.Thread;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public class MessageRepository : Repository<DataContext, Message>, IMessageRepository
+	public class MessageRepository : Repository<DataContext, Message, Guid>, IMessageRepository
 	{
-		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(Message).GetProperty(nameof(Message.Id))}, LazyThreadSafetyMode.PublicationOnly);
-
 		/// <inheritdoc />
 		public MessageRepository([NotNull] DataContext context, [NotNull] IConfiguration configuration, ILogger<MessageRepository> logger)
 			: base(context, configuration, logger)
 		{
 		}
-
-		/// <inheritdoc />
-		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
 
 		/// <inheritdoc />
 		public IQueryable<Message> List(string userId, IPagination settings = null)
@@ -53,7 +47,7 @@ namespace MatchNBuy.Data.Repositories
 				container = MessageContainers.Default;
 				range = DateTimeHelper.GetRange(null, null);
 			}
-			
+
 			IQueryable<Message> queryable = DbSet
 											.Include(e => e.Sender)
 											.Include(e => e.Recipient)
@@ -70,7 +64,7 @@ namespace MatchNBuy.Data.Repositories
 					queryable = queryable.Where(e => e.RecipientId == userId && !e.RecipientDeleted && e.DateRead == null);
 					break;
 			}
-			
+
 			if (settings is ISortable sortable && (sortable.OrderBy == null || sortable.OrderBy.Count == 0))
 			{
 				sortable.OrderBy = new[]
@@ -97,7 +91,7 @@ namespace MatchNBuy.Data.Repositories
 			if (message.SenderId != userId && message.RecipientId != userId) throw new UnauthorizedAccessException("The sender must be a part of the conversation.");
 
 			Thread thread;
-			
+
 			if (message.ThreadId == null)
 			{
 				thread = new Thread
@@ -143,7 +137,7 @@ namespace MatchNBuy.Data.Repositories
 			if (message.SenderId != userId && message.RecipientId != userId) throw new UnauthorizedAccessException("The sender must be a part of the conversation.");
 
 			Thread thread;
-			
+
 			if (message.ThreadId == null)
 			{
 				thread = new Thread
@@ -231,7 +225,7 @@ namespace MatchNBuy.Data.Repositories
 				queryable = includeSettings.Include.SkipNullOrEmpty()
 											.Aggregate(queryable, (current, path) => current.Include(path));
 			}
-		
+
 			if (sortable != null && sortable.OrderBy?.Count > 0)
 			{
 				bool addedFirst = false;
@@ -269,7 +263,7 @@ namespace MatchNBuy.Data.Repositories
 											.Include(e => e.Sender)
 											.Include(e => e.Recipient)
 											.Where(e => !e.IsArchived && e.ThreadId == threadId && (!e.RecipientDeleted || !e.SenderDeleted));
-			
+
 			if (settings is ISortable sortable && (sortable.OrderBy == null || sortable.OrderBy.Count == 0))
 			{
 				sortable.OrderBy = new[]

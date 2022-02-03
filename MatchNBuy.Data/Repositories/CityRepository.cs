@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using essentialMix.Core.Data.Entity.Patterns.Repository;
 using essentialMix.Extensions;
-using MatchNBuy.Model;
 using JetBrains.Annotations;
+using MatchNBuy.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace MatchNBuy.Data.Repositories
 {
-	public class CityRepository : RepositoryBase<DataContext, City>, ICityRepositoryBase
+	public class CityRepository : RepositoryBase<DataContext, City, Guid>, ICityRepositoryBase
 	{
-		private static readonly Lazy<PropertyInfo[]> __keyProperties = new Lazy<PropertyInfo[]>(() => new[] { typeof(City).GetProperty(nameof(City.Id))}, LazyThreadSafetyMode.PublicationOnly);
-		
 		/// <inheritdoc />
 		public CityRepository([NotNull] DataContext context, [NotNull] IConfiguration configuration, ILogger<CityRepository> logger)
 			: base(context, configuration, logger)
 		{
 		}
-
-		/// <inheritdoc />
-		protected override PropertyInfo[] KeyProperties => __keyProperties.Value;
 
 		[NotNull]
 		public IQueryable<City> List(string countryCode)

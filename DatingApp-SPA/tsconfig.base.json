@@ -33,7 +33,7 @@
 		"forceConsistentCasingInFileNames": false,
 		"strictNullChecks": true,
 		"typeRoots": [
-			"node_modules/@types",
+			"./node_modules/@types",
 			"./typings"
 		],
 		"lib": [
@@ -45,7 +45,7 @@
 			"~/*": [
 				"node_modules/*"
 			],
-			"@/*": [
+			"@app/*": [
 				"src/app/*"
 			],
 			"@common/*": [
@@ -78,11 +78,11 @@
 	},
 	"include": [
 		"./typings",
-		"src/**/*",
-		"src/**/*.json"
+		"./src/**/*",
+		"./src/**/*.json"
 	],
 	"exclude": [
-		"node_modules",
+		"./node_modules",
 		"dist",
 		"public"
 	]

@@ -20,7 +20,7 @@ import {
 } from "@ng-bootstrap/ng-bootstrap";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 @Component({
 	selector: "app-root",

@@ -31,7 +31,7 @@
 							"node_modules/bootstrap/dist/css/bootstrap.min.css",
 							"node_modules/material-design-icons/iconfont/material-icons.css",
 							"src/styles/bootstrap.scss",
-							"src/styles/ng-bootstrap/ng-bootstrap.scss",
+							//"src/styles/ng-bootstrap/ng-bootstrap.scss",
 							"src/styles/styles.scss"
 						],
 						"scripts": [],

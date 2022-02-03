@@ -8,7 +8,7 @@ import {
 } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 @Injectable({
 	providedIn: "root"

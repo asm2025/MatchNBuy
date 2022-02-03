@@ -13,7 +13,7 @@ import { IUser, IUserForList, IUserForDetails, IUserToRegister, IUserToUpdate, I
 import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
 import { IMessageThread, IMessage, IMessageToAdd, IMessageToEdit } from "@data/model/Message";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 export function getToken(): string | null {
 	return localStorage.getItem("SESSIONID");

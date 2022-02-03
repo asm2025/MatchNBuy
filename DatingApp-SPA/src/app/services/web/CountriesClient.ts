@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
 import ApiClient from "@common/web/ApiClient";
 import { ICountry, ICity } from "@data/common/Country";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 @Injectable()
 export default class CountriesClient extends ApiClient<HttpClient> {

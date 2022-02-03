@@ -6,7 +6,7 @@ import { IUserForList } from "@data/model/User";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 @Component({
 	selector: "app-member-card",

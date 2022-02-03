@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import * as _ from "lodash";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 const cookieName = (config.language && config.language.cookieName) ? <string>config.language.cookieName : "culture";
 

@@ -5,7 +5,7 @@ import { takeUntil } from "rxjs/operators";
 
 import UserClient from "@services/web/UserClient";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 @Component({
 	selector: "app-nav",

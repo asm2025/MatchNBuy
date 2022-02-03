@@ -45,19 +45,19 @@ import { SortableHeader } from "@common/directives/sortable.directive";
 import { StopPropagation } from "@common/directives/stop-propagation.directive";
 import { PreventDefaults } from "@common/directives/prevent-defaults.directive";
 
-import HammerConfigProvider from "@/config/hammer.config";
+import HammerConfigProvider from "@app/config/hammer.config";
 
-import HTTPHeadersInterceptorProvider from "@/interceptors/http-headers.interceptor";
-import ErrorInterceptorProvider from "@/interceptors/error.interceptor";
+import HTTPHeadersInterceptorProvider from "@app/interceptors/http-headers.interceptor";
+import ErrorInterceptorProvider from "@app/interceptors/error.interceptor";
 
 import CountriesClient from "@services/web/CountriesClient";
 import WeatherClient from "@services/web/WeatherClient";
 import UserClient, { getToken } from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
-import AppInitializerProvider from "@/initializers/app.initializer";
+import AppInitializerProvider from "@app/initializers/app.initializer";
 
-import AuthGuard from "@/guards/auth.guard";
+import AuthGuard from "@app/guards/auth.guard";
 import UnsavedChangesGuard from "@common/guards/unsaved-changes.guard";
 
 import AppComponent from "./app.component";

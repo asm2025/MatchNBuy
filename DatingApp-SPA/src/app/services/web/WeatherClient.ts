@@ -6,7 +6,7 @@ import moment from "moment";
 import ApiClient from "@common/web/ApiClient";
 import { IForecastResult, IForecast } from "@data/model/Forecast";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 @Injectable()
 export default class WeatherClient extends ApiClient<HttpClient> {

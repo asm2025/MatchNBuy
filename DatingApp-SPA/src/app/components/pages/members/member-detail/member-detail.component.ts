@@ -18,7 +18,7 @@ import { IPhoto, IPhotoToEdit } from "@data/model/Photo";
 import UserClient from "@services/web/UserClient";
 import AlertService from "@services/alert.service";
 
-import config from "@/config.json";
+import config from "@app/config.json";
 
 const TABS_MIN = 1;
 const TABS_MAX = 3;

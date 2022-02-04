@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <FileVersion>21.11.12.1</FileVersion>
+	<TargetFramework>net6.0</TargetFramework>
+	<FileVersion>21.11.12.1</FileVersion>
 	<LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="11.0.0" />
-    <PackageReference Include="essentialMix" Version="13.0.0" />
-    <PackageReference Include="essentialMix.Data" Version="13.0.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	<PackageReference Include="AutoMapper" Version="11.0.0" />
+	<PackageReference Include="essentialMix" Version="13.0.1" />
+	<PackageReference Include="essentialMix.Data" Version="13.0.1" />
+	<PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
+	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+	<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

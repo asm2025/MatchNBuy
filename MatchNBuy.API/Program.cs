@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using essentialMix.Core.Web.Helpers;
 using essentialMix.Extensions;
 using essentialMix.Helpers;
 using JetBrains.Annotations;
@@ -18,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using IConfigurationBuilderHelper = essentialMix.Core.Web.Helpers.IConfigurationBuilderHelper;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace MatchNBuy.API;

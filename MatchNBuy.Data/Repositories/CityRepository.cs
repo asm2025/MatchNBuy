@@ -36,7 +36,7 @@ namespace MatchNBuy.Data.Repositories
 			token.ThrowIfCancellationRequested();
 			countryCode = countryCode.Trim();
 			if (countryCode.Length == 0) throw new ArgumentNullException(nameof(countryCode));
-			return DbSet.Where(e => e.CountryCode == countryCode).ToListAsync(token).As<List<City>, IList<City>>();
+			return DbSet.Where(e => e.CountryCode == countryCode).ToListAsync(token).As<List<City>, IList<City>>(token);
 		}
 	}
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bogus;
 using essentialMix.Collections;
 using essentialMix.Helpers;
-using Bogus;
 using MatchNBuy.Model;
 
 namespace MatchNBuy.Data.Fakers
@@ -24,8 +24,8 @@ namespace MatchNBuy.Data.Fakers
 		{
 			base.RuleFor(e => e.Date, DateTime.Today);
 			base.RuleFor(e => e.TemperatureC, () => RNGRandomHelper.Next(-20, 50));
-			base.RuleFor(e => e.Keyword, (f, e) => __summaries[e.TemperatureC].Name);
-			base.RuleFor(e => e.Summary, (f, e) => __summaries[e.TemperatureC].Description);
+			base.RuleFor(e => e.Keyword, (_, e) => __summaries[e.TemperatureC].Name);
+			base.RuleFor(e => e.Summary, (_, e) => __summaries[e.TemperatureC].Description);
 		}
 	}
 }

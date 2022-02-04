@@ -251,7 +251,7 @@ namespace MatchNBuy.Data.Repositories
 		{
 			token.ThrowIfCancellationRequested();
 			IQueryable<Thread> queryable = Threads(userId, settings);
-			return await queryable.ToListAsync(token).As<List<Thread>, IList<Thread>>();
+			return await queryable.ToListAsync(token).As<List<Thread>, IList<Thread>>(token);
 		}
 
 		/// <inheritdoc />
@@ -280,7 +280,7 @@ namespace MatchNBuy.Data.Repositories
 		{
 			token.ThrowIfCancellationRequested();
 			IQueryable<Message> queryable = Thread(threadId, settings);
-			return queryable.ToListAsync(token).As<List<Message>, IList<Message>>();
+			return queryable.ToListAsync(token).As<List<Message>, IList<Message>>(token);
 		}
 
 		/// <inheritdoc />

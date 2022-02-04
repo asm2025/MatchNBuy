@@ -3,13 +3,18 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<FileVersion>21.11.12.1</FileVersion>
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>10.0</LangVersion>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 		<OutputType>Library</OutputType>
 		<AssemblyName>DatingApp.SPA</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="dist\**" />
+	  <Content Remove="dist\**" />
+	  <EmbeddedResource Remove="dist\**" />
+	  <None Remove="dist\**" />
+	  <TypeScriptCompile Remove="dist\**" />
 	  <TypeScriptCompile Remove="node_modules\**" />
 	</ItemGroup>
 

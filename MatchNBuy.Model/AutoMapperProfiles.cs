@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
+using AutoMapper;
 using essentialMix.Data.Patterns.Parameters;
 using essentialMix.Extensions;
 using essentialMix.Patterns.Pagination;
-using AutoMapper;
 using MatchNBuy.Model.Parameters;
 using MatchNBuy.Model.TransferObjects;
 
@@ -43,7 +43,7 @@ namespace MatchNBuy.Model
 			CreateMap<Thread, MessageThread>()
 				.ForMember(m => m.ThreadId, opt => opt.MapFrom(e => e.Id))
 				.ForMember(m => m.Count, opt => opt.MapFrom(e => e.Messages.Count))
-				.ForMember(m => m.IsRead, opt => opt.MapFrom(e => e.Messages.All(e => e.DateRead == null)))
+				.ForMember(m => m.IsRead, opt => opt.MapFrom(e => e.Messages.All(p => p.DateRead == null)))
 				.ForMember(m => m.LastModified, opt => opt.MapFrom(e => e.Modified));
 
 			CreateMap<MessageToAdd, Message>().ReverseMap();

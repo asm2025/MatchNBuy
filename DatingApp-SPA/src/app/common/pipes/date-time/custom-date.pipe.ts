@@ -26,8 +26,8 @@ export default class CustomDatePipe extends DatePipe implements PipeTransform {
 		super(_locale);
 	}
 
-	transform(value: Date | string | number, format?: string, timezone?: string, locale?: string): string | null;
 	transform(value: null | undefined, format?: string, timezone?: string, locale?: string): null;
+	transform(value: Date | string | number, format?: string, timezone?: string, locale?: string): string | null;
 	transform(value: Date | string | number | null | undefined,
 		format?: string,
 		timezone?: string,

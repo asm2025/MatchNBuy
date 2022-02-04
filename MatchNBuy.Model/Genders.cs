@@ -1,9 +1,8 @@
-namespace MatchNBuy.Model
+namespace MatchNBuy.Model;
+
+public enum Genders
 {
-	public enum Genders
-	{
-		Unspecified,
-		Male,
-		Female
-	}
+	Unspecified,
+	Male,
+	Female
 }

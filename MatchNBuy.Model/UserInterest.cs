@@ -2,16 +2,15 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using essentialMix.Data.Model;
 
-namespace MatchNBuy.Model
+namespace MatchNBuy.Model;
+
+[Serializable]
+public class UserInterest : IEntity
 {
-	[Serializable]
-	public class UserInterest : IEntity
-	{
-		[Required]
-		[StringLength(128, MinimumLength = 128)]
-		public string UserId { get; set; }
-		public virtual User User { get; set; }
-		public Guid InterestId { get; set; }
-		public virtual Interest Interest { get; set; }
-	}
+	[Required]
+	[StringLength(128, MinimumLength = 128)]
+	public string UserId { get; set; }
+	public virtual User User { get; set; }
+	public Guid InterestId { get; set; }
+	public virtual Interest Interest { get; set; }
 }

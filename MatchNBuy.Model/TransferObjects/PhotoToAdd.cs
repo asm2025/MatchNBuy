@@ -2,12 +2,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace MatchNBuy.Model.TransferObjects
+namespace MatchNBuy.Model.TransferObjects;
+
+[Serializable]
+public class PhotoToAdd : PhotoToEdit
 {
-	[Serializable]
-	public class PhotoToAdd : PhotoToEdit
-	{
-		[Required]
-		public IFormFile File { get; set; }
-	}
+	[Required]
+	public IFormFile File { get; set; }
 }

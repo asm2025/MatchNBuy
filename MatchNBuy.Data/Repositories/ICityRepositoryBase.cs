@@ -7,12 +7,11 @@ using essentialMix.Core.Data.Entity.Patterns.Repository;
 using JetBrains.Annotations;
 using MatchNBuy.Model;
 
-namespace MatchNBuy.Data.Repositories
+namespace MatchNBuy.Data.Repositories;
+
+public interface ICityRepositoryBase : IRepositoryBase<DataContext, City, Guid>
 {
-	public interface ICityRepositoryBase : IRepositoryBase<DataContext, City, Guid>
-	{
-		IQueryable<City> List([NotNull] string countryCode);
-		[NotNull]
-		Task<IList<City>> ListAsync([NotNull] string countryCode, CancellationToken token = default(CancellationToken));
-	}
+	IQueryable<City> List([NotNull] string countryCode);
+	[NotNull]
+	Task<IList<City>> ListAsync([NotNull] string countryCode, CancellationToken token = default(CancellationToken));
 }

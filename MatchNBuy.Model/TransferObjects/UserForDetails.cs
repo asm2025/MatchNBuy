@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace MatchNBuy.Model.TransferObjects
+namespace MatchNBuy.Model.TransferObjects;
+
+[Serializable]
+public class UserForDetails : UserForList
 {
-	[Serializable]
-	public class UserForDetails : UserForList
-	{
-		public string PhoneNumber { get; set; }
-		public string LookingFor { get; set; }
-		public IList<string> Interests { get; set; }
-		public IList<string> Roles { get; set; }
-	}
+	public string PhoneNumber { get; set; }
+	public string LookingFor { get; set; }
+	public IList<string> Interests { get; set; }
+	public IList<string> Roles { get; set; }
 }

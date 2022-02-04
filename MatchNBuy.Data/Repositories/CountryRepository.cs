@@ -4,14 +4,13 @@ using MatchNBuy.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace MatchNBuy.Data.Repositories
+namespace MatchNBuy.Data.Repositories;
+
+public class CountryRepository : RepositoryBase<DataContext, Country, string>, ICountryRepositoryBase
 {
-	public class CountryRepository : RepositoryBase<DataContext, Country, string>, ICountryRepositoryBase
+	/// <inheritdoc />
+	public CountryRepository([NotNull] DataContext context, [NotNull] IConfiguration configuration, ILogger<CityRepository> logger)
+		: base(context, configuration, logger)
 	{
-		/// <inheritdoc />
-		public CountryRepository([NotNull] DataContext context, [NotNull] IConfiguration configuration, ILogger<CityRepository> logger)
-			: base(context, configuration, logger)
-		{
-		}
 	}
 }
